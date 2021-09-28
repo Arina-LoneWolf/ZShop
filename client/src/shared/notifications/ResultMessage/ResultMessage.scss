@@ -1,0 +1,84 @@
+@import "../../style/color.scss";
+
+.result-message {
+  animation: wait 0.25s, fadeIn 0.6s 0.25s;
+
+  #overlay {
+    position: fixed;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-color: rgba(0, 0, 0, 0.3);
+    z-index: 1;
+  }
+
+  .result-message-container {
+    max-width: 516px;
+    background: $white;
+    z-index: 1;
+    position: fixed;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    border-radius: 21px;
+    padding: 8px 8px;
+    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+
+    .result-image {
+      width: 40%;
+      height: auto;
+      margin: 0 auto;
+      display: block;
+    }
+
+    .result-title {
+      text-align: center;
+      font-size: 25px;
+      font-weight: 700;
+    }
+
+    .result-description {
+      text-align: center;
+      font-size: 19px;
+      line-height: 27.5px;
+      margin: 14px 52px 24px 52px;
+    }
+
+    .accept-btn {
+      margin: 0 auto 22px auto;
+      text-align: center;
+      background: $lightpink;
+      color: $white;
+      height: 42px;
+      line-height: 42px;
+      width: 186px;
+      font-size: 20px;
+      border-radius: 21px;
+      font-weight: 700;
+      cursor: pointer;
+
+      &:hover {
+        background: $coralpink;
+      }
+    }
+  }
+
+  @keyframes wait {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 0;
+    }
+  }
+
+  @keyframes fadeIn {
+    0% {
+      opacity: 0;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+}

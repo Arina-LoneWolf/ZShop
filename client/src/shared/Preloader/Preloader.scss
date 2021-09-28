@@ -1,0 +1,10 @@
+.preloader {
+  height: 100vh;
+
+  img {
+    margin: 0 auto;
+    display: block;
+    margin-top: 50vh;
+    transform: translateY(-50%);
+  }
+}

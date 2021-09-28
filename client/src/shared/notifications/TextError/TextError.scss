@@ -1,0 +1,15 @@
+.error {
+  margin-left: 2px;
+  font-size: 12px;
+}
+
+.error-container {
+  * {
+    color: red !important;
+  }
+
+  .error {
+    margin-left: 2px;
+    font-size: 12px;
+  }
+}

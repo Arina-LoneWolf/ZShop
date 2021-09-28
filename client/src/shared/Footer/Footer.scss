@@ -1,0 +1,88 @@
+@import "../../shared/style/color.scss";
+
+.footer {
+  background-color: $lightpink;
+  color: $white;
+  overflow: auto;
+  overflow-x: hidden;
+
+  .container {
+    max-width: 1140px;
+    margin: 36px auto;
+    font-weight: 700;
+
+    .title {
+      text-transform: uppercase;
+      margin-bottom: 6px;
+      font-size: 18px;
+      font-weight: 800;
+    }
+
+    li {
+      font-size: 14px;
+      margin: 3px 0;
+    }
+
+    .contact {
+      .phone, .email {
+        display: flex;
+        align-items: center;
+        font-size: 18px;
+        margin: 4px 0;
+
+        span {
+          margin-left: 6px;
+        }
+      }
+    }
+
+    .logo-and-socials {
+      .logo {
+        margin: auto;
+        text-align: center;
+        line-height: 58px;
+
+        img {
+          height: 74px;
+        }
+      }
+
+      .socials {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+
+        a, a:visited, a:active {
+          color: inherit;
+          line-height: 10px;
+        }
+
+        .facebook-icon, .instagram-icon, .youtube-icon {
+          cursor: pointer;
+
+          &:hover {
+            opacity: 0.6;
+          }
+        }
+
+        .facebook-icon {
+          font-size: 33px;
+        }
+
+        .instagram-icon {
+          font-size: 36px;
+        }
+
+        .youtube-icon {
+          font-size: 44px;
+        }
+      }
+    }
+  }
+
+  .copyright {
+    text-align: center;
+    border-top: 2px solid $white;
+    line-height: 56px;
+  }
+}

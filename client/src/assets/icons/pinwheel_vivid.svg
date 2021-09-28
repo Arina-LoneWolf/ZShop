@@ -1,0 +1,35 @@
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0,0,1024,1024">
+	<desc>toys icon - Licensed under Apache License v2.0 (http://www.apache.org/licenses/LICENSE-2.0) - Created with Iconfu.com - Derivative work of Material icons (Copyright Google Inc.)</desc>
+	<defs>
+		<clipPath id="clip-uKl7EJmC">
+			<path d="M277.33,277.33c0,-128 106.67,-234.66 234.67,-234.66v469.33c0,-128 106.67,-234.67 234.67,-234.67c128,0 234.66,106.67 234.66,234.67h-469.33c0,128 -106.67,234.67 -234.67,234.67c-128,0 -234.66,-106.67 -234.66,-234.67h469.33c128,0 234.67,106.67 234.67,234.67c0,128 -106.67,234.66 -234.67,234.66v-469.33c-128,0 -234.67,-106.67 -234.67,-234.67z" fill="none"/>
+		</clipPath>
+		<linearGradient x1="0" y1="1024" x2="1024" y2="0" gradientUnits="userSpaceOnUse" id="color-fElAlbkm">
+			<stop offset="0.2" stop-color="#508aff"/>
+			<stop offset="0.8" stop-color="#ff7eae"/>
+		</linearGradient>
+		<radialGradient cx="0" cy="0" r="1448.15" gradientUnits="userSpaceOnUse" id="color-rILQ74Lv">
+			<stop offset="0.07" stop-color="#ffc355"/>
+			<stop offset="0.75" stop-color="#ffc355" stop-opacity="0"/>
+		</radialGradient>
+		<filter id="filter-vyArf2Ud" x="0%" y="0%" width="100%" height="100%" color-interpolation-filters="sRGB">
+			<feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.05 0" in="SourceGraphic"/>
+			<feOffset dy="20"/>
+			<feGaussianBlur stdDeviation="11" result="blur0"/>
+			<feColorMatrix values="1 0 0 0 0 0 1 0 0 0 0 0 1 0 0 0 0 0 0.07 0" in="SourceGraphic"/>
+			<feOffset dy="30"/>
+			<feGaussianBlur stdDeviation="20" result="blur1"/>
+			<feMerge>
+				<feMergeNode in="blur0"/>
+				<feMergeNode in="blur1"/>
+			</feMerge>
+		</filter>
+	</defs>
+	<g fill="none" fill-rule="nonzero" style="mix-blend-mode: normal">
+		<path d="M277.33,277.33c0,-128 106.67,-234.66 234.67,-234.66v469.33c0,-128 106.67,-234.67 234.67,-234.67c128,0 234.66,106.67 234.66,234.67h-469.33c0,128 -106.67,234.67 -234.67,234.67c-128,0 -234.66,-106.67 -234.66,-234.67h469.33c128,0 234.67,106.67 234.67,234.67c0,128 -106.67,234.66 -234.67,234.66v-469.33c-128,0 -234.67,-106.67 -234.67,-234.67z" fill="url(#color-fElAlbkm)"/>
+		<path d="M277.33,277.33c0,-128 106.67,-234.66 234.67,-234.66v469.33c0,-128 106.67,-234.67 234.67,-234.67c128,0 234.66,106.67 234.66,234.67h-469.33c0,128 -106.67,234.67 -234.67,234.67c-128,0 -234.66,-106.67 -234.66,-234.67h469.33c128,0 234.67,106.67 234.67,234.67c0,128 -106.67,234.66 -234.67,234.66v-469.33c-128,0 -234.67,-106.67 -234.67,-234.67z" fill="url(#color-rILQ74Lv)"/>
+		<g clip-path="url(#clip-uKl7EJmC)">
+			<path d="M-50.33,1024.33v-1124.66h1124.66v1124.66zM512,512h469.33c0,-128 -106.66,-234.67 -234.66,-234.67c-128,0 -234.67,106.67 -234.67,234.67v-469.33c-128,0 -234.67,106.66 -234.67,234.66c0,128 106.67,234.67 234.67,234.67zM512,512h-469.33c0,128 106.66,234.67 234.66,234.67c128,0 234.67,-106.67 234.67,-234.67zM512,512v469.33c128,0 234.67,-106.66 234.67,-234.66c0,-128 -106.67,-234.67 -234.67,-234.67z" filter="url(#filter-vyArf2Ud)" fill="#000000"/>
+		</g>
+	</g>
+</svg>

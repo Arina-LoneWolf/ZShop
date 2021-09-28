@@ -1,0 +1,133 @@
+@import "../../shared/style/color.scss";
+
+a {
+  text-decoration: none;
+}
+
+.product-container {
+  padding-bottom: 30px;
+
+  .product-interface {
+    position: relative;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px;
+    box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px,
+      rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+
+    &:hover {
+      transform: translateY(-2px);
+      box-shadow: rgba(171, 119, 126, 0.19) 0px 10px 20px,
+        rgba(255, 100, 120, 0.23) 0px 6px 6px;
+
+      .product-name {
+        color: $lightpink !important;
+      }
+    }
+
+    .product-image {
+      padding-top: 100%;
+      border-top-left-radius: 5px;
+      border-top-right-radius: 5px;
+      background: {
+        size: contain;
+        repeat: no-repeat;
+      }
+    }
+
+    .product-info {
+      padding: 10px 8px;
+
+      .product-name {
+        font-weight: 700;
+        margin-bottom: 6px;
+        line-height: 22px;
+        height: 44px;
+        color: $black;
+      }
+
+      .product-price {
+        margin-top: 4px;
+        font-weight: 900;
+        font-size: 17px;
+        color: $sweetindianred;
+      }
+
+      .product-original-price {
+        text-decoration: line-through;
+        font-size: 14px;
+        margin-top: 1px;
+        color: $darkgrey;
+      }
+
+      .empty {
+        height: 16px;
+      }
+    }
+
+    .product-new-label {
+      position: absolute;
+      top: 10px;
+      left: -6px;
+      background-color: $lightpink;
+      color: $white;
+      font-weight: 700;
+      font-size: 15px;
+      padding: 0 8px;
+      border-top-right-radius: 3px;
+      border-bottom-right-radius: 3px;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 0;
+        bottom: -6px;
+        border-top: 6px solid $lightpink;
+        border-left: 5px solid transparent;
+        filter: brightness(70%);
+      }
+    }
+
+    .product-hot-label-container {
+      position: absolute;
+      top: -4px;
+      right: -4px;
+      width: 80px;
+      height: 80px;
+      overflow: hidden;
+    }
+
+    .hot-label {
+      background-color: $indianred;
+      color: $white;
+      font-weight: 700;
+      font-size: 15px;
+      transform: rotate(45deg);
+      width: 90px;
+      text-align: center;
+      margin: 12px;
+      font-size: 14px;
+
+      &:after {
+        content: "";
+        position: absolute;
+        left: 2px;
+        bottom: -5px;
+        border-top: 5px solid $indianred;
+        border-right: 5px solid transparent;
+        filter: brightness(70%);
+        margin-left: 3px;
+      }
+
+      &:before {
+        content: "";
+        position: absolute;
+        right: 4px;
+        bottom: -4px;
+        border-top: 5px solid $indianred;
+        border-left: 5px solid transparent;
+        filter: brightness(70%);
+      }
+    }
+  }
+}

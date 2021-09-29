@@ -1,5 +1,6 @@
 import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from 'react-query';
 import Home from '../pages/Home';
 import Cart from '../pages/Cart';
 import Search from '../pages/Search';
@@ -18,6 +19,8 @@ import ScrollToTop from '../helpers/ScrollToTop';
 import PrivateRoute from '../helpers/PrivateRoute';
 import AdminRoute from '../helpers/AdminRoute';
 
+const queryClient = new QueryClient();
+
 function App() {
   // const toastDisplay = useRecoilValue(toastDisplayState);
   // const user = useRecoilValue(userState);
@@ -30,6 +33,8 @@ function App() {
   return (
     <Router>
       <ScrollToTop />
+
+      <QueryClientProvider client={queryClient}>
       <Header />
 
       <Switch>
@@ -49,6 +54,7 @@ function App() {
       {/* <ResultMessage /> */}
       {/* <Dialog /> */}
       {/* {toastDisplay.show && <ToastMessage />} */}
+      </QueryClientProvider>
     </Router>
   );
 }

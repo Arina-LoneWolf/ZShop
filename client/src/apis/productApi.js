@@ -8,7 +8,7 @@ const productApi = {
 
   getAll: () => {},
 
-  getAllCategory: (params) => {},
+  getAllByCategory: (params) => {},
 
   getDetail: (id) => {
     const url = `/api/product/home/get-product/${id}`;
@@ -17,7 +17,9 @@ const productApi = {
 
   searchAll: (params) => {},
 
-  add: (params) => {},
+  add: (params) => {
+    const url = '/api/product/'
+  },
 
   update: (params) => {},
 

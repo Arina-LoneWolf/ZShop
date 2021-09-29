@@ -1,0 +1,44 @@
+@import "../../../shared/style/color.scss";
+
+.new-products-section {
+  .container {
+    max-width: 1140px;
+    margin: 0 auto;
+    margin-bottom: 24px;
+
+    .section-title {
+      font-weight: 900;
+      font-size: 28px;
+      margin-bottom: 12px;
+    }
+
+    .load-more-btn {
+      // position: relative;
+      cursor: pointer;
+      text-transform: uppercase;
+      color: $white;
+      background-color: $lightpink;
+      width: 108px;
+      height: 42px;
+      line-height: 42px;
+      text-align: center;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 700;
+      margin: {
+        left: auto;
+        right: auto;
+        top: 4px;
+      }
+
+      &:hover {
+        background-color: $coralpink;
+      }
+
+      .loading-icon {
+        width: 42px;
+        height: 100%;
+      }
+    }
+  }
+}

@@ -7,7 +7,7 @@ function Messenger() {
   if (match) return null;
 
   return (
-    <MessengerCustomerChat pageId="107987698119089" appId="466417401239652" themeColor="#ffb0bd" />
+    <MessengerCustomerChat pageId={process.env.FACEBOOK_PAGE_ID} appId={process.env.FACEBOOK_APP_ID} themeColor="#ffb0bd" />
   );
 }
 

@@ -1,29 +1,45 @@
 import axiosClient from './axiosClient';
 
 const productApi = {
-  getNew: (params) => {
+  getNew: (params) => { // it worked // params: page, limit
     const url = '/api/product/home';
     return axiosClient.get(url, { params });
   },
 
-  getAll: () => {},
+  getAll: (params) => { // params: status, sort, page, limit
+    const url = '/api/product/all';
+    return axiosClient.get(url, { params });
+  },
 
-  getAllByCategory: (params) => {},
+  getByCategory: (category, params) => { // params: type, status, sort, page, limit
+    const url = `/api/product/detail/${category}`;
+    return axiosClient.get(url, { params });
+  },
 
-  getDetail: (id) => {
-    const url = `/api/product/home/get-product/${id}`;
+  getInfo: (id) => { // it worked
+    const url = `/api/product/get-product/${id}`;
     return axiosClient.get(url);
   },
 
-  searchAll: (params) => {},
-
-  add: (params) => {
-    const url = '/api/product/'
+  search: (params) => { // params: name, status, sort, page, limit
+    const url = '/api/product/search';
+    return axiosClient.get(url, { params });
   },
 
-  update: (params) => {},
+  add: (data) => {
+    const url = '/api/product/add';
+    return axiosClient.post(url, data);
+  },
 
-  delete: (params) => {}
+  update: (id, data) => {
+    const url = `/api/product/update/${id}`;
+    return axiosClient.put(url, data);
+  },
+
+  delete: (id) => {
+    const url = `/api/product/delete/${id}`;
+    return axiosClient.delete(url);
+  }
 }
 
 export default productApi;

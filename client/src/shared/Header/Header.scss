@@ -175,13 +175,13 @@
           }
 
           .cart-preview {
+            z-index: 2;
             cursor: default;
             position: absolute;
             top: calc(100% + 6px);
             right: -6px;
             background-color: $white;
             width: 346px;
-            z-index: 1;
             border-radius: 5px;
             box-shadow: rgba(14, 30, 37, 0.12) 0px 2px 4px 0px, rgba(14, 30, 37, 0.32) 0px 2px 16px 0px;
             transform-origin: calc(100% - 15px) top;
@@ -424,154 +424,154 @@
 
 // ----- Sign Up/Login Form -----
 
-@mixin common-popup($width) {
-  width: $width;
-  background-color: $white;
-  border-radius: 8px;
-  z-index: 1;
-  position: fixed;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-}
+// @mixin common-popup($width) {
+//   width: $width;
+//   background-color: $white;
+//   border-radius: 8px;
+//   z-index: 1;
+//   position: fixed;
+//   top: 50%;
+//   left: 50%;
+//   transform: translate(-50%, -50%);
+// }
 
-@mixin overlay {
-  position: fixed;
-  top: 0;
-  right: 0;
-  bottom: 0;
-  left: 0;
-  background-color: rgba(0, 0, 0, 0.3);
-  z-index: 1;
-}
+// @mixin overlay {
+//   position: fixed;
+//   top: 0;
+//   right: 0;
+//   bottom: 0;
+//   left: 0;
+//   background-color: rgba(0, 0, 0, 0.3);
+//   z-index: 1;
+// }
 
-#sign-up-form,
-#login-form {
-  #overlay {
-    @include overlay;
-  }
+// #sign-up-form,
+// #login-form {
+//   #overlay {
+//     @include overlay;
+//   }
 
-  .form-container {
-    @include common-popup(400px);
-    box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
+//   .form-container {
+//     @include common-popup(400px);
+//     box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
 
-    .form-interface {
-      width: calc(100% - 24 * 2px);
-      display: flex;
-      flex-direction: column;
-      margin: 26px 24px;
+//     .form-interface {
+//       width: calc(100% - 24 * 2px);
+//       display: flex;
+//       flex-direction: column;
+//       margin: 26px 24px;
 
-      label,
-      input {
-        display: block;
-        margin-bottom: 2px;
-      }
+//       label,
+//       input {
+//         display: block;
+//         margin-bottom: 2px;
+//       }
 
-      label {
-        margin-left: 2px;
-        color: $dimpink;
-        font-weight: 600;
-      }
+//       label {
+//         margin-left: 2px;
+//         color: $dimpink;
+//         font-weight: 600;
+//       }
 
-      input {
-        width: 100%;
-        height: 40px;
-        border: 2px solid $lightpink;
-        border-radius: 8px;
-        padding: 14px;
-      }
+//       input {
+//         width: 100%;
+//         height: 40px;
+//         border: 2px solid $lightpink;
+//         border-radius: 8px;
+//         padding: 14px;
+//       }
 
-      .form-control {
-        margin-bottom: 10px;
-        width: 100%;
-      }
+//       .form-control {
+//         margin-bottom: 10px;
+//         width: 100%;
+//       }
 
-      .submit-btn {
-        background: $lightpink;
-        color: $white;
-        cursor: pointer;
-        font-weight: 600;
-        font-size: 17px;
-        height: 42px;
-        border-radius: 8px;
-        margin-top: 8px;
+//       .submit-btn {
+//         background: $lightpink;
+//         color: $white;
+//         cursor: pointer;
+//         font-weight: 600;
+//         font-size: 17px;
+//         height: 42px;
+//         border-radius: 8px;
+//         margin-top: 8px;
 
-        &:hover {
-          background: $coralpink;
-        }
-      }
+//         &:hover {
+//           background: $coralpink;
+//         }
+//       }
 
-      .strike {
-        display: block;
-        text-align: center;
-        overflow: hidden;
-        white-space: nowrap;
-        font-size: 20px;
-      }
+//       .strike {
+//         display: block;
+//         text-align: center;
+//         overflow: hidden;
+//         white-space: nowrap;
+//         font-size: 20px;
+//       }
 
-      .strike > span {
-        position: relative;
-        display: inline-block;
-        font-size: 12px;
-        color: $darkgrey;
-        font-weight: 600;
-      }
+//       .strike > span {
+//         position: relative;
+//         display: inline-block;
+//         font-size: 12px;
+//         color: $darkgrey;
+//         font-weight: 600;
+//       }
 
-      .strike {
-        margin-top: 6px;
-        margin-bottom: 10px;
+//       .strike {
+//         margin-top: 6px;
+//         margin-bottom: 10px;
 
-        span:before,
-        span:after {
-          content: "";
-          position: absolute;
-          top: 50%;
-          width: 9999px;
-          /* Here is the modification */
-          border-top: 1px solid $silver;
-        }
+//         span:before,
+//         span:after {
+//           content: "";
+//           position: absolute;
+//           top: 50%;
+//           width: 9999px;
+//           /* Here is the modification */
+//           border-top: 1px solid $silver;
+//         }
 
-        span:before {
-          right: 100%;
-          margin-right: 15px;
-        }
+//         span:before {
+//           right: 100%;
+//           margin-right: 15px;
+//         }
 
-        span:after {
-          left: 100%;
-          margin-left: 15px;
-        }
-      }
+//         span:after {
+//           left: 100%;
+//           margin-left: 15px;
+//         }
+//       }
 
-      .google-submit-btn {
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 42px;
-        border-radius: 8px;
-        border: 1px solid $grey;
-        background-color: $white;
-        cursor: pointer;
+//       .google-submit-btn {
+//         display: flex;
+//         justify-content: center;
+//         align-items: center;
+//         height: 42px;
+//         border-radius: 8px;
+//         border: 1px solid $grey;
+//         background-color: $white;
+//         cursor: pointer;
 
-        .google-icon {
-          width: 24px;
-          height: 24px;
-          margin-right: 8px;
-        }
+//         .google-icon {
+//           width: 24px;
+//           height: 24px;
+//           margin-right: 8px;
+//         }
 
-        span {
-          font-size: 16px;
-          font-weight: 600;
-        }
+//         span {
+//           font-size: 16px;
+//           font-weight: 600;
+//         }
 
-        &:hover {
-          background-color: $lightsilver;
-          border: 1px solid $lightpink;
-        }
-      }
-    }
-  }
-}
+//         &:hover {
+//           background-color: $lightsilver;
+//           border: 1px solid $lightpink;
+//         }
+//       }
+//     }
+//   }
+// }
 
-.google-submit-btn:active #login-form {
-  display: none;
-}
+// .google-submit-btn:active #login-form {
+//   display: none;
+// }

@@ -13,7 +13,10 @@ const axiosClient = axios.create({
 });
 
 axiosClient.interceptors.request.use(async (config) => {
-  // Handle token here ...
+  const userAccessToken = localStorage.getItem('accessToken');
+  if (userAccessToken) {
+    config.headers.Authorization = userAccessToken;
+  }
   return config;
 })
 

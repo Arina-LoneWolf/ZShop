@@ -1,5 +1,5 @@
 import './Banner.scss';
-import React, { useRef, useState } from "react";
+import React from "react";
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Pagination, Navigation } from "swiper";
 import 'swiper/swiper.scss';

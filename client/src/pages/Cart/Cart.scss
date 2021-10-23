@@ -1,0 +1,125 @@
+@import '../../shared/style/color.scss';
+
+.full-cart {
+  max-width: 1140px;
+  min-height: 100vh;
+  margin: 0 auto;
+
+  table {
+    width: 100%;
+    margin-top: 24px;
+    border-collapse: collapse;
+
+    tr {
+      height: 116px;
+      border: 1px solid $divider;
+
+      td:not(:first-child) {
+        text-align: center;
+      }
+    }
+  }
+
+  .image-color-container {
+    padding: 4px;
+
+    .image-color {
+      padding-top: 100%;
+      background: {
+        size: contain;
+        repeat: no-repeat;
+      }
+    }
+  }
+
+  .product-name {
+    padding: 0 24px;
+
+    a, a:visited, a:active {
+      color: inherit;
+    }
+
+    a:hover {
+      color: $lightpink;
+      cursor: pointer;
+    }
+  }
+
+  .quantity-adjustment {
+    .increment-btn, .decrement-btn {
+      border: 1px solid $divider;
+      border-radius: 3px;
+      cursor: pointer;
+    }
+
+    .decrement-btn {
+      padding: 0 7.1px;
+    }
+
+    .quantity {
+      padding: 0 14px;
+    }
+
+    .increment-btn {
+      padding: 0 6px;
+    }
+  }
+
+  .remove-btn {
+    cursor: pointer;
+
+    &:hover {
+      color: $lightpink;
+    }
+  }
+
+  .total-price {
+    text-align: right;
+    color: $lightpink;
+    margin-top: 52px;
+    font-size: 26px;
+    font-weight: 800;
+  }
+
+  .btn-group {
+    margin-top: 28px;
+    display: flex;
+    justify-content: flex-end;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 44px;
+
+    .continue-shopping-btn, .checkout-btn {
+      height: 44px;
+      line-height: 44px;
+      text-align: center;
+      border-radius: 22px;
+      padding: 0 22px;
+      cursor: pointer;
+
+      a, a:active, a:visited {
+        color: inherit;
+      }
+    }
+
+    .continue-shopping-btn {
+      margin-right: 12px;
+      color: $lightpink;
+      border: 1px solid $lightpink;
+
+      &:hover {
+        background-color: $lightpink;
+        color: $white;
+      }
+    }
+
+    .checkout-btn {
+      background-color: $lightpink;
+      color: $white;
+
+      &:hover {
+        background-color: $coralpink;
+      }
+    }
+  }
+}

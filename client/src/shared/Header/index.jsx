@@ -1,102 +1,96 @@
 import './Header.scss';
 import React, { useState, useEffect, useRef } from 'react';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { cartTotalQuantity, cartTotalPrice, cartState } from '../../recoil/cartState';
+import { loginState, signUpState } from '../../recoil/entryPointState';
+import { userState } from '../../recoil/userState';
 import { Link, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
 import { FaSearch } from "react-icons/fa";
 import { HiOutlineShoppingBag } from "react-icons/hi";
+import LoginForm from './LoginForm';
+import SignUpForm from './SignUpForm';
 import ConditionalLink from '../../helpers/ConditionalLink';
 import logo from '../../assets/images/textlogo.png';
+import emptyCart from '../../assets/images/cart-empty.png';
+import userApi from '../../apis/userApi';
 
 function Header() {
   const history = useHistory();
   const { pathname } = useLocation();
 
-  // const cart = useRecoilValue(cartState);
-  // const totalQuantity = useRecoilValue(cartTotalQuantity);
-  // const totalPrice = useRecoilValue(cartTotalPrice);
+  const cart = useRecoilValue(cartState);
+  const totalQuantity = useRecoilValue(cartTotalQuantity);
+  const totalPrice = useRecoilValue(cartTotalPrice);
 
-  // const [login, setLogin] = useRecoilState(loginState);
-  // const [signUp, setSignUp] = useRecoilState(signUpState);
-  // const [user, setUser] = useRecoilState(userState);
+  const [login, setLogin] = useRecoilState(loginState);
+  const [signUp, setSignUp] = useRecoilState(signUpState);
+  const [user, setUser] = useRecoilState(userState);
 
   const cartPreviewRef = useRef(null);
   const searchRef = useRef(null);
 
-  // const [name, setName] = useState('');
-
-  const name = 'Trinh Trinh'; // hard code tí thui
-  const totalQuantity = 4;
-  const totalPrice = 140000;
-  const cart = [];
+  const [name, setName] = useState('');
 
   const handleLoginUser = (e) => {
-    // if (e.target.innerText === 'Đăng nhập')
-    //   setLogin(true);
+    if (e.target.innerText === 'Đăng nhập')
+      setLogin(true);
   };
 
   const handleSignUpEscape = (e) => {
-    // if (e.target.innerText === 'Đăng ký') {
-    //   setSignUp(true);
-    // } else {
-    //   setUser({});
-    //   localStorage.removeItem('accessToken');
-    // }
+    if (e.target.innerText === 'Đăng ký') {
+      setSignUp(true);
+    } else {
+      setUser({});
+      localStorage.removeItem('accessToken');
+    }
   };
 
   const onSubmit = (e) => {
-    // e.preventDefault();
-    // const keyword = searchRef.current.value;
-    // if (keyword)
-    //   history.push(`/search?name=${keyword}`);
+    e.preventDefault();
+    const keyword = searchRef.current.value;
+    if (keyword)
+      history.push(`/search?name=${keyword}`);
   }
 
-  // useEffect(() => {
-  //   const userAccessToken = localStorage.getItem('accessToken');
+  useEffect(() => {
+    const userAccessToken = localStorage.getItem('accessToken');
 
-  //   if (userAccessToken) {
-  //     const config = {
-  //       headers: {
-  //         Authorization: userAccessToken,
-  //       }
-  //     }
+    if (userAccessToken) {
+      userApi.getInfo().then(response => {
+        console.log(response)
+        setUser({
+          accessToken: userAccessToken,
+          ...response.user,
+        })
+      }).catch(error => {
+        console.log(error);
+      })
+    }
+  }, []);
 
-  //     axios.get('http://localhost:5000/user/info', config)
-  //       .then(res => {
-  //         // console.log(res.data.user);
-  //         // console.log('set user');
-  //         setUser({
-  //           accessToken: userAccessToken,
-  //           ...res.data.user
-  //         });
-  //       })
-  //       .catch(err => {
-  //         console.log(err);
-  //       })
-  //   }
-  // }, []);
+  useEffect(() => {
+    if (user.accessToken) {
+      setName(user.name);
+    } else {
+      setName('');
+    }
+  }, [user]);
 
-  // useEffect(() => {
-  //   if (user.accessToken) {
-  //     setName(user.name);
-  //   } else {
-  //     setName('');
-  //   }
-  // }, [user]);
+  useEffect(() => {
+    if (pathname !== '/search' && !pathname.includes('/admin')) {
+      searchRef.current.value = '';
+    }
+  }, [pathname]);
 
-  // useEffect(() => {
-  //   if (pathname !== '/search' && !pathname.includes('/admin')) {
-  //     searchRef.current.value = '';
-  //   }
-  // }, [pathname]);
+  useEffect(() => {
+    if (pathname === '/cart' || pathname.includes('/admin')) return;
 
-  // useEffect(() => {
-  //   if (pathname === '/cart' || pathname.includes('/admin')) return;
-
-  //   if (cart.length) {
-  //     cartPreviewRef.current.classList.remove('empty');
-  //   } else {
-  //     cartPreviewRef.current.classList.add('empty');
-  //   }
-  // }, [cart, pathname]);
+    if (cart.length) {
+      cartPreviewRef.current.classList.remove('empty');
+    } else {
+      cartPreviewRef.current.classList.add('empty');
+    }
+  }, [cart, pathname]);
 
   const isInDashboard = useRouteMatch('/admin');
   const isInCartPage = useRouteMatch('/cart');
@@ -121,9 +115,9 @@ function Header() {
           <div className="account-cart col l-3">
             <div className="account">
               <span className="name" onClick={handleLoginUser}>
-                <Link /*ConditionalLink*/ to='/account' /*condition={name}*/>
+                <ConditionalLink to='/account' condition={name}>
                   {name || 'Đăng nhập'}
-                </Link>
+                </ConditionalLink>
               </span>
               <span className="log-out" onClick={handleSignUpEscape}>{name ? 'Thoát' : 'Đăng ký'}</span>
             </div>
@@ -133,7 +127,7 @@ function Header() {
               <div className="cart-notice">{totalQuantity}</div>
               {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
                 <div className="empty-cart-container">
-                  <img src="/img/cart-empty.png" alt="" className="empty-cart-img" />
+                  <img src={emptyCart} alt="" className="empty-cart-img" />
                   <div className="empty-cart-message">Chưa có sản phẩm nào</div>
                 </div>
 
@@ -201,8 +195,8 @@ function Header() {
         </div>
       </div>
 
-      {/* {signUp && <SignUpForm />} */}
-      {/* {login && <LoginForm />} */}
+      {signUp && <SignUpForm />}
+      {login && <LoginForm />}
     </div>
   );
 }

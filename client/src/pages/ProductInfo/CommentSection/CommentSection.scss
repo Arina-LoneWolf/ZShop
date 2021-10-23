@@ -1,0 +1,117 @@
+@import '../../../shared/style/color.scss';
+@import url("https://fonts.googleapis.com/css2?family=Berkshire+Swash&family=Kaushan+Script&display=swap");
+
+.comment-section {
+  max-width: 1140px;
+  margin: 0 auto 48px auto;
+  padding: {
+    left: 14px;
+    right: 14px;
+  }
+
+  .title {
+    color: $lightpink;
+    border-bottom: 2px solid $lightpink;
+    font-size: 20px;
+    font-weight: 700;
+    padding-bottom: 2px;
+  }
+
+  .comment-posting-area {
+    width: 60%;
+    margin-top: 26px;
+
+    .comment-typing-area {
+      display: flex;
+
+      .avatar {
+        width: 37px;
+        height: 34px;
+        background-color: #ffb0bd;
+        color: #fff;
+        border-radius: 50%;
+        margin-top: -3px;
+
+        &.admin-mode {
+          background: $white;
+          border: 1px solid $lightpink;
+
+          .text-avatar {
+            font-family: "Berkshire Swash", cursive;
+            margin-left: 1px;
+            margin-top: -1.8px;
+            font-size: 22px;
+            color: $lightpink;
+          }
+        }
+
+        .text-avatar {
+          text-align: center;
+          font-weight: 600;
+          font-size: 18px;
+          line-height: 36px;
+          margin-left: 1px;
+        }
+      }
+
+      [contentEditable="true"]:empty:before {
+        content: attr(data-placeholder);
+        color: $grey;
+        cursor: text;
+      }
+
+      .comment-typing {
+        border-bottom: 1px solid $grey;
+        min-height: 30px;
+        width: 100%;
+        margin-left: 10px;
+        line-height: 22px;
+        margin-bottom: 4px;
+      }
+    }
+
+    .btn-group {
+      justify-content: flex-end;
+      text-transform: uppercase;
+      margin-top: 3px;
+      font-size: 14px;
+      font-weight: 600;
+      display: none;
+
+      &.active {
+        display: flex;
+      }
+
+      .cancel-btn,
+      .submit-btn {
+        padding: 7px 10px 6px 10px;
+        cursor: pointer;
+        min-width: 60px;
+        text-align: center;
+        border: 1px solid $lightpink;
+      }
+
+      .cancel-btn {
+        color: $lightpink;
+        margin-right: 6px;
+
+        &:hover {
+          background-color: $whitesmoke;
+        }
+      }
+
+      .submit-btn {
+        color: $white;
+        background: $lightpink;
+
+        &:hover {
+          background-color: $coralpink;
+        }
+      }
+    }
+  }
+
+  .comment-display-area {
+    margin-top: 46px;
+  }
+}

@@ -1,0 +1,76 @@
+@import '../../style/color.scss';
+@import '../../style/common.scss';
+
+.dialog {
+  #overlay {
+    @include overlay;
+  }
+
+  .dialog-container {
+    @include popup(2px);
+    background: $white;
+    padding: 8px 8px;
+
+    &.admin-mode {
+      border-radius: 6px;
+    }
+
+    .message {
+      text-align: center;
+      font-size: 18px;
+      margin: 30px 22px 25px 22px;
+    }
+
+    .option-btn-group {
+      display: flex;
+      justify-content: flex-end;
+      text-transform: uppercase;
+      margin-top: 12px;
+      font-size: 14px;
+      font-weight: 600;
+
+      .cancel-btn,
+      .accept-btn {
+        padding: 8px 10px 4px 10px;
+        cursor: pointer;
+        min-width: 76px;
+        text-align: center;
+        border-radius: 2px;
+      }
+
+      .cancel-btn {
+        color: $lightpink;
+        border: 1px solid $lightpink;
+        margin-right: 8px;
+
+        &:hover {
+          background-color: $whitesmoke;
+        }
+      }
+
+      .accept-btn {
+        color: $white;
+        background: $lightpink;
+
+        &:hover {
+          background-color: $coralpink;
+        }
+      }
+
+      &.admin-mode {
+        .cancel-btn {
+          color: $hotpink;
+          border-color: $hotpink;
+        }
+
+        .accept-btn {
+          background: $hotpink;
+
+          &:hover {
+            background-color: darken($hotpink, 6);
+          }
+        }
+      }
+    }
+  }
+}

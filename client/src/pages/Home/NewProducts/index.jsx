@@ -17,7 +17,7 @@ function NewProductsSection() {
       limit: 16
     }
 
-    const response = await productApi.getNew(params);;
+    const response = await productApi.getNew(params);
     const updatedProducts = [...products].concat(response.products);
 
     setProducts(updatedProducts);

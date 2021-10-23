@@ -1,13 +1,16 @@
 import './App.scss';
 import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
+import { useRecoilValue } from 'recoil';
+import { toastDisplayState } from '../recoil/toastDisplayState';
+import { userState } from '../recoil/userState';
 import Home from '../pages/Home';
 import Cart from '../pages/Cart';
 import Search from '../pages/Search';
-import ProductDetail from '../pages/ProductDetail';
+import ProductInfo from '../pages/ProductInfo';
 import Checkout from '../pages/Checkout';
 import AccountInfo from '../pages/AccountInfo';
-import AdminAuthentication from '../pages/AdminAuthentication';
+import AdminLogin from '../pages/AdminLogin';
 import Dashboard from '../pages/Dashboard';
 import Header from '../shared/Header';
 import Footer from '../shared/Footer';
@@ -22,11 +25,11 @@ import AdminRoute from '../helpers/AdminRoute';
 const queryClient = new QueryClient();
 
 function App() {
-  // const toastDisplay = useRecoilValue(toastDisplayState);
-  // const user = useRecoilValue(userState);
+  const toastDisplay = useRecoilValue(toastDisplayState);
+  const user = useRecoilValue(userState);
 
   const isLogged = () => {
-    // if (user.accessToken) return true;
+    if (user.accessToken) return true;
     return false;
   }
 
@@ -42,18 +45,18 @@ function App() {
         <Route path='/cart' component={Cart} />
         <Route path='/category/:category' component={Search} />
         <Route path='/search' component={Search} />
-        <Route path='/product/:id' component={ProductDetail} />
+        <Route path='/product/:id' component={ProductInfo} />
         <PrivateRoute path='/checkout' component={Checkout} redirect='/' auth={isLogged} />
         <PrivateRoute path='/account' component={AccountInfo} redirect='/' auth={isLogged} />
-        <Route path='/admin/login' component={AdminAuthentication} />
-        <AdminRoute path='/admin' component={Dashboard} redirect='/admin/login' />
+        <Route path='/admin/login' component={AdminLogin} />
+        {/* <AdminRoute path='/admin' component={Dashboard} redirect='/admin/login' /> */}
       </Switch>
 
       <Footer />
-      {/* <Messenger /> */}
-      {/* <ResultMessage /> */}
-      {/* <Dialog /> */}
-      {/* {toastDisplay.show && <ToastMessage />} */}
+      <Messenger />
+      <ResultMessage />
+      <Dialog />
+      {toastDisplay.show && <ToastMessage />}
       </QueryClientProvider>
     </Router>
   );

@@ -1,0 +1,18 @@
+@import '../../../shared/style/color.scss';
+
+.empty-cart {
+  img {
+    height: auto;
+    width: 70vh;
+    margin: 0 auto;
+    display: block;
+  }
+
+  .message {
+    font-size: 24px;
+    font-weight: 700;
+    text-align: center;
+    color: lighten(#e34738, 15);
+    margin-bottom: 24px;
+  }
+}

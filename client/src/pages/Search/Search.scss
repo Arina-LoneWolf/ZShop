@@ -1,0 +1,156 @@
+@import '../../shared/style/color.scss';
+
+.search-section {
+  max-width: 1140px;
+  margin: 16px auto;
+
+  .title {
+    color: $lightpink;
+    border-bottom: 1px solid $lightpink;
+    font-weight: 700;
+    font-size: 19px;
+    padding-bottom: 4px;
+  }
+
+  .product-catalog {
+    .catalog-detail {
+      list-style: none;
+      margin-top: 18px;
+      color: $darkslategrey;
+
+      li {
+        border: 1px solid $silver;
+        padding: 6px 14px;
+
+        a,
+        a:active,
+        a:visited {
+          color: inherit;
+          cursor: pointer;
+
+          &:hover {
+            color: $lightpink;
+          }
+        }
+
+        &:not(:first-child) {
+          border-top: none;
+        }
+      }
+    }
+  }
+
+  .search-result {
+    .title-and-filters {
+      select {
+        height: 34px;
+        border: 1px solid $divider;
+        border-radius: 4px;
+        padding: 0 10px;
+        width: 100%;
+        font-size: 16px;
+
+        option {
+          cursor: pointer;
+        }
+      }
+    }
+
+    .products-list {
+      margin-top: 14px;
+      position: relative;
+    }
+
+    .no-set {
+      text-align: center;
+      line-height: 70vh;
+      font-size: 20px;
+    }
+
+    .no-result {
+      font-size: 18px;
+      height: 70vh;
+    }
+
+    .pagination {
+      display: flex;
+      list-style: none;
+      justify-content: center;
+
+      .paginated-btn,
+      .prev-btn,
+      .next-btn {
+        a {
+          cursor: pointer;
+          border: 1px solid $silver;
+          font-size: 16px;
+          min-width: 36px;
+          text-align: center;
+          display: block;
+        }
+
+        &:not(.disabled-btn) {
+          a:hover {
+            background: $lightpink;
+            color: $white;
+          }
+        }
+      }
+
+      .paginated-btn a {
+        padding: 5px 9px;
+        border-left: none;
+      }
+
+      .prev-btn,
+      .next-btn {
+        a {
+          padding: 5px 10px;
+        }
+      }
+
+      .prev-btn a {
+        min-width: 56px;
+        border-top-left-radius: 4px;
+        border-bottom-left-radius: 4px;
+      }
+
+      .next-btn a {
+        border-left: none;
+        border-top-right-radius: 4px;
+        border-bottom-right-radius: 4px;
+      }
+
+      .disabled-btn a {
+        cursor: default;
+        opacity: 1;
+        color: rgba($color: $silver, $alpha: 1.0);
+      }
+
+      .active-btn a {
+        background: $lightpink;
+        color: $white;
+      }
+    }
+  }
+
+  .row-10 {
+    margin-left: -10px;
+    margin-right: -10px;
+  }
+
+  .col-10 {
+    padding-left: 10px;
+    padding-right: 10px;
+  }
+
+  .fl-20 {
+    flex: 0 0 20%;
+    max-width: 20%;
+  }
+
+  .fl-80 {
+    flex: 0 0 80%;
+    max-width: 80%;
+  }
+}

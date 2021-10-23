@@ -1,0 +1,221 @@
+@import '../../shared/style/color.scss';
+
+.checkout-section {
+  width: 100%;
+  max-width: 1140px;
+  margin: 24px auto;
+  display: flex;
+
+  .step-container {
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    margin-bottom: 22px;
+
+    .step-number {
+      background-color: $lightpink;
+      color: $white;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      line-height: 20px;
+      text-align: center;
+      font-weight: 700;
+    }
+
+    .step-title {
+      font-weight: 700;
+      font-size: 17px;
+      margin-left: 8px;
+      line-height: 20px;
+    }
+
+    label,
+    input {
+      display: block;
+      margin-bottom: 2px;
+    }
+  }
+
+  .buyer-info,
+  .payment-method,
+  .cart-info {
+    padding: 0 14px;
+  }
+
+  .buyer-info {
+    input,
+    select,
+    textarea {
+      border: 1px solid $lightpink;
+      border-radius: 4px;
+      padding: 0 10px;
+      width: 100%;
+      margin-bottom: 2px;
+
+      &:not(textarea) {
+        height: 34px;
+      }
+    }
+
+    select {
+      padding: 0 6px;
+    }
+
+    textarea {
+      height: 96px;
+      padding: 6px 10px;
+      font-size: 14px;
+      font-family: 'Nunito', sans-serif;
+    }
+
+    .form-control {
+      margin-bottom: 12px;
+      width: 100%;
+    }
+  }
+
+  .payment-method {
+    border: {
+      left: 1px solid $divider;
+      right: 1px solid $divider;
+    }
+
+    input[type="radio"] {
+      display: none;
+    }
+
+    input[type="radio"] + label:before {
+      content: "";
+      /* create custom radiobutton appearance */
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      padding: 2px;
+      margin-right: 6px;
+      /* background-color only for content */
+      background-clip: content-box;
+      border: 2px solid $lightpink;
+      // background-color: #e7e6e7;
+      border-radius: 50%;
+    }
+
+    /* appearance for checked radiobutton */
+    input[type="radio"]:checked + label:before {
+      background-color: $lightpink;
+    }
+
+    /* optional styles, I'm using this for centering radiobuttons */
+    label {
+      display: flex;
+      align-items: center;
+      line-height: 14px;
+    }
+
+    .checkout-method {
+      &:not(:last-child) {
+        margin-bottom: 18px;
+      }
+
+      .method-detail {
+        background-color: lighten($palemistyrose, 2);
+        border-radius: 3px;
+        margin-left: 22px;
+        margin-top: 8px;
+        padding: 4px 10px;
+        text-align: justify;
+      }
+    }
+  }
+
+  .cart-info {
+    .cart-detail {
+      border-collapse: collapse;
+
+      thead tr th {
+        font-size: 15px;
+        border-bottom: 1px solid #a2a2a2;
+        padding-bottom: 8px;
+      }
+
+      tr {
+        .product-name {
+          text-align: left;
+        }
+
+        .product-quantity {
+          text-align: center;
+        }
+
+        .product-unit-price {
+          text-align: right;
+        }
+      }
+
+      td {
+        border-top: 1px solid #dee2e6;
+        font-size: 14px;
+        padding: 6px 0;
+      }
+
+      tbody {
+        .product-name, .product-quantity {
+          font-weight: 600;
+        }
+
+        .product-unit-price {
+          font-weight: 800;
+        }
+      }
+    }
+
+    .cart-total-price {
+      border-collapse: collapse;
+      margin-top: 20px;
+
+      tfoot tr {
+        td {
+          border-top: 1px solid #dee2e6;
+          padding: 10px 0;
+        }
+
+        td:first-child {
+          text-align: left;
+        }
+
+        td:last-child {
+          text-align: right;
+        }
+
+        &:nth-child(1) {
+          td {
+            border-top: 1px solid #a2a2a2;
+          }
+        }
+
+        &:nth-child(3) {
+          td {
+            font-weight: 800;
+            font-size: 18px;
+          }
+        }
+      }
+    }
+
+    .order-btn {
+      cursor: pointer;
+      background-color: $lightpink;
+      color: $white;
+      float: right;
+      font-size: 18px;
+      font-weight: 800;
+      padding: 8px 12px;
+      border-radius: 6px;
+      margin-top: 8px;
+
+      &:hover {
+        background-color: $coralpink;
+      }
+    }
+  }
+}

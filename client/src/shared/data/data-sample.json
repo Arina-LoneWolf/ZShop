@@ -1,0 +1,30 @@
+[
+  {
+    "categoryKey": "ao",
+    "categoryName": "Áo",
+    "types": [
+      {
+        "typeKey": "ao-thun-nu",
+        "typeName": "Áo thun nữ"
+      },
+      {
+        "typeKey": "ao-kieu-nu",
+        "typeName": "Áo kiểu nữ"
+      }
+    ]
+  },
+  {
+    "categoryKey": "dam-vay",
+    "categoryName": "Đầm váy",
+    "types": [
+      {
+        "typeKey": "chan-vay",
+        "typeName": "Chân váy"
+      },
+      {
+        "typeKey": "yem",
+        "typeName": "Yếm"
+      }
+    ]
+  }
+]

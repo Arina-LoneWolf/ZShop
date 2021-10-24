@@ -165,27 +165,27 @@ function Header() {
             <li className="shirt">
               <Link to={{ pathname: '/category/ao', state: 'Áo' }}>Áo</Link>
               <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/ao-the-thao', state: 'Áo thể thao' }}>Áo thể thao</Link></li>
-                <li><Link to={{ pathname: '/category/ao-thun-nu', state: 'Áo thun nữ' }}>Áo thun nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao-kieu-nu', state: 'Áo kiểu nữ' }}>Áo kiểu nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao-so-mi-nu', state: 'Áo sơ mi nữ' }}>Áo sơ mi nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao-khoac-nu', state: 'Áo khoác nữ' }}>Áo khoác nữ</Link></li>
+                <li><Link to={{ pathname: '/category/ao/ao-the-thao', state: 'Áo thể thao' }}>Áo thể thao</Link></li>
+                <li><Link to={{ pathname: '/category/ao/ao-thun-nu', state: 'Áo thun nữ' }}>Áo thun nữ</Link></li>
+                <li><Link to={{ pathname: '/category/ao/ao-kieu-nu', state: 'Áo kiểu nữ' }}>Áo kiểu nữ</Link></li>
+                <li><Link to={{ pathname: '/category/ao/ao-so-mi-nu', state: 'Áo sơ mi nữ' }}>Áo sơ mi nữ</Link></li>
+                <li><Link to={{ pathname: '/category/ao/ao-khoac-nu', state: 'Áo khoác nữ' }}>Áo khoác nữ</Link></li>
               </ul>
             </li>
             <li className="pants">
               <Link to={{ pathname: '/category/quan', state: 'Quần' }}>Quần</Link>
               <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/quan-dai', state: 'Quần dài' }}>Quần dài</Link></li>
-                <li><Link to={{ pathname: '/category/quan-short-nu', state: 'Quần jean nữ' }}>Quần jean nữ</Link></li>
-                <li><Link to={{ pathname: '/category/quan-legging', state: 'Quần legging' }}>Quần legging</Link></li>
+                <li><Link to={{ pathname: '/category/quan/quan-dai', state: 'Quần dài' }}>Quần dài</Link></li>
+                <li><Link to={{ pathname: '/category/quan/quan-short-nu', state: 'Quần jean nữ' }}>Quần jean nữ</Link></li>
+                <li><Link to={{ pathname: '/category/quan/quan-legging', state: 'Quần legging' }}>Quần legging</Link></li>
               </ul>
             </li>
             <li className="dress-skirt">
               <Link to={{ pathname: '/category/dam-vay', state: 'Đầm váy' }}>Đầm váy</Link>
               <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/chan-vay', state: 'Chân váy' }}>Chân váy</Link></li>
-                <li><Link to={{ pathname: '/category/dam-nu', state: 'Đầm nữ' }}>Đầm nữ</Link></li>
-                <li><Link to={{ pathname: '/category/yem', state: 'Yếm' }}>Yếm</Link></li>
+                <li><Link to={{ pathname: '/category/dam-vay/chan-vay', state: 'Chân váy' }}>Chân váy</Link></li>
+                <li><Link to={{ pathname: '/category/dam-vay/dam-nu', state: 'Đầm nữ' }}>Đầm nữ</Link></li>
+                <li><Link to={{ pathname: '/category/dam-vay/yem', state: 'Yếm' }}>Yếm</Link></li>
               </ul>
             </li>
             <li className="set"><Link to={{ pathname: '/category/set', state: 'Set - Jumpsuit' }}>Set - Jumpsuit</Link></li>

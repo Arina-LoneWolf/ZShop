@@ -1,47 +1,69 @@
 const types = [
   {
     name: 'Áo Thể Thao',
-    categoryName: 'Áo'
+    key: 'ao-the-thao',
+    categoryName: 'Áo',
+    categoryKey: 'ao'
   },
   {
     name: 'Áo Thun Nữ',
-    categoryName: 'Áo'
+    key: 'ao-thun-nu',
+    categoryName: 'Áo',
+    categoryKey: 'ao'
   },
   {
     name: 'Áo Kiểu Nữ',
-    categoryName: 'Áo'
+    key: 'ao-kieu-nu',
+    categoryName: 'Áo',
+    categoryKey: 'ao'
   },
   {
     name: 'Áo Sơ Mi Nữ',
-    categoryName: 'Áo'
+    key: 'ao-so-mi-nu',
+    categoryName: 'Áo',
+    categoryKey: 'ao'
   },
   {
     name: 'Áo Khoác Nữ',
-    categoryName: 'Áo'
+    key: 'ao-khoac-nu',
+    categoryName: 'Áo',
+    categoryKey: 'ao'
   },
   {
     name: 'Quần Dài',
-    categoryName: 'Quần'
+    key: 'quan-dai',
+    categoryName: 'Quần',
+    categoryKey: 'quan'
   },
   {
     name: 'Quần Jean Nữ',
-    categoryName: 'Quần'
+    key: 'quan-short-nu',
+    categoryName: 'Quần',
+    categoryKey: 'quan'
   },
   {
     name: 'Quần Legging',
-    categoryName: 'Quần'
+    key: 'quan-legging',
+    categoryName: 'Quần',
+    categoryKey: 'quan'
   },
   {
     name: 'Chân Váy',
-    categoryName: 'Đầm Váy'
+    key: 'chan-vay',
+    categoryName: 'Đầm Váy',
+    categoryKey: 'dam-vay'
   },
   {
     name: 'Đầm Nữ',
-    categoryName: 'Đầm Váy'
+    key: 'dam-nu',
+    categoryName: 'Đầm Váy',
+    categoryKey: 'dam-vay'
   },
   {
     name: 'Yếm',
-    categoryName: 'Đầm Váy'
+    key: 'yem',
+    categoryName: 'Đầm Váy',
+    categoryKey: 'dam-vay'
   },
 ];
 

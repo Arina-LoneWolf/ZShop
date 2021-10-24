@@ -8,63 +8,67 @@ import FetchError from '../../shared/notifications/FetchError';
 import ReactPaginate from "react-paginate";
 import { EatLoading } from 'react-loadingg';
 import productApi from '../../apis/productApi';
-import axios from 'axios';
+import categories from '../../shared/data/categories';
+import types from '../../shared/data/types';
 
 function SearchSection() {
   const { search, state, pathname } = useLocation();
   const { name } = queryString.parse(search);
-  const { category } = useParams();
-  const catalog = getCatalog(category);
+  const { category, type } = useParams();
+  const catalog = getCatalog(category, type);
 
   const filterRef = useRef(null);
 
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(0);
-  const [filter, setFilter] = useState('');
+  const [filter, setFilter] = useState({});
 
-  const { data, isLoading, isError } = useQuery(['filteredProducts', page, category, name, filter], async () => {
-    const params = {};
+  const { data, isLoading, isError } = useQuery(['filteredProducts', page, category, type, name, filter], async () => {
+    const pagination = {
+      page: page + 1,
+      limit: 16
+    };
 
-    let categoryKey;
-    if (getCategoryKey(category)) {
-      categoryKey = getCategoryKey(category);
+    let response;
+
+    if (search) {
+      const params = {
+        ...pagination,
+        name
+      };
+      response = await productApi.search(params);
+    } else if (category === 'all') {
+      const params = {
+        ...pagination,
+        ...filter
+      };
+      response = await productApi.getAll(params);
     } else {
-      categoryKey = `search?name=${name}&`;
+      let params;
+      if (type) {
+        params = {
+          ...pagination,
+          ...filter,
+          type
+        };
+      } else {
+        params = {
+          ...pagination,
+          ...filter
+        };
+      }
+      response = await productApi.getByCategory(category, params);
     }
 
-    switch (filter) {
-      case 'new':
-        categoryKey += 'status=1&';
-        break;
-      case 'ascending':
-        categoryKey += 'sort=1&';
-        break;
-      case 'descending':
-        categoryKey += 'sort=-1&';
-        break;
-      case 'sale':
-        categoryKey += 'status=2&';
-        break;
-      default:
-        break;
-    }
-
-    // console.log(categoryKey);
-    // console.log(`http://localhost:5000/api/product/${categoryKey}page=${page + 1}&limit=16`);
-
-    const response = await axios.get(`http://localhost:5000/api/product/${categoryKey}page=${page + 1}&limit=16`);
-    setTotalPages(response.data.totalPages);
-
-    return response.data;
+    setTotalPages(response.totalPages);
+    return response;
   });
 
   useEffect(() => {
-    // console.log('set page 0');
     setPage(0);
-  }, [category, filter]);
+  }, [category, type, filter]);
 
   const handlePageChange = ({ selected }) => {
-    // console.log('page click: ', selected);
     setPage(selected);
     window.scrollTo({
       top: 0,
@@ -73,12 +77,27 @@ function SearchSection() {
   };
 
   useEffect(() => {
-    setFilter('');
+    setFilter({});
     filterRef.current.selectedIndex = 0;
-  }, [pathname, category])
+  }, [pathname, category, type])
 
-  const handleFilter = (e) => {
-    setFilter(e.target.value);
+  const handleFilterChange = (e) => {
+    switch (e.target.value) {
+      case 'new':
+        setFilter({ status: 1 });
+        break;
+      case 'sale':
+        setFilter({ status: 2 });
+        break;
+      case 'ascending':
+        setFilter({ sort: 1 });
+        break;
+      case 'descending':
+        setFilter({ sort: -1 });
+        break;
+      default:
+        break;
+    }
   };
 
   return (
@@ -88,7 +107,8 @@ function SearchSection() {
           <div className="title">Danh mục sản phẩm</div>
           <ul className="catalog-detail">
             {catalog.map((item, index) => (
-              <li key={index}><Link to={{ pathname: `/category/${item.key}`, state: item.value }}>{item.value}</Link></li>
+              item.typeKey ? <li key={index}><Link to={{ pathname: `/category/${item.categoryKey}/${item.typeKey}`, state: item.name }}>{item.name}</Link></li>
+                : <li key={index}><Link to={{ pathname: `/category/${item.categoryKey}`, state: item.name }}>{item.name}</Link></li>
             ))}
           </ul>
         </div>
@@ -101,7 +121,7 @@ function SearchSection() {
                   <div className="title">{state || `Tìm kiếm: ${name}`}</div>
                 </div>
                 <div className="col fl-20">
-                  <select name="filters" id="filters" onChange={handleFilter} ref={filterRef}>
+                  <select name="filters" id="filters" onChange={handleFilterChange} ref={filterRef}>
                     <option value="option">------ Lọc -----</option>
                     <option value="new">Mới nhất</option>
                     <option value="ascending">Giá tăng dần</option>
@@ -147,127 +167,22 @@ function SearchSection() {
 
 export default SearchSection;
 
-const getCatalog = (category) => {
-  switch (category) {
-    case 'ao':
-    case 'ao-the-thao':
-    case 'ao-thun-nu':
-    case 'ao-kieu-nu':
-    case 'ao-so-mi-nu':
-    case 'ao-khoac-nu':
-      return [
-        {
-          key: 'ao-the-thao',
-          value: 'Áo thể thao'
-        },
-        {
-          key: 'ao-thun-nu',
-          value: 'Áo thun nữ'
-        },
-        {
-          key: 'ao-kieu-nu',
-          value: 'Áo kiểu nữ'
-        },
-        {
-          key: 'ao-so-mi-nu',
-          value: 'Áo sơ mi nữ'
-        },
-        {
-          key: 'ao-khoac-nu',
-          value: 'Áo khoác nữ'
-        }
-      ];
+const getCatalog = (category, type) => {
+  let catalog = [];
 
-    case 'quan':
-    case 'quan-dai':
-    case 'quan-short-nu':
-    case 'quan-legging':
-      return [
-        {
-          key: 'quan-dai',
-          value: 'Quần dài'
-        },
-        {
-          key: 'quan-short-nu',
-          value: 'Quần jean nữ'
-        },
-        {
-          key: 'quan-legging',
-          value: 'Quần legging'
-        }
-      ];
-
-    case 'dam-vay':
-    case 'chan-vay':
-    case 'dam-nu':
-    case 'yem':
-      return [
-        {
-          key: 'chan-vay',
-          value: 'Chân váy'
-        },
-        {
-          key: 'dam-nu',
-          value: 'Đầm nữ'
-        },
-        {
-          key: 'yem',
-          value: 'Yếm'
-        }
-      ];
-
-    default:
-      return [
-        {
-          key: 'ao',
-          value: 'Áo'
-        },
-        {
-          key: 'quan',
-          value: 'Quần'
-        },
-        {
-          key: 'dam-vay',
-          value: 'Đầm váy'
-        }
-      ];
+  if (category === 'all') {
+    catalog = categories.map(e => ({
+      categoryKey: e.key,
+      name: e.name
+    }));
+  } else {
+    const accordingTypes = types.filter(type => type.categoryKey === category);
+    catalog = accordingTypes.map(e => ({
+      categoryKey: e.categoryKey,
+      typeKey: e.key,
+      name: e.name
+    }))
   }
-}
 
-const getCategoryKey = (category) => {
-  switch (category) {
-    case 'ao':
-    case 'quan':
-    case 'dam-vay':
-      return `detail/${category}?`;
-
-    case 'ao-the-thao':
-    case 'ao-thun-nu':
-    case 'ao-kieu-nu':
-    case 'ao-so-mi-nu':
-    case 'ao-khoac-nu':
-      return `detail/ao?type=${category}&`;
-
-    case 'quan-dai':
-    case 'quan-short-nu':
-    case 'quan-legging':
-      return `detail/quan?type=${category}&`;
-
-    case 'chan-vay':
-    case 'dam-nu':
-    case 'yem':
-      return `detail/dam-vay?type=${category}&`;
-
-    case 'hot':
-      return `all?status=3&`;
-
-    case 'sale':
-      return `all?status=2&`;
-
-    case 'all':
-      return `all?`;
-
-    default:
-      return null;
-  }
+  return catalog;
 }

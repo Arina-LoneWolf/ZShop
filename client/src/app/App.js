@@ -43,7 +43,7 @@ function App() {
       <Switch>
         <Route path='/' exact component={Home} />
         <Route path='/cart' component={Cart} />
-        <Route path='/category/:category(/:type)' component={Search} />
+        <Route path='/category/:category/:type?' component={Search} />
         <Route path='/search' component={Search} />
         <Route path='/product/:id' component={ProductInfo} />
         <PrivateRoute path='/checkout' component={Checkout} redirect='/' auth={isLogged} />

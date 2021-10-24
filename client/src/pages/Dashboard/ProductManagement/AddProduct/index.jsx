@@ -227,7 +227,7 @@ function AddNewProduct({ refetch }) {
               <select {...register("productCategory")} name="productCategory" onChange={(e) => handleCategoryChange(e)}>
                 <option hidden value="">-- Phân loại --</option>
                 {categories.map(category => (
-                  <option key={category} value={category}>{category}</option>
+                  <option key={category.value} value={category.value}>{category.value}</option>
                 ))}
               </select>
               <TextError>{errors.productCategory?.message}</TextError>

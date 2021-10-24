@@ -8,7 +8,7 @@ import { productAddDisplayState } from '../../../recoil/productAddDisplayState';
 import { dialogState } from '../../../recoil/dialogState';
 import AddProduct from './AddProduct';
 import ViewProduct from './ViewProduct';
-// import EditProduct from './EditProduct';
+import EditProduct from './EditProduct';
 import ReactPaginate from "react-paginate";
 import { useQuery } from 'react-query';
 import { AiOutlinePlus } from "react-icons/ai";
@@ -345,7 +345,7 @@ function ProductManagement() {
 
       {productAddDisplay && <AddProduct refetch={refetch} />}
       {currentProduct && productViewDisplay && <ViewProduct product={currentProduct} />}
-      {/* {currentProduct && productEditDisplay && <EditProduct product={currentProduct} refetch={refetch} />} */}
+      {currentProduct && productEditDisplay && <EditProduct product={currentProduct} refetch={refetch} />}
     </React.Fragment>
   );
 }

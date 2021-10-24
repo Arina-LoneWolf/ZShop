@@ -2,7 +2,7 @@ import './AddProduct.scss';
 import React, { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { toastDisplayState } from '../../../../recoil/toastDisplayState';
-import { productAddDisplayState } from '../../../../recoil/productAddDisplayState';
+import { productEditDisplayState } from '../../../../recoil/productEditDisplayState';
 import TextError from '../../../../shared/notifications/TextError';
 import * as yup from 'yup';
 import { useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ function AddNewProduct({ refetch }) {
   const [accordingTypes, setAccordingTypes] = useState([]);
 
   const setToastDisplay = useSetRecoilState(toastDisplayState);
-  const setProductAddDisplay = useSetRecoilState(productAddDisplayState);
+  const setProductAddDisplay = useSetRecoilState(productEditDisplayState);
 
   const resetSelections = () => {
     setSelectedImages([]);
@@ -251,7 +251,7 @@ function AddNewProduct({ refetch }) {
             <label htmlFor="productPrice">Giá</label>
             <div className="input-container">
               <div className="price-input">
-                <input {...register("productPrice", { min: 0 })} type="number" name="productPrice" />
+                <input {...register("productPrice")} type="number" name="productPrice" />
                 <label className="unit-lb">VND</label>
               </div>
               <TextError>{errors.productPrice?.message}</TextError>
@@ -364,7 +364,7 @@ function AddNewProduct({ refetch }) {
         </div>}
       </div>
     </div>
-  )
+  );
 }
 
 export default AddNewProduct;

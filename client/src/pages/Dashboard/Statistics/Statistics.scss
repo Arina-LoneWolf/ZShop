@@ -1,0 +1,105 @@
+@import '../../../shared/style/color.scss';
+
+.statistics {
+  display: flex;
+  height: 100%;
+
+  .chart-zone {
+    flex: 0 0 74%;
+    max-width: 74%;
+    height: 100%;
+
+    .monthly-sales {
+      position: relative;
+      background: $white;
+      width: 100%;
+      height: 45%;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+
+    .sold-category-monthly {
+      position: relative;
+      margin-top: 3%;
+      background: $white;
+      width: 100%;
+      height: 51%;
+      padding: 16px 24px;
+      border-radius: 8px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+    }
+
+    .chart-name {
+      position: absolute;
+      font-size: 19px;
+      font-weight: 600;
+      bottom: 10px;
+      left: 50%;
+      transform: translateX(-50%);
+      color: lighten($lightslategray, 15);
+    }
+  }
+
+  .overview {
+    margin-left: 26px;
+    height: 100%;
+    width: calc(100% - 26px);
+
+    .category-overview {
+      padding: 18px 0;
+      border-radius: 8px;
+      text-align: center;
+      height: calc((100% - 36px) / 3);
+
+      .category-name {
+        font-size: 18px;
+        text-transform: uppercase;
+        font-weight: 800;
+        margin-bottom: 12px;
+      }
+
+      .total-control {
+        margin-top: 10px;
+
+        .total-title {
+          font-size: 17px;
+          font-weight: 600;
+        }
+
+        .total-value {
+          color: $darkslategrey;
+          font-size: 20px;
+          font-weight: 800;
+          margin-top: 2px;
+        }
+      }
+
+      &.shirt {
+        background: lighten($mediumpurple, 24);
+
+        .category-name {
+          color: $mediumpurple;
+        }
+      }
+
+      &.pants {
+        background: lighten($sandybrown, 25);
+        margin-top: 18px;
+
+        .category-name {
+          color: darken($sandybrown, 5);
+        }
+      }
+
+      &.dress-skirt {
+        background: lighten($hotpink, 20);
+        margin-top: 18px;
+
+        .category-name {
+          color: $hotpink;
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,16 @@
+@import '../../../../shared/style/color.scss';
+
+.close-button {
+  border-radius: 15px;
+  display: inline-flex;
+  margin-top: 6px;
+
+  .close-icon {
+    width: 26px;
+    height: 26px;
+  }
+
+  &:hover {
+    background: $silver;
+  }
+}

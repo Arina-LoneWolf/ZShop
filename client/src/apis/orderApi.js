@@ -6,12 +6,12 @@ const orderApi = {
     return axiosClient.get(url, { params });
   },
 
-  getAll: (data, params) => { // data: timeStart, timeEnd;  params: page, limit
+  getAll: (data, params) => { // data: timeStart, timeEnd, status;  params: page, limit
     const url = '/api/order/get-all';
     return axiosClient.post(url, data, { params });
   },
 
-  search: (params) => { // params: page, limit
+  search: (params) => { // params: page, limit, status
     const url = '/api/order/search';
     return axiosClient.get(url, { params });
   },

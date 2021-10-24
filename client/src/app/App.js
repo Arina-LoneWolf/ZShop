@@ -43,13 +43,13 @@ function App() {
       <Switch>
         <Route path='/' exact component={Home} />
         <Route path='/cart' component={Cart} />
-        <Route path='/category/:category' component={Search} />
+        <Route path='/category/:category(/:type)' component={Search} />
         <Route path='/search' component={Search} />
         <Route path='/product/:id' component={ProductInfo} />
         <PrivateRoute path='/checkout' component={Checkout} redirect='/' auth={isLogged} />
         <PrivateRoute path='/account' component={AccountInfo} redirect='/' auth={isLogged} />
         <Route path='/admin/login' component={AdminLogin} />
-        {/* <AdminRoute path='/admin' component={Dashboard} redirect='/admin/login' /> */}
+        <AdminRoute path='/admin' component={Dashboard} redirect='/admin/login' />
       </Switch>
 
       <Footer />

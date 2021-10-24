@@ -39,6 +39,11 @@ const productApi = {
   delete: (id) => {
     const url = `/api/product/delete/${id}`;
     return axiosClient.delete(url);
+  },
+
+  uploadImages: (data) => {
+    const url = '/api/image/upload';
+    return axiosClient.delete(url, data);
   }
 }
 

@@ -1,0 +1,82 @@
+@import '../../../../shared/style/color.scss';
+@import '../../../../shared/style/common.scss';
+
+.edit-order {
+  #overlay {
+    @include overlay;
+  }
+
+  .edit-order-container {
+    @include popup(10px);
+    width: 800px;
+    background-color: $white;
+    padding: 48px 70px 42px 70px;
+
+    .btn-group {
+      margin-top: 72px;
+      display: flex;
+      border: 1px solid $hotpink;
+      border-radius: 4px;
+      margin-right: -1px;
+
+      div {
+        min-width: 40px;
+        line-height: 36px;
+        cursor: pointer;
+        color: $hotpink;
+        text-align: center;
+        flex: 0 0 25%;
+        max-width: 25%;
+        font-weight: 600;
+        margin-bottom: -1px;
+        margin-top: -1px;
+
+        &:not(:last-child) {
+          border-right: 1px solid $hotpink;
+        }
+
+        &:first-child {
+          border-top-left-radius: 4px;
+          border-bottom-left-radius: 4px;
+        }
+
+        &:last-child {
+          border-top-right-radius: 4px;
+          border-bottom-right-radius: 4px;
+        }
+
+        &:hover {
+          background: $hotpink;
+          color: $white;
+        }
+      }
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      border-radius: 6px;
+      width: 33px;
+      height: 33px;
+      text-align: center;
+      cursor: pointer;
+      transition: 0.4s;
+
+      .close-icon {
+        width: 26px;
+        height: 100%;
+        color: $lightslategray;
+        transition: 0.1s;
+      }
+
+      &:hover {
+        background: lighten($hotpink, 4);
+
+        .close-icon {
+          color: $white;
+        }
+      }
+    }
+  }
+}

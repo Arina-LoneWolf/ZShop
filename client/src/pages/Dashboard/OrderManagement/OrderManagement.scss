@@ -1,0 +1,428 @@
+@import '../../../shared/style/color.scss';
+@import '../../../shared/style/common.scss';
+
+.admin-body {
+  .order-search {
+    width: 100%;
+    max-width: 1034px;
+    margin: 0 auto;
+    margin-bottom: 20px;
+    display: flex;
+    // align-items: center;
+
+    .order-search-bar {
+      height: 37px;
+      flex-grow: 1;
+      border: 1px solid lighten($hotpink, 10);
+      border-radius: 30px;
+      padding: 0 12px;
+      display: flex;
+      background: $white;
+      overflow: hidden;
+      margin-right: 34px;
+
+      .search-input {
+        height: 100%;
+        margin-left: 6px;
+        flex-grow: 1;
+        font-size: 14px;
+        margin-top: 0.5px;
+      }
+
+      .search-icon {
+        height: 100%;
+        width: 20px;
+      }
+
+      .search-btn {
+        display: none;
+      }
+    }
+
+    .date-picker-group {
+      display: flex;
+    }
+
+    .date-picker {
+      .DateRangePickerInput {
+        border-radius: 20px;
+        overflow: hidden;
+      }
+
+      .DateInput_input {
+        font-size: 14px;
+        line-height: 14px;
+        padding: 8px 18px 6px;
+      }
+
+      .DateRangePickerInput__withBorder {
+        // border-color: $hotpink;
+      }
+
+      .DateInput_input__focused {
+        border-color: $hotpink;
+      }
+
+      .DateRangePickerInput_arrow_svg {
+        height: 20px;
+        width: 20px;
+      }
+
+      .CalendarDay__selected,
+      .CalendarDay__selected:active,
+      .CalendarDay__selected:hover {
+        background: $hotpink;
+        border: 1px double $hotpink;
+      }
+
+      .CalendarDay__selected_span {
+        background: lighten($hotpink, 11);
+        border: 1px double lighten($hotpink, 6);
+      }
+
+      .DayPickerKeyboardShortcuts_show__bottomRight::before {
+        border-top: 26px solid transparent;
+        border-right: 33px solid $hotpink;
+      }
+
+      .CalendarDay__hovered_span,
+      .CalendarDay__hovered_span:hover {
+        background: lighten($hotpink, 12);
+        border: 1px double lighten($hotpink, 6);
+        color: darken($hotpink, 9);
+      }
+    }
+  }
+
+  .order-table {
+    width: 100%;
+    max-width: 1034px;
+    background: $white;
+    margin: 0 auto;
+    border-radius: 16px;
+    box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+    &.offset {
+      min-height: 500px;
+    }
+
+    .title-list {
+      display: flex;
+      background: $hotpink;
+      border-top-left-radius: 16px;
+      border-top-right-radius: 16px;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+      .title {
+        text-align: center;
+        color: $white;
+        font-weight: 700;
+        padding: 8px 0;
+
+        span {
+          color: $white;
+        }
+      }
+
+      .status-title-container {
+        position: relative;
+        cursor: pointer;
+
+        &:hover {
+          .status-options {
+            display: block;
+          }
+        }
+
+        .dropdown-icon {
+          position: absolute;
+          top: 13px;
+          color: $white;
+          width: 16px;
+          height: 13px;
+        }
+
+        .status-options {
+          display: none;
+          list-style: none;
+          position: absolute;
+          top: calc(100% + 3px);
+          width: 100%;
+          border-radius: 4px;
+          font-weight: 500;
+          font-size: 15px;
+          line-height: 30px;
+          box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
+
+          &::before {
+            content: "";
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            top: -3px;
+            left: 0;
+          }
+
+          input[type="radio"] {
+            display: none;
+          }
+
+          label {
+            position: relative;
+            display: block;
+            cursor: pointer;
+            color: $darkslategrey;
+            background: lighten($hotpink, 19);
+            border-bottom: 1px solid lighten($hotpink, 15);
+            border-top: 1px solid lighten($hotpink, 21);
+
+            &:nth-child(2) {
+              border-top-left-radius: 4px;
+              border-top-right-radius: 4px;
+            }
+
+            &:last-child {
+              border-bottom-left-radius: 4px;
+              border-bottom-right-radius: 4px;
+            }
+
+            &:hover {
+              background: lighten($hotpink, 15);
+            }
+          }
+
+          // input[type="radio"]:checked + label {
+          //   background: $hotpink;
+          // }
+        }
+      }
+    }
+
+    .order-list {
+      .order-item {
+        display: flex;
+        align-items: center;
+        min-height: 50px;
+
+        &:nth-child(odd) {
+          background: $white;
+        }
+
+        &:nth-child(even) {
+          background: $ghostwhite;
+        }
+
+        &:nth-child(9) {
+          border-bottom-left-radius: 16px;
+          border-bottom-right-radius: 16px;
+        }
+
+        div {
+          text-align: center;
+          color: $darkslategrey;
+          font-weight: 600;
+
+          // a,
+          // a:visited,
+          // a:active {
+          //   color: inherit;
+          // }
+
+          // a:hover {
+          //   color: $hotpink;
+          // }
+        }
+
+        .order-id {
+          color: $hotpink;
+        }
+
+        .order-status {
+          .status-label {
+            padding: 1px 8px;
+            font-size: 12px;
+            border-radius: 10px;
+            margin: 3px 3px;
+            box-shadow: rgba(0, 0, 0, 0.05) 0px 0px 0px 1px;
+
+            &.pending {
+              color: lighten($orangecoral, 1);
+              background: lighten($antiquewhite, 1);
+            }
+
+            &.paid {
+              color: lighten($mediumslateblue, 2);
+              background: lighten($lavender, 3);
+            }
+
+            &.confirmed {
+              color: #37aaa9;
+              background: #d9f3f4;
+            }
+
+            &.success {
+              color: lighten($darkerindianred, 5);
+              background: lighten($mystyred, 1);
+            }
+
+            &.canceled {
+              color: $lightslategray;
+              background: $greylavender;
+            }
+          }
+        }
+
+        .order-manipulation {
+          display: flex;
+          justify-content: center;
+
+          div {
+            width: 30px;
+            height: 30px;
+            margin: 3px;
+            border-radius: 50%;
+            cursor: pointer;
+            padding: 4px;
+            box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+            &:not(.disabled):hover {
+              filter: brightness(0.9);
+            }
+          }
+
+          .view-btn {
+            background: $hotpink;
+          }
+
+          .edit-btn {
+            background: $cornflowerblue;
+
+            &.disabled {
+              background: $lightgrey;
+              cursor: default;
+            }
+          }
+
+          .delete-btn {
+            background: $sandybrown;
+          }
+        }
+      }
+    }
+  }
+
+  .pagination {
+    color: $darkslategrey;
+
+    display: flex;
+    list-style: none;
+    position: absolute;
+    bottom: 30px;
+    left: 50%;
+    transform: translateX(-50%);
+
+    .paginated-btn,
+    .prev-btn,
+    .next-btn {
+      a {
+        cursor: pointer;
+        font-size: 16px;
+        min-width: 32px;
+        text-align: center;
+        display: block;
+      }
+    }
+
+    .paginated-btn a {
+      padding: 5px 8px;
+      border-left: none;
+      border-radius: 4px;
+      margin: 0 4px;
+
+      &:hover {
+        background: $hotpink;
+        color: $white;
+      }
+    }
+
+    .prev-btn,
+    .next-btn {
+      a {
+        width: 32px;
+        height: 32px;
+        border-radius: 4px;
+      }
+    }
+
+    .prev-icon,
+    .next-icon {
+      width: 20px;
+      height: 31.5px;
+    }
+
+    .prev-btn a {
+      margin-right: 4px;
+    }
+
+    .next-btn a {
+      margin-left: 4px;
+    }
+
+    .disabled-btn a {
+      cursor: default;
+      opacity: 1;
+      color: rgba($color: $silver, $alpha: 1);
+    }
+
+    .active-btn a {
+      background: $hotpink;
+      color: $white;
+    }
+  }
+}
+
+.fl-5 {
+  @include flex-width(5%);
+}
+.fl-6 {
+  @include flex-width(6%);
+}
+.fl-8 {
+  @include flex-width(8%);
+}
+.fl-10 {
+  @include flex-width(10%);
+}
+.fl-11 {
+  @include flex-width(11%);
+}
+.fl-12 {
+  @include flex-width(12%);
+}
+.fl-13 {
+  @include flex-width(13%);
+}
+.fl-14 {
+  @include flex-width(14%);
+}
+.fl-15 {
+  @include flex-width(15%);
+}
+.fl-16 {
+  @include flex-width(16%);
+}
+.fl-17 {
+  @include flex-width(17%);
+}
+.fl-20 {
+  @include flex-width(20%);
+}
+.fl-22 {
+  @include flex-width(22%);
+}
+.fl-23 {
+  @include flex-width(23%);
+}
+.fl-25 {
+  @include flex-width(25%);
+}

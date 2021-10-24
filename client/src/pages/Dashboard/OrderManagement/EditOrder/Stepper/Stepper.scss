@@ -1,0 +1,66 @@
+@import '../../../../../shared/style/color.scss';
+
+.stepper {
+  width: 100%;
+  position: relative;
+
+  .step-progress-wrapper {
+    width: calc(100% - 20px);
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    padding-top: 10px;
+
+    div:first-child {
+      display: none;
+    }
+
+    .progress-bar {
+      height: 10px;
+      background: $divider;
+
+      &.active {
+        background: $hotpink;
+      }
+    }
+  }
+
+  .step-point-wrapper {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    position: absolute;
+    left: 0;
+    top: 0;
+
+    .step-point {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+
+      .step-number {
+        width: 30px;
+        line-height: 30px;
+        border-radius: 50%;
+        color: $white;
+        background: $divider;
+        text-align: center;
+        font-weight: 600;
+
+        &.active {
+          background: $hotpink;
+        }
+      }
+
+      .step-description {
+        color: $darkslategrey;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        top: calc(100% + 5px);
+        white-space: nowrap;
+      }
+    }
+  }
+}

@@ -11,7 +11,7 @@ const orderApi = {
     return axiosClient.post(url, data, { params });
   },
 
-  search: (params) => { // params: page, limit, status
+  search: (params) => { // params: page, limit
     const url = '/api/order/search';
     return axiosClient.get(url, { params });
   },

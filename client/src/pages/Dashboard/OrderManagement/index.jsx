@@ -2,10 +2,9 @@ import './OrderManagement.scss';
 import 'react-dates/initialize';
 import 'react-dates/lib/css/_datepicker.css';
 import React, { useState, useRef, useEffect } from 'react';
-import { useRecoilValue, useRecoilState } from 'recoil';
+import { useRecoilState } from 'recoil';
 import { orderEditDisplayState } from '../../../recoil/orderEditDisplayState';
 import { orderDisplayState } from '../../../recoil/orderDisplayState';
-import { userState } from '../../../recoil/userState';
 import EditOrder from './EditOrder';
 import CloseButton from './CloseButton';
 import OrderDetail from '../../../shared/OrderDetail';
@@ -20,8 +19,7 @@ import isAfterDay from 'react-dates/lib/utils/isAfterDay';
 import moment from 'moment';
 import viewIcon from '../../../assets/icons/visibility.svg';
 import editIcon from '../../../assets/icons/edit.svg';
-import axios from 'axios';
-// chua xong, dang loi
+import orderApi from '../../../apis/orderApi';
 
 const orderStatus = {
   0: {
@@ -53,9 +51,8 @@ const orderStatus = {
 function OrderManagement() {
   const [totalPages, setTotalPages] = useState(1);
   const [page, setPage] = useState(0);
-  const [filterQuery, setFilterQuery] = useState('get-all?');
-  const [data, setData] = useState({});
-  const [method, setMethod] = useState('post');
+  const [searchKey, setSearchKey] = useState('');
+  const [filter, setFilter] = useState({});
   const [currentOrder, setCurrentOrder] = useState();
 
   const [startDate, setStartDate] = useState(null);
@@ -72,28 +69,28 @@ function OrderManagement() {
   const canceledStatusRef = useRef(null);
   const allStatusRef = useRef(null);
 
-  const user = useRecoilValue(userState);
   const [orderDisplay, setOrderDisplay] = useRecoilState(orderDisplayState);
   const [orderEditDisplay, setOrderEditDisplay] = useRecoilState(orderEditDisplayState);
 
-  const { data: orders, isLoading, refetch } = useQuery(['managedOrders', page, data, filterQuery], async () => {
-    const params = {
+  const { data: orders, isLoading, refetch } = useQuery(['managedOrders', page, searchKey, filter], async () => {
+    const pagination = {
       page: page + 1,
       limit: 9
     }
 
-    const config = {
-      method: method,
-      url: `http://localhost:5000/api/order/${filterQuery}page=${page + 1}&limit=9`,
-      headers: { Authorization: user.accessToken },
-      data: data
+    let response;
+
+    if (searchKey) {
+      const params = {
+        ...pagination,
+        q: searchKey
+      }
+      response = await orderApi.search(params);
+    } else {
+      response = await orderApi.getAll(filter, pagination);
     }
 
-    // console.log(config);
-
-    const response = await axios(config);
     setTotalPages(response.totalPages);
-    // console.log(response.data);
     return response.orders;
   });
 
@@ -113,8 +110,11 @@ function OrderManagement() {
     setOrderEditDisplay(true);
   }
 
-  const handleStatusChange = () => {
+  const handleStatusAndDateChange = () => {
     // console.log('status change');
+    setSearchKey('');
+    searchRef.current.value = '';
+
     const request = {}
 
     const statusFilter = new FormData(statusFilterRef.current);
@@ -126,45 +126,25 @@ function OrderManagement() {
       request.timeEnd = endDate._d.toISOString().slice(0, 10);
     }
 
-    // console.log(request);
-    searchRef.current.value = '';
-    setMethod('post')
     setPage(0);
-    setFilterQuery(`get-all?`);
-    setData(request);
+    setFilter(request);
   }
 
   useEffect(() => {
     // console.log('date change');
-    const request = {}
-
-    const statusFilter = new FormData(statusFilterRef.current);
-    const status = parseInt(statusFilter.get('orderStatus'));
-    if (status) request.status = status;
-
-    if (startDate && endDate) {
-      request.timeStart = startDate._d.toISOString().slice(0, 10);
-      request.timeEnd = endDate._d.toISOString().slice(0, 10);
-    }
-
-    // console.log(request);
-    searchRef.current.value = '';
-    setMethod('post');
-    setPage(0);
-    setFilterQuery(`get-all?`);
-    setData(request);
+    handleStatusAndDateChange();
   }, [startDate, endDate]);
 
   const handleSearch = (e) => {
     e.preventDefault();
     const search = searchRef.current.value;
+    setSearchKey(search);
 
+    setFilter({});
     resetStatusOptions();
+    setPage(0);
     setStartDate(null);
     setEndDate(null);
-    setMethod('get')
-    setPage(0);
-    setFilterQuery(`search?q=${search}&`);
   }
 
   const resetStatusOptions = () => {
@@ -209,7 +189,7 @@ function OrderManagement() {
         </div>
       </div>
       <div className={orders?.length === 9 ? "order-table" : "order-table offset"}>
-        <form className="title-list" ref={statusFilterRef} onChange={handleStatusChange}>
+        <form className="title-list" ref={statusFilterRef} onChange={handleStatusAndDateChange}>
           <div className="id-title fl-14 title">Mã đơn hàng</div>
           <div className="recipient-name-title fl-25 title">Người nhận</div>
           <div className="recipient-phone-title fl-15 title">Điện thoại</div>

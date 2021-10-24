@@ -1,7 +1,6 @@
 import './AddProduct.scss';
 import React, { useState, useEffect } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-// import { userState } from '../../../../recoil/userState';
+import { useSetRecoilState } from 'recoil';
 import { toastDisplayState } from '../../../../recoil/toastDisplayState';
 import { productAddDisplayState } from '../../../../recoil/productAddDisplayState';
 import TextError from '../../../../shared/notifications/TextError';
@@ -21,24 +20,20 @@ const schema = yup.object({
   productCategory: yup.string().required('*Bắt buộc'),
   productType: yup.string().required('*Bắt buộc'),
   productPrice: yup.number()
-    .typeError('Giá phải là một số')
-    .positive('Giá phải lớn hơn 0')
-    .required('*Bắt buộc'),
+    .typeError('*Bắt buộc')
+    .min(0, 'Giá không được âm'),
   productDiscount: yup.number()
-    .typeError('Khuyến mãi phải là một số')
-    .min(0, 'Khuyến mãi phải lớn hơn hoặc bằng 0')
-    .required('Nhập "0" nếu không có khuyến mãi'),
+    .typeError('Nhập "0" nếu không có khuyến mãi')
+    .min(0, 'Khuyến mãi không được âm'),
   productQuantity: yup.number()
-    .required('*Bắt buộc')
-    .typeError('Số lượng phải là một số'),
+    .typeError('*Bắt buộc')
+    .min(0, 'Số lượng không được âm'),
   productSize: yup.array().min(1, 'Chọn ít nhất 1 kích thước'),
   productImages: yup.array().min(1, 'Chọn ít nhất 1 ảnh'),
   productColors: yup.array().min(1, 'Chọn ít nhất 1 ảnh')
 });
 
 function AddNewProduct({ refetch }) {
-  // const user = useRecoilValue(userState);
-
   const [selectedImages, setSelectedImages] = useState([]);
   const [selectedColors, setSelectedColors] = useState([]);
   const [selectedCategory, setSelectedCategory] = useState('');
@@ -70,14 +65,8 @@ function AddNewProduct({ refetch }) {
       productApi.uploadImages(colors)
     ]);
 
-    console.log(uploadedImages)
-    console.log(uploadedColors)
-
-    // const config = {
-    //   headers: {
-    //     Authorization: user.accessToken
-    //   }
-    // }
+    // console.log(uploadedImages)
+    // console.log(uploadedColors)
 
     const productStatus = values.productStatus.map(status => parseInt(status));
     if (values.productDiscount > 0) {
@@ -95,64 +84,41 @@ function AddNewProduct({ refetch }) {
       quantity: values.productQuantity,
       sizes: values.productSize,
       status: productStatus,
-      images: uploadedImages.data.images,
-      colors: uploadedColors.data.images
+      images: uploadedImages.images,
+      colors: uploadedColors.images
     }
 
     console.log(product);
 
-    // productApi.add(product).then(response => {
-    //   console.log('Them thanh cong');
-    //   console.log(response);
+    productApi.add(product).then(response => {
+      console.log('Them thanh cong');
+      console.log(response);
 
-    //   reset();
-    //   resetSelections();
-    //   refetch();
+      reset();
+      resetSelections();
+      refetch();
 
-    //   setToastDisplay({
-    //     show: true,
-    //     message: 'Thêm sản phẩm thành công'
-    //   });
-    // }).catch(error => console.log(error));
-
-    // axios.post('http://localhost:5000/api/product/add', product, config)
-    //   .then((response) => {
-    //     // console.log('Them thanh cong');
-    //     // console.log(response.data);
-
-    //     resetForm();
-    //     resetSelections();
-    //     refetch();
-
-    //     setToastDisplay({
-    //       show: true,
-    //       message: 'Thêm sản phẩm thành công'
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   })
+      setToastDisplay({
+        show: true,
+        message: 'Thêm sản phẩm thành công'
+      });
+    }).catch(error => console.log(error));
   });
 
   const defaultValues = {
-    productName: '',
-    productPrice: '',
-    productCategory: '',
-    productType: '',
-    productQuantity: '',
     productStatus: [],
     productSize: [],
-    productDiscount: '',
     productImages: [],
     productColors: []
   }
 
-  const { register, handleSubmit, setValue, reset, formState: { errors } } = useForm({
+  const { register, handleSubmit, setValue, setError, clearErrors,  reset, formState: { errors } } = useForm({
     defaultValues,
     resolver: yupResolver(schema)
   });
 
   const onSubmit = (values) => {
+    // console.log(values);
     mutation.mutate({ values });
   }
 
@@ -189,6 +155,7 @@ function AddNewProduct({ refetch }) {
       } else {
         setSelectedImages(expectedImages);
         setValue('productImages', expectedImages);
+        clearErrors('productImages');
       }
 
       Array.from(e.target.files).map(file => URL.revokeObjectURL(file));
@@ -212,6 +179,7 @@ function AddNewProduct({ refetch }) {
       } else {
         setSelectedColors(expectedColors);
         setValue('productColors', expectedColors);
+        clearErrors('productColors');
       }
 
       Array.from(e.target.files).map(file => URL.revokeObjectURL(file));
@@ -223,12 +191,18 @@ function AddNewProduct({ refetch }) {
     const expectedImages = selectedImages.filter(img => img !== image);
     setSelectedImages(expectedImages);
     setValue('productImages', expectedImages);
+    if (!expectedImages.length) {
+      setError('productImages', { message: 'Chọn ít nhất 1 ảnh' });
+    }
   }
 
   const handleRemoveColorClick = (color) => {
     const expectedColors = selectedColors.filter(img => img !== color);
     setSelectedColors(expectedColors);
     setValue('productColors', expectedColors);
+    if (!expectedColors.length) {
+      setError('productColors', { message: 'Chọn ít nhất 1 ảnh' });
+    }
   }
 
   return (
@@ -242,7 +216,7 @@ function AddNewProduct({ refetch }) {
           <div className="form-control">
             <label htmlFor="productName">Tên sản phẩm</label>
             <div className="input-container">
-              <input {...register("productName")} />
+              <input {...register("productName")} type="text" name="productName" />
               <TextError>{errors.productName?.message}</TextError>
             </div>
           </div>
@@ -250,7 +224,7 @@ function AddNewProduct({ refetch }) {
           <div className="form-control">
             <label htmlFor="productCategory">Phân loại</label>
             <div className="input-container">
-              <select {...register("productCategory")} onChange={(e) => handleCategoryChange(e)}>
+              <select {...register("productCategory")} name="productCategory" onChange={(e) => handleCategoryChange(e)}>
                 <option hidden value="">-- Phân loại --</option>
                 {categories.map(category => (
                   <option key={category} value={category}>{category}</option>
@@ -263,7 +237,7 @@ function AddNewProduct({ refetch }) {
           <div className="form-control">
             <label htmlFor="productType">Loại</label>
             <div className="input-container">
-              <select {...register("productType")}>
+              <select {...register("productType")} name="productType">
                 <option hidden value="">----- Loại ----</option>
                 {accordingTypes.map(type => (
                   <option key={type.name} value={type.name}>{type.name}</option>
@@ -277,7 +251,7 @@ function AddNewProduct({ refetch }) {
             <label htmlFor="productPrice">Giá</label>
             <div className="input-container">
               <div className="price-input">
-                <input {...register("productPrice")} />
+                <input {...register("productPrice", { min: 0 })} type="number" name="productPrice" />
                 <label className="unit-lb">VND</label>
               </div>
               <TextError>{errors.productPrice?.message}</TextError>
@@ -288,7 +262,7 @@ function AddNewProduct({ refetch }) {
             <label htmlFor="productDiscount">Khuyến mãi</label>
             <div className="input-container">
               <div className="price-input">
-                <input {...register("productDiscount")} />
+                <input {...register("productDiscount")} type="number" name="productDiscount" />
                 <label className="unit-lb">VND</label>
               </div>
               <TextError>{errors.productDiscount?.message}</TextError>
@@ -298,7 +272,7 @@ function AddNewProduct({ refetch }) {
           <div className="form-control">
             <label htmlFor="productQuantity">Số lượng</label>
             <div className="input-container">
-              <input {...register("productQuantity")} />
+              <input {...register("productQuantity")} type="number" name="productQuantity" />
               <TextError>{errors.productQuantity?.message}</TextError>
             </div>
           </div>
@@ -307,9 +281,9 @@ function AddNewProduct({ refetch }) {
             <label htmlFor="status-options">Trạng thái</label>
             <div className="multi-select-container">
               <div className="status-options">
-                <input {...register("productStatus")} type="checkbox" id="new" value="1" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="new" value="1" />
                 <label htmlFor="new">Mới nhất</label>
-                <input {...register("productStatus")} type="checkbox" id="hot" value="3" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="hot" value="3" />
                 <label htmlFor="hot">Bán chạy</label>
               </div>
               <TextError>{errors.productStatus?.message}</TextError>
@@ -322,7 +296,7 @@ function AddNewProduct({ refetch }) {
               <div className="size-options">
                 {sizes.map(size => (
                   <React.Fragment key={size}>
-                    <input {...register("productSize")} type="checkbox" id={size} value={size} />
+                    <input {...register("productSize")} name="productSize" type="checkbox" id={size} value={size} />
                     <label htmlFor={size}>{size}</label>
                   </React.Fragment>
                 ))}
@@ -333,7 +307,7 @@ function AddNewProduct({ refetch }) {
 
           <div className="image-control">
             <label className="label-for-img" htmlFor="product-image">Hình ảnh</label>
-            <input {...register("productImages")} type="file" multiple name="productImages" id="image" onChange={(e) => handleImagesChoose(e)} accept="image/*" />
+            <input name="productImages" type="file" multiple id="image" onChange={(e) => handleImagesChoose(e)} accept="image/*" />
             <div className="product-image">
               <div className="img-row">
                 {selectedImages.map(image => (
@@ -357,7 +331,7 @@ function AddNewProduct({ refetch }) {
 
           <div className="image-control">
             <label className="label-for-img" htmlFor="product-color">Màu sắc</label>
-            <input {...register("productColors")} type="file" multiple name="productColors" id="color" onChange={(e) => handleColorsChoose(e)} accept="image/*" />
+            <input name="productColors" type="file" multiple id="color" onChange={(e) => handleColorsChoose(e)} accept="image/*" />
             <div className="product-color">
               <div className="img-row">
                 {selectedColors.map(color => (

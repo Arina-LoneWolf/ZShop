@@ -43,7 +43,7 @@ const productApi = {
 
   uploadImages: (data) => {
     const url = '/api/image/upload';
-    return axiosClient.delete(url, data);
+    return axiosClient.post(url, data);
   }
 }
 

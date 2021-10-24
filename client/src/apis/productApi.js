@@ -1,7 +1,7 @@
 import axiosClient from './axiosClient';
 
 const productApi = {
-  getNew: (params) => { // it worked // params: page, limit
+  getNew: (params) => { // params: page, limit
     const url = '/api/product/home';
     return axiosClient.get(url, { params });
   },
@@ -16,7 +16,7 @@ const productApi = {
     return axiosClient.get(url, { params });
   },
 
-  getInfo: (id) => { // it worked
+  getInfo: (id) => {
     const url = `/api/product/get-product/${id}`;
     return axiosClient.get(url);
   },
@@ -44,7 +44,11 @@ const productApi = {
   uploadImages: (data) => {
     const url = '/api/image/upload';
     return axiosClient.post(url, data);
-  }
+  },
+
+  addCategory: (data) => {},
+
+  deleteCategory: (name) => {},
 }
 
 export default productApi;

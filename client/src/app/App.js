@@ -3,7 +3,6 @@ import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { toastDisplayState } from '../recoil/toastDisplayState';
-import { userState } from '../recoil/userState';
 import Home from '../pages/Home';
 import Cart from '../pages/Cart';
 import Search from '../pages/Search';
@@ -26,12 +25,6 @@ const queryClient = new QueryClient();
 
 function App() {
   const toastDisplay = useRecoilValue(toastDisplayState);
-  const user = useRecoilValue(userState);
-
-  const isLogged = () => {
-    if (user.accessToken) return true;
-    return false;
-  }
 
   return (
     <Router>
@@ -46,8 +39,8 @@ function App() {
         <Route path='/category/:category/:type?' component={Search} />
         <Route path='/search' component={Search} />
         <Route path='/product/:id' component={ProductInfo} />
-        <PrivateRoute path='/checkout' component={Checkout} redirect='/' auth={isLogged} />
-        <PrivateRoute path='/account' component={AccountInfo} redirect='/' auth={isLogged} />
+        <PrivateRoute path='/checkout' component={Checkout} redirect='/' />
+        <PrivateRoute path='/account' component={AccountInfo} redirect='/' />
         <Route path='/admin/login' component={AdminLogin} />
         <AdminRoute path='/admin' component={Dashboard} redirect='/admin/login' />
       </Switch>

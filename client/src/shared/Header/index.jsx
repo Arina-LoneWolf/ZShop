@@ -188,9 +188,10 @@ function Header() {
                 <li><Link to={{ pathname: '/category/dam-vay/yem', state: 'Yếm' }}>Yếm</Link></li>
               </ul>
             </li>
-            <li className="set"><Link to={{ pathname: '/category/set', state: 'Set - Jumpsuit' }}>Set - Jumpsuit</Link></li>
-            <li className="hot"><Link to={{ pathname: '/category/hot', state: 'Sản phẩm bán chạy' }}>Bán chạy</Link></li>
-            <li className="sale"><Link to={{ pathname: '/category/sale', state: 'Sản phẩm khuyến mãi' }}>Khuyến mãi</Link></li>
+            <li className="gift"><Link to={{ pathname: '/category/gift', state: 'Quà tặng' }}>Quà tặng</Link></li>
+            <li className="decorator"><Link to={{ pathname: '/category/decorator', state: 'Đồ trang trí' }}>Đồ trang trí</Link></li>
+            <li className="bag"><Link to={{ pathname: '/category/bag', state: 'Túi ví' }}>Túi ví</Link></li>
+            <li className="stuff-animal"><Link to={{ pathname: '/category/stuff-animal', state: 'Gấu bông' }}>Gấu bông</Link></li>
           </ul>
         </div>
       </div>

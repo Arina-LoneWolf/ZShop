@@ -141,9 +141,9 @@ function SearchSection() {
             {data?.products.map(product => <ProductCard product={product} key={product._id} />)}
           </div>
 
-          {category === 'set' && <div className="no-set">Hiện chưa có sản phẩm này</div>}
+          {(category === 'gift' || category === 'decorator' || category === 'bag' || category === 'stuff-animal') && <div className="no-set">Hiện chưa có sản phẩm này</div>}
 
-          {category !== 'set' && data?.products.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
+          {data?.products.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
 
           {data?.products.length > 0 && <ReactPaginate
             previousLabel={"Prev"}

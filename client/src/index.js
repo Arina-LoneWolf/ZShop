@@ -10,7 +10,7 @@ const App = React.lazy(() => import('./app/App'));
 ReactDOM.render(
   <React.StrictMode>
     <RecoilRoot>
-      <Suspense fallback={Preloader}>
+      <Suspense fallback={<Preloader />}>
         <App />
       </Suspense>
     </RecoilRoot>

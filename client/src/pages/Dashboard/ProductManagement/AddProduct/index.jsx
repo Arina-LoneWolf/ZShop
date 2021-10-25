@@ -2,7 +2,7 @@ import './AddProduct.scss';
 import React, { useState, useEffect } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { toastDisplayState } from '../../../../recoil/toastDisplayState';
-import { productEditDisplayState } from '../../../../recoil/productEditDisplayState';
+import { productAddDisplayState } from '../../../../recoil/productAddDisplayState';
 import TextError from '../../../../shared/notifications/TextError';
 import * as yup from 'yup';
 import { useForm } from "react-hook-form";
@@ -40,7 +40,7 @@ function AddNewProduct({ refetch }) {
   const [accordingTypes, setAccordingTypes] = useState([]);
 
   const setToastDisplay = useSetRecoilState(toastDisplayState);
-  const setProductAddDisplay = useSetRecoilState(productEditDisplayState);
+  const setProductAddDisplay = useSetRecoilState(productAddDisplayState);
 
   const resetSelections = () => {
     setSelectedImages([]);
@@ -227,7 +227,7 @@ function AddNewProduct({ refetch }) {
               <select {...register("productCategory")} name="productCategory" onChange={(e) => handleCategoryChange(e)}>
                 <option hidden value="">-- Phân loại --</option>
                 {categories.map(category => (
-                  <option key={category.value} value={category.value}>{category.value}</option>
+                  <option key={category.name} value={category.name}>{category.name}</option>
                 ))}
               </select>
               <TextError>{errors.productCategory?.message}</TextError>

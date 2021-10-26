@@ -85,19 +85,19 @@ function Checkout() {
 
     console.log(order);
 
-    orderApi.add(order).then(response => {
-      console.log(response);
-      setCart([]);
-      localStorage.removeItem('cart');
-      setOrderSuccessfully(true);
-    }).catch(error => {
-      console.log(error.response.data.error);
-      const errorProducts = error.response.data.error;
-      setToastDisplay({
-        show: true,
-        message: errorProducts.map(errProduct => <div><strong>{errProduct.name}</strong> hiện chỉ còn <strong>{errProduct.quantity}</strong> sản phẩm</div>)
-      });
-    });
+    // orderApi.add(order).then(response => {
+    //   console.log(response);
+    //   setCart([]);
+    //   localStorage.removeItem('cart');
+    //   setOrderSuccessfully(true);
+    // }).catch(error => {
+    //   console.log(error.response.data.error);
+    //   const errorProducts = error.response.data.error;
+    //   setToastDisplay({
+    //     show: true,
+    //     message: errorProducts.map(errProduct => <div><strong>{errProduct.name}</strong> hiện chỉ còn <strong>{errProduct.quantity}</strong> sản phẩm</div>)
+    //   });
+    // });
   };
 
   const handleProvinceChange = (e) => {
@@ -164,7 +164,7 @@ function Checkout() {
             </div>
 
             <div className="form-control">
-              <textarea id="note" name="note" placeholder="Ghi chú" />
+              <textarea {...register("note")} id="note" placeholder="Ghi chú" />
             </div>
           </div>
 

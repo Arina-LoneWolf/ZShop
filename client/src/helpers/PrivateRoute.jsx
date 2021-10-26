@@ -10,13 +10,15 @@ function PrivateRoute({ component: Component, children, redirect, ...rest }) {
   const user = useRecoilValue(userState);
 
   const { isLoading, isSuccess } = useQuery(['auth', user], async () => {
-    const userAccessToken = localStorage.getItem('accessToken');
+    if (!user.accessToken) {
+      const userAccessToken = localStorage.getItem('accessToken');
 
-    if (!userAccessToken) {
-      throw new Error('Access token not available');
+      if (!userAccessToken) {
+        throw new Error('Access token not available');
+      }
+
+      await userApi.getInfo();
     }
-
-    await userApi.getInfo();
   }, { retry: false });
 
   return (

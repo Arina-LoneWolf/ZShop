@@ -1,5 +1,5 @@
 import './Header.scss';
-import React, { useState, useEffect, useRef } from 'react';
+import React, { useEffect, useRef } from 'react';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { cartTotalQuantity, cartTotalPrice, cartState } from '../../recoil/cartState';
 import { loginState, signUpState } from '../../recoil/entryPointState';
@@ -67,7 +67,7 @@ function Header() {
   }, []);
 
   useEffect(() => {
-    const handleInvalidToken = (e) => {
+    const handleAuthentication = (e) => {
       if (e.key === 'accessToken') {
         if (e.oldValue && !e.newValue) {
           setUser({});
@@ -87,10 +87,10 @@ function Header() {
       }
     }
 
-    window.addEventListener('storage', handleInvalidToken)
+    window.addEventListener('storage', handleAuthentication)
 
     return function cleanup() {
-      window.removeEventListener('storage', handleInvalidToken)
+      window.removeEventListener('storage', handleAuthentication)
     }
   }, []);
 

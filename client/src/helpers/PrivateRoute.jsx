@@ -1,27 +1,22 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
-import { useSetRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { userState } from '../recoil/userState';
 import Preloader from '../shared/Preloader';
 import { useQuery } from 'react-query';
 import userApi from '../apis/userApi';
 
 function PrivateRoute({ component: Component, children, redirect, ...rest }) {
-  const setUser = useSetRecoilState(userState);
+  const user = useRecoilValue(userState);
 
-  const { isLoading, isSuccess } = useQuery('authAdmin', async () => {
+  const { isLoading, isSuccess } = useQuery(['auth', user], async () => {
     const userAccessToken = localStorage.getItem('accessToken');
 
     if (!userAccessToken) {
       throw new Error('Access token not available');
     }
 
-    const response = await userApi.getInfo();
-
-    setUser({
-      accessToken: userAccessToken,
-      ...response.user,
-    })
+    await userApi.getInfo();
   }, { retry: false });
 
   return (

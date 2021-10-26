@@ -29,8 +29,6 @@ function Header() {
   const cartPreviewRef = useRef(null);
   const searchRef = useRef(null);
 
-  const [name, setName] = useState('');
-
   const handleLoginUser = (e) => {
     if (e.target.innerText === 'Đăng nhập')
       setLogin(true);
@@ -69,12 +67,32 @@ function Header() {
   }, []);
 
   useEffect(() => {
-    if (user.accessToken) {
-      setName(user.name);
-    } else {
-      setName('');
+    const handleInvalidToken = (e) => {
+      if (e.key === 'accessToken') {
+        if (e.oldValue && !e.newValue) {
+          setUser({});
+        } else if (e.newValue) {
+          const userAccessToken = localStorage.getItem('accessToken');
+
+          userApi.getInfo().then(response => {
+            console.log(response)
+            setUser({
+              accessToken: userAccessToken,
+              ...response.user,
+            })
+          }).catch(error => {
+            console.log(error);
+          })
+        }
+      }
     }
-  }, [user]);
+
+    window.addEventListener('storage', handleInvalidToken)
+
+    return function cleanup() {
+      window.removeEventListener('storage', handleInvalidToken)
+    }
+  }, []);
 
   useEffect(() => {
     if (pathname !== '/search' && !pathname.includes('/admin')) {
@@ -115,11 +133,11 @@ function Header() {
           <div className="account-cart col l-3">
             <div className="account">
               <span className="name" onClick={handleLoginUser}>
-                <ConditionalLink to='/account' condition={name}>
-                  {name || 'Đăng nhập'}
+                <ConditionalLink to='/account' condition={user.name}>
+                  {user.name || 'Đăng nhập'}
                 </ConditionalLink>
               </span>
-              <span className="log-out" onClick={handleSignUpEscape}>{name ? 'Thoát' : 'Đăng ký'}</span>
+              <span className="log-out" onClick={handleSignUpEscape}>{user.name ? 'Thoát' : 'Đăng ký'}</span>
             </div>
             <div className="cart-group">
               <Link to='/cart' className="cart-hover"></Link>

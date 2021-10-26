@@ -17,8 +17,6 @@ import vividPinwheel from '../../assets/icons/pinwheel_vivid.svg';
 import skyBackground from '../../assets/images/sky-background.jpg';
 
 function Dashboard() {
-  const history = useHistory();
-
   const setUser = useSetRecoilState(userState);
 
   const [selectedTab, setSelectedTab] = useState('statistics');
@@ -28,7 +26,6 @@ function Dashboard() {
   const orderTabRef = useRef(null);
 
   const handleLogOutClick = () => {
-    history.push('/admin/login');
     setUser({});
     localStorage.removeItem('accessToken');
   }

@@ -1,11 +1,15 @@
 import React from 'react';
 import { Route, Redirect } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { userState } from '../recoil/userState';
 import { useQuery } from 'react-query';
 import Preloader from '../shared/Preloader';
 import userApi from '../apis/userApi';
 
 function AdminRoute({ component: Component, children, redirect, ...rest }) {
-  const { isLoading, isSuccess } = useQuery('authAdmin', async () => {
+  const user = useRecoilValue(userState);
+
+  const { isLoading, isSuccess } = useQuery(['authAdmin', user], async () => {
     const userAccessToken = localStorage.getItem('accessToken');
 
     if (!userAccessToken) {

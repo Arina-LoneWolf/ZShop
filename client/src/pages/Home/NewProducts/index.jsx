@@ -18,6 +18,7 @@ function NewProductsSection() {
     }
 
     const response = await productApi.getNew(params);
+    console.log(response);
     const updatedProducts = [...products].concat(response.products);
 
     setProducts(updatedProducts);

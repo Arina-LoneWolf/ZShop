@@ -1,409 +1,283 @@
-require('dotenv').config();
-const Users = require('../models/userModel');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+import User from '../services/user.service.js';
+import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
+import { sendMail, sendMailOTP } from '../helpers/mail.helper.js';
+import { google } from 'googleapis';
 
-const { google } = require('googleapis');
-const { OAuth2 } = google.auth;
-
-const nodemailer = require('nodemailer');
-
-const client = new OAuth2(process.env.OAUTH_GOOGLE_CLIENT);
+const client = new google.auth.OAuth2(process.env.OAUTH_GOOGLE_CLIENT);
 
 const register = async (req, res) => {
-	try {
-		const { username, password, name, address, phone, email } = req.body;
+  try {
+    const { username, password, name, email } = req.body;
 
-		if (!username || !password)
-			return res
-				.status(400)
-				.json({ message: 'Please fill username and password' });
+    const checkUsernameAndEmail = await User.checkUsernameAndEmail([username, email]);
 
-		const user = await Users.findOne({ username });
-		const userEmail = await Users.findOne({ email });
-		if (user)
-			return res.status(400).json({ message: 'This username already exist' });
+    if (checkUsernameAndEmail.length !== 0)
+      return res.status(400).json({ message: 'Duplicate username or email' });
 
-		if (userEmail)
-			return res.status(400).json({ message: 'This email already exist' });
+    const hashPassword = await bcrypt.hash(password, 10);
+    //Object.values(validateReqBody);
+    await User.register([name, username, hashPassword, email]);
 
-		if (password.length < 6)
-			return res
-				.status(400)
-				.json({ message: 'Password must be at least 6 characters' });
+    const token = jwt.sign(
+      {
+        email,
+      },
+      process.env.ACCESS_TOKEN_SECRET
+    );
 
-		if (email.length != 0 && !validateEmail(email))
-			return res.status(400).json({ message: 'Invalid email' });
+    const url = `http://localhost:5000/api/user/confirm/${token}`;
 
-		//if (phone.length < 10)
-		//return res.status(400).json({ message: 'Phone number too short' });
+    sendMail(email, url);
 
-		const passwordHash = await bcrypt.hash(password, 10);
-		const newUser = new Users({
-			username,
-			password: passwordHash,
-			name,
-			address,
-			phone,
-			email,
-		});
-
-		const result = await newUser.save();
-
-		//console.log(req.body);
-		// const accessToken = createAccessToken({
-		// 	id: newUser._id,
-		// 	username: newUser.username,
-		// 	password: newUser.password,
-		// });
-		const url = `http://localhost:5000/user/confirm/${newUser._id}`;
-		sendMail(email, url);
-		res.json({ message: 'Register success' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(201).json({ message: 'Register success' });
+  } catch (error) {
+    //if (error.isJoi) return res.status(400).json(error.details);
+    return res.status(500).json(error);
+  }
 };
 
-const sendMail = (to, url) => {
-	const smtpTransport = nodemailer.createTransport({
-		//service: 'gmail',
-		host: 'smtp.gmail.com',
-		port: 587,
-		ignoreTLS: false,
-		secure: false,
-		auth: {
-			user: process.env.USERNAME_GMAIL,
-			pass: process.env.PASS_GMAIL,
-		},
-	});
+// const sendMail = async (to, url) => {
+//   // const smtpTransport = nodemailer.createTransport({
+//   //   service: 'gmail',
+//   //   auth: {
+//   //     user: process.env.USERNAME_GMAIL,
+//   //     pass: process.env.PASS_GMAIL,
+//   //   },
+//   // });
 
-	const mailOptions = {
-		from: `"ZShop" <${process.env.USERNAME_GMAIL}>`,//process.env.USERNAME_GMAIL,
-		to: to,
-		subject: 'Confirm Email',
-		html: ` <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
-		<h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to ZShop.</h2>
-		<p>Congratulations! You're almost set to start using ZShop.
-			Just click the button below to validate your email address.
-		</p>
-		
-		<a href=${url} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">Verify your account</a>`,
-	};
+//   const accessToken = await oAuth2Client.getAccessToken();
+//   const smtpTransport = nodemailer.createTransport({
+//     service: 'gmail',
+//     auth: {
+//       type: 'OAuth2',
+//       user: process.env.USERNAME_GMAIL,
+//       clientId: CLIENT_ID,
+//       clientSecret: CLIENT_SECRET,
+//       refreshToken: REFRESH_TOKEN_MAIL,
+//       accessToken: accessToken,
+//     },
+//   });
 
-	smtpTransport.sendMail(mailOptions, (err, info) => {
-		if (err) {
-			//console.log(err);
-			return err;
-		}
-		//console.log(info);
-		return info;
-	});
-};
+//   const mailOptions = {
+//     from: `ZShopAdmin ${process.env.USERNAME_GMAIL}`,
+//     to: to,
+//     subject: 'Confirm Email',
+//     html: ` <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
+// 		<h2 style="text-align: center; text-transform: uppercase;color: teal;">Welcome to ZShop.</h2>
+// 		<p>Congratulations! You're almost set to start using ZShop.
+// 			Just click the button below to validate your email address.
+// 		</p>
 
-const sendMailOTP = (to, otp) => {
-	const smtpTransport = nodemailer.createTransport({
-		//service: 'gmail',
-		host: 'smtp.gmail.com',
-		port: 587,
-		ignoreTLS: false,
-		secure: false,
-		auth: {
-			user: process.env.USERNAME_GMAIL,
-			pass: process.env.PASS_GMAIL,
-		},
-	});
+// 		<a href=${url} style="background: crimson; text-decoration: none; color: white; padding: 10px 20px; margin: 10px 0; display: inline-block;">Verify your account</a>`,
+//   };
 
-	const mailOptions = {
-		from: `"ZShop" <${process.env.USERNAME_GMAIL}>`,
-		to: to,
-		subject: 'Confirm Email',
-		html: ` <div style="max-width: 700px; margin:auto; border: 10px solid #ddd; padding: 50px 20px; font-size: 110%;">
-		<h2 style="text-align: center; text-transform: uppercase;color: teal;">ZShop Messenger.</h2>
-		<p>Please enter OTP code</p>
-		
-		<h2>${otp}</h2>`,
-	};
+//   smtpTransport.sendMail(mailOptions, (err, info) => {
+//     if (err) {
+//       console.log(err);
+//     }
+//     console.log(info);
+//   });
+// };
 
-	smtpTransport.sendMail(mailOptions, (err, info) => {
-		if (err) {
-			console.log(err);
-			return err;
-		}
-		console.log("info", info);
-		return info;
-	});
+const confirmMail = async (req, res) => {
+  try {
+    let email = null;
+    jwt.verify(req.params.token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+      if (error) {
+        return res.status(403).json({ message: 'Wrong token' });
+      }
+      email = user.email;
+    });
+    await User.updateConfirmed([1, email]);
+  } catch (error) {
+    res.status(500).json(error);
+  }
+  return res.redirect('http://localhost:3000');
 };
 
 const login = async (req, res) => {
-	try {
-		const { username, password } = req.body;
+  try {
+    const { username, password } = req.body;
+    const resultSelectLogin = await User.selectLogin([username]);
+    if (resultSelectLogin.length === 0)
+      return res.status(400).json({ message: 'Wrong username or passowrd' });
 
-		const user = await Users.findOne({ username });
-		if (!user) return res.status(400).json({ message: 'User does not exist' });
-		if (!user.confirmed)
-			return res.status(400).json({ message: 'Please active account' });
-		const isMatch = await bcrypt.compare(password, user.password);
-		if (!isMatch)
-			return res
-				.status(400)
-				.json({ message: 'Incorrect password or username' });
+    if (resultSelectLogin[0].confirmed === 0) {
+      return res.status(400).json({ message: 'Please active account' });
+    }
 
-		//if login success
-		const accessToken = createAccessToken({ id: user._id });
-		//const refresh_token = createRefreshToken({ id: user._id });
+    const isMatchPassword = await bcrypt.compare(password, resultSelectLogin[0].password);
+    if (!isMatchPassword) {
+      return res.status(400).json({ message: 'Wrong username or passowrd' });
+    }
 
-		// res.cookie('refresh_token', refresh_token, {
-		// 	httpOnly: true,
-		// 	path: '/user/refresh-token',
-		// });
+    const accessToken = jwt.sign({ id: resultSelectLogin[0].id }, process.env.ACCESS_TOKEN_SECRET);
 
-		res.json({ message: 'Login success', accessToken /*user*/ });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    res.status(200).json({ message: 'Login success', accessToken });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 const getInfo = async (req, res) => {
-	try {
-		const user = await Users.findById({ _id: req.user.id }).select('-password');
-		if (!user) return res.status(400).json({ message: 'User does not exits' });
-		res.json({ message: 'Get info success', user });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const loginGoogle = async (req, res) => {
-	//console.log('do login gg');
-	const { tokenId } = req.body;
-	const verify = await client.verifyIdToken({
-		idToken: tokenId,
-		audience: process.env.OAUTH_GOOGLE_CLIENT,
-	});
-
-	const { email, name, email_verified } = verify.payload;
-	//console.log(email_verified);
-	if (email_verified) {
-		const user = await Users.findOne({ email });
-		if (user) {
-			const accessToken = createAccessToken({
-				id: user._id,
-			});
-			console.log(user);
-			return res.json({
-				message: 'Login with gg success',
-				accessToken /*user*/,
-			});
-		}
-		const phone = '';
-		const address = '';
-		const username = name + process.env.REFRESH_TOKEN_SECRET;
-		const password = email + process.env.REFRESH_TOKEN_SECRET;
-		const passwordHash = await bcrypt.hash(password, 10);
-		const newUser = new Users({
-			username,
-			password: passwordHash,
-			name,
-			email,
-			phone,
-			address,
-		});
-
-		const result = await newUser.save();
-		const accessToken = createAccessToken({
-			id: newUser._id,
-		});
-		res.json({ message: 'Login success', accessToken /*user: newUser*/ });
-	}
-
-	//console.log(verify);
-};
-
-const confirmMail = async (req, res) => {
-	try {
-		//console.log(req.params.token);
-		await Users.findByIdAndUpdate(
-			{ _id: req.params.token },
-			{ confirmed: true }
-		);
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-	return res.redirect(process.env.CLIENT_URL);
+  try {
+    const id = req.user.id;
+    const user = await User.getInfo(id);
+    return res.status(200).json({ message: 'Get info success', user: user[0] });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 const updateInfo = async (req, res) => {
-	try {
-		if (req.body.username) {
-			return res.status(400).json({ message: 'Do not update username' });
-		}
+  try {
+    const id = req.user.id;
+    if (
+      req.body.username ||
+      req.body.password ||
+      req.body.mute ||
+      req.body.confirmed ||
+      req.body.isAdmin ||
+      req.body.email
+    ) {
+      return res.status(400).json({ message: 'Update info fail' });
+    }
 
-		const userUpdate = await Users.findByIdAndUpdate(
-			{ _id: req.user.id },
-			req.body,
-			{ new: true }
-		).select('-password');
+    const data = [req.body, id];
 
-		if (userUpdate) {
-			res.json({ message: 'Update Info success', user: userUpdate });
-		} else {
-			res.json({ message: 'Update Info fail' });
-		}
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    await User.updateInfo(data);
+    const user = await User.getInfo(id);
+    return res.json({ message: 'Update info success', user });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 const updatePass = async (req, res) => {
-	try {
-		const { newPassword, currentPassword } = req.body;
-		const user = await Users.findById({ _id: req.user.id });
-		const isMatch = await bcrypt.compare(currentPassword, user.password);
+  try {
+    const id = req.user.id;
+    const { newPassword, currentPassword } = req.body;
+    let password = await User.getPassword(id);
+    const isMatch = await bcrypt.compare(currentPassword, password[0].PASSWORD);
 
-		if (!isMatch)
-			return res.status(400).json({ message: 'Incorrect password' });
+    if (!isMatch) return res.status(400).json({ message: 'Incorrect password' });
+    //password[0].PASSWORD;
 
-		const passwordHash = await bcrypt.hash(newPassword, 10);
-		const userUpdate = await Users.findByIdAndUpdate(
-			{ _id: req.user.id },
-			{ password: passwordHash },
-			{ new: true }
-		);
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await User.updatePassword(passwordHash, id);
 
-		if (userUpdate) {
-			res.json({ message: 'Update Pass success' });
-		} else {
-			res.json({ message: 'Update Pass fail' });
-		}
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const updateEmail = async (req, res) => {
-	try {
-		if (req.body.newEmail.length != 0 && !validateEmail(req.body.newEmail))
-			return res.status(400).json({ message: 'Invalid email' });
-
-		const checkEmail = await Users.findOne({ email: req.body.newEmail });
-		if (checkEmail)
-			return res.status(400).json({ message: 'This email already exists' });
-
-		const userUpdate = await Users.findById({ _id: req.user.id });
-
-		if (userUpdate) {
-			//req.mail = userUpdate.email;
-			const otp = Math.floor(100000 + Math.random() * 900000);
-			const newToken = jwt.sign(
-				{ id: userUpdate._id, otp, email: req.body.newEmail },
-				process.env.REFRESH_TOKEN_SECRET,
-				{
-					expiresIn: '10m',
-				}
-			); /*createAccessToken({
-				id: userUpdate._id,
-				email: req.body.newEmail,
-			});*/
-			//const url = `http://localhost:5000/user/confirm-update-mail/${newToken}`;
-			sendMailOTP(req.body.newEmail, otp);
-			res.json({
-				message: 'Please check otp in new email (expires in 10m)',
-				token: newToken,
-				otp,
-			});
-		} else {
-			res.json({ message: 'Update Info fail' });
-		}
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const confirmUpdateEmail = async (req, res) => {
-	try {
-		//console.log(req.params.token);
-		let verifyUser = {};
-		jwt.verify(
-			req.body.token,
-			process.env.REFRESH_TOKEN_SECRET,
-			(error, user) => {
-				// if (error) {
-				// 	return res.status(401).json({ message: 'token sai' });
-				// }
-
-				verifyUser = { ...user };
-			}
-		);
-
-		console.log(verifyUser.otp);
-		console.log(req.body.otp);
-
-		if (req.body.otp !== verifyUser.otp) {
-			return res.status(401).json({ message: 'Ma otp sai' });
-		}
-
-		const userUpdate = await Users.findByIdAndUpdate(
-			{ _id: verifyUser.id },
-			{ email: verifyUser.email },
-			{ new: true }
-		).select('-_id email');
-
-		return res
-			.status(200)
-			.json({ message: 'Update email success', newEmail: userUpdate.email });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.json({ message: 'Update password success' });
+  } catch (error) {
+    res.status(500).json(error);
+  }
 };
 
 const setMuteUser = async (req, res) => {
-	try {
-		const user = await Users.findByIdAndUpdate(
-			{ _id: req.body.id },
-			{ mute: req.body.mute }
-		);
-		return res.status(200).json({ message: 'Update mute success' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+  try {
+    const { mute, id } = req.body;
+    await User.updateMute(mute, id);
+    return res.status(200).json({ message: 'Update mute success' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-// const refreshToken = (req, res) => {
-// 	try {
-// 		const rf_token = req.cookies.refresh_token;
-// 		if (!rf_token) return res.status(400).json({ message: 'Please login' });
-// 		jwt.verify(rf_token, process.env.REFRESH_TOKEN_SECRET, (error, user) => {
-// 			if (error) return res.status(400).json({ message: 'Please login' });
-
-// 			const accessToken = createAccessToken({ id: user.id });
-
-// 			res.json({ accessToken });
-// 		});
-// 	} catch (error) {
-// 		return res.status(500).json({ message: error.message });
-// 	}
-
-// };
-
-const createAccessToken = (user) => {
-	return jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
+const updateEmail = async (req, res) => {
+  try {
+    const { newEmail } = req.body;
+    const id = req.user.id;
+    const checkEmail = await User.getIdByEmail(newEmail);
+    if (checkEmail.length > 1) {
+      return res.status(400).json({ message: 'This email already exists' });
+    }
+    const user = await User.getInfo(id);
+    if (user) {
+      const otp = Math.floor(100000 + Math.random() * 900000);
+      const newToken = jwt.sign({ id, otp, email: newEmail }, process.env.ACCESS_TOKEN_SECRET, {
+        expiresIn: '10m',
+      });
+      sendMailOTP(newEmail, otp);
+      return res.json({
+        message: 'Please check otp in new email (expires in 10m)',
+        token: newToken,
+        otp,
+      });
+    } else {
+      return res.json({ message: 'Update email failed' });
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-function validateEmail(email) {
-	const re =
-		/^(([^<>()[\]\\.,;:\s@\"]+(\.[^<>()[\]\\.,;:\s@\"]+)*)|(\".+\"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
-	return re.test(email);
-}
+const confirmUpdateEmail = async (req, res) => {
+  try {
+    const { token, otp } = req.body;
+    let verifyUser = {};
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (error, user) => {
+      if (error) {
+        verifyUser = {};
+      }
 
-module.exports = {
-	register,
-	login,
-	getInfo,
-	loginGoogle,
-	confirmMail,
-	confirmUpdateEmail,
-	updateInfo,
-	updatePass,
-	updateEmail,
-	setMuteUser,
+      verifyUser = { ...user };
+    });
+
+    if (parseInt(otp) !== verifyUser.otp) {
+      return res.status(401).json({ message: 'Invalid otp' });
+    }
+    await User.updateEmail(verifyUser.email, verifyUser.id);
+    return res.status(200).json({ message: 'Update email success', newEmail: verifyUser.email });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const loginGoogle = async (req, res) => {
+  try {
+    const { tokenId } = req.body;
+    const verify = await client.verifyIdToken({
+      idToken: tokenId,
+      audience: process.env.OAUTH_GOOGLE_CLIENT,
+    });
+
+    const { email, name, email_verified } = verify.payload;
+
+    if (email_verified) {
+      let checkEmail = null;
+      checkEmail = await User.getIdByEmail(newEmail);
+      if (checkEmail !== null && checkEmail.length === 1) {
+        const accessToken = jwt.sign({ id: checkEmail[0].id }, process.env.ACCESS_TOKEN_SECRET);
+        return res.status(200).json({
+          message: 'Login with gg success',
+          accessToken,
+        });
+      }
+
+      const username = name + Date.now();
+      const password = email + Date.now();
+      const hashPassword = await bcrypt.hash(password, 10);
+
+      await User.register([name, username, hashPassword, email]);
+      const accessToken = jwt.sign({ id: checkEmail[0].id }, process.env.ACCESS_TOKEN_SECRET);
+      return res.status(201).json({ message: 'Login with gg success', accessToken });
+    }
+    // console.log(name);
+    // return res.status(201).json({ message: 'Register success gg' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export default {
+  register,
+  confirmMail,
+  login,
+  getInfo,
+  updateInfo,
+  updatePass,
+  updateEmail,
+  setMuteUser,
+  confirmUpdateEmail,
+  loginGoogle,
 };

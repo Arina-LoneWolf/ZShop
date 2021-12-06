@@ -1,4 +1,6 @@
-FROM node:12.19.0-slim
+# FROM node:12.19.0-slim
+
+FROM node:14.18.0-alpine
 
 WORKDIR /app/server
 
@@ -12,4 +14,6 @@ RUN ls -ltr
 
 EXPOSE 5000
 
-CMD [ "npm", "start"]
+#ENTRYPOINT ["npm"]
+
+CMD ["npm","run","dev"]

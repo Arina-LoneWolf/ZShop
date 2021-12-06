@@ -1,0 +1,68 @@
+version: '3.5'
+services:
+  backend:
+    container_name: 'node_backend'
+    build:
+      context: ./server
+      dockerfile: dockerfile.node
+    image: node_api
+    env_file: ./server/.env
+    restart: unless-stopped
+    stdin_open: true
+    tty: true
+    depends_on:
+      - mysql
+    networks:
+      - backend
+      - frontend
+    ports:
+      - $NODE_LOCAL_PORT:$NODE_DOCKER_PORT
+    volumes:
+      - ./server/configs:/app/server/configs
+      - ./server/controllers:/app/server/controllers
+      - ./server/helpers:/app/server/helpers
+      - ./server/middleware:/app/server/middleware
+      - ./server/services:/app/server/services
+      - ./server/routers:/app/server/routers
+      - ./server/validates:/app/server/validates
+      - ./server/app.js:/app/server/app.js
+  mysql:
+    container_name: 'test_mysql'
+    image: mysql:8.0
+    restart: unless-stopped
+    networks:
+      - backend
+    ports:
+      - '3307:3306'
+    command:
+      - '--innodb-ft-min-token-size=1'
+      - '--default-time-zone=+07:00'
+    # command: ['mysql:3306']
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      MYSQL_DATABASE: 'testdb'
+      # MYSQL_USER: 'nhat'
+      # MYSQL_PASSWORD: '123456'
+    volumes:
+      - D:\Semester_7\Projects\ZShop\database:/var/lib/mysql
+  phpmyadmin:
+    container_name: 'test_phpmyadmin'
+    image: phpmyadmin/phpmyadmin:5
+    restart: unless-stopped
+    depends_on:
+      - mysql
+    networks:
+      - backend
+    ports:
+      - '8000:80'
+    environment:
+      MYSQL_ROOT_PASSWORD: '123456'
+      PMA_HOSTS: mysql
+      # PMA_USER: root
+      # PMA_PASSWORD: '123456'
+
+networks:
+  backend:
+  frontend:
+# volumes:
+#   db:

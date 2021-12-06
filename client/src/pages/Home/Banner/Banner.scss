@@ -8,6 +8,35 @@
   .container {
     max-width: 1140px;
     margin: 18px auto;
+    position: relative;
+
+    .edit-btn {
+      display: flex;
+      align-items: center;
+      cursor: pointer;
+      position: absolute;
+      right: 8px;
+      bottom: 8px;
+      z-index: 1;
+      border-radius: 5px;
+      color: $grey;
+      background: white;
+      padding: 4px 12px;
+      padding-right: 6px;
+      font-weight: 700;
+      box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+
+      .edit-icon {
+        width: 15px;
+        height: 15px;
+        margin-left: 3px;
+        margin-bottom: 1px;
+      }
+
+      &:hover {
+        background: $whitesmoke;
+      }
+    }
   }
 
   .swiper-slide img {

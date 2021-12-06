@@ -7,7 +7,7 @@ const commentApi = {
   },
 
   add: (data, params) => {
-    const url = `/api/comment/add`; // params: reply: 1, id (commentId)
+    const url = '/api/comment/add'; // params: reply: 1, id (commentId)
     return axiosClient.post(url, data, { params });
   },
 

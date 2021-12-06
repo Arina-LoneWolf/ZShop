@@ -1,21 +1,20 @@
-const express = require('express');
-const cookieParser = require('cookie-parser');
-const cors = require('cors');
-const db = require('./configs/connectDB');
-const route = require('./routers/root.router');
-const app = express();
+import express from 'express';
+import morgan from 'morgan';
+import cors from 'cors';
+//import executeQuery from './configs/db.config.js';
+import routerRoot from './routers/root.router.js';
 
-const port = process.env.PORT || 5000;
+const app = express();
+const port = 5000;
 
 app.use(cors());
 app.use(express.json());
-app.use(cookieParser());
-//app.use(express.urlencoded({ extended: false }));
+app.use(morgan('dev'));
 
-route(app);
+//connectDB.connect();
 
-db.connectDB;
+app.use('/api', routerRoot);
 
 app.listen(port, () => {
-	console.log(`Example app listening at http://localhost:${port}`);
+  console.log(`Example app listening at http://localhost:${port}`);
 });

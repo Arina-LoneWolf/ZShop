@@ -50,6 +50,10 @@ function Header() {
       history.push(`/search?name=${keyword}`);
   }
 
+  // useEffect(() => {
+  //   console.log(user);
+  // }, [user]);
+
   useEffect(() => {
     const userAccessToken = localStorage.getItem('accessToken');
 

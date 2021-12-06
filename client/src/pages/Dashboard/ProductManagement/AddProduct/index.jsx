@@ -14,6 +14,7 @@ import categories from '../../../../shared/data/categories';
 import types from '../../../../shared/data/types';
 import sizes from '../../../../shared/data/sizes';
 import productApi from '../../../../apis/productApi';
+import imageUploadApi from '../../../../apis/imageUploadApi';
 
 const schema = yup.object({
   productName: yup.string().required('*Bắt buộc'),
@@ -61,8 +62,8 @@ function AddNewProduct({ refetch }) {
     }
 
     const [uploadedImages, uploadedColors] = await Promise.all([
-      productApi.uploadImages(images),
-      productApi.uploadImages(colors)
+      imageUploadApi.uploadImages(images),
+      imageUploadApi.uploadImages(colors)
     ]);
 
     // console.log(uploadedImages)

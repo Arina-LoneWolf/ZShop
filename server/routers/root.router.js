@@ -1,11 +1,24 @@
-function route(app) {
-	app.use('/user', require('../routers/user.router'));
-	app.use('/api/product', require('../routers/product.router'));
-	app.use('/api/comment', require('../routers/comment.router'));
-	app.use('/api/order', require('../routers/order.router'));
-	app.use('/api/image', require('../routers/uploadimage'));
-	app.get('/', (req, res) => {
-		res.send('Hello World1!23');
-	});
-}
-module.exports = route;
+import express from 'express';
+import userRouter from './user.router.js';
+import productRouter from './product.router.js';
+import commentRouter from './comment.router.js';
+import categoryRouter from './category.router.js';
+import typeRouter from './type.router.js';
+import cartRouter from './cart.router.js';
+import orderRouter from './order.router.js';
+import bannerRouter from './banner.router.js';
+import imageRouter from './image.router.js';
+
+const router = express.Router();
+
+router.use('/user', userRouter);
+router.use('/product', productRouter);
+router.use('/comment', commentRouter);
+router.use('/category', categoryRouter);
+router.use('/type', typeRouter);
+router.use('/cart', cartRouter);
+router.use('/order', orderRouter);
+router.use('/banner', bannerRouter);
+router.use('/image', imageRouter);
+
+export default router;

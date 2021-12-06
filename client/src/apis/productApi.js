@@ -41,14 +41,15 @@ const productApi = {
     return axiosClient.delete(url);
   },
 
-  uploadImages: (data) => {
-    const url = '/api/image/upload';
-    return axiosClient.post(url, data);
-  },
+  // uploadImages: (data) => {
+  //   const url = '/api/image/upload';
+  //   return axiosClient.post(url, data);
+  // },
 
-  addCategory: (data) => {},
-
-  deleteCategory: (name) => {},
+  getAllCategories: () => {
+    const url = '/api/category/getAll';
+    return axiosClient.get(url);
+  }
 }
 
 export default productApi;

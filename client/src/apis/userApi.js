@@ -2,47 +2,47 @@ import axiosClient from './axiosClient';
 
 const userApi = {
   login: (data) => {
-    const url = '/user/login';
+    const url = '/api/user/login';
     return axiosClient.post(url, data);
   },
 
   loginWithGoogle: (data) => {
-    const url = '/user/login-google';
+    const url = '/api/user/login-google';
     return axiosClient.post(url, data);
   },
 
   register: (data) => {
-    const url = '/user/register';
+    const url = '/api/user/register';
     return axiosClient.post(url, data);
   },
 
   getInfo: () => {
-    const url = '/user/info';
+    const url = '/api/user/info';
     return axiosClient.get(url);
   },
 
-  updateInfo: (data) => {
-    const url = '/user/update-info';
+  updateInfo: (id, data) => {
+    const url = `/api/user/update-info/${id}`;
     return axiosClient.patch(url, data);
   },
 
   updateEmail: (data) => {
-    const url = '/user/update-email';
+    const url = '/api/user/update-email';
     return axiosClient.patch(url, data);
   },
 
   verifyOTP: (data) => {
-    const url = '/user/confirm-update-mail';
+    const url = '/api/user/confirm-update-mail';
     return axiosClient.post(url, data);
   },
 
   updatePassword: (data) => {
-    const url = '/user/update-pass';
+    const url = '/api/user/update-pass';
     return axiosClient.patch(url, data);
   },
 
   updateMute: (data) => {
-    const url = '/user/update-mute';
+    const url = '/api/user/update-mute';
     return axiosClient.patch(url, data);
   }
 }

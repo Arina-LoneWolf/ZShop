@@ -1,44 +1,48 @@
-const router = require('express').Router();
-const orderController = require('../controllers/order.controller');
-const auth = require('../middleware/auth');
-const authAdmin = require('../middleware/authAmin');
+import express from 'express';
+import orderController from '../controllers/order.controller.js';
+import { auth } from '../middleware/auth.js';
+import { authAdmin } from '../middleware/authAmin.js';
 
-router.post('/add', auth, orderController.addOrder);
+const router = express.Router();
 
-router.get('/get-by-user/:id', auth, orderController.getOrder);
+router.get('/gettotalonemonth/:year', auth, authAdmin, orderController.getRevenue);
 
-router.post('/get-all', auth, authAdmin, orderController.getAllOrders);
+router.get('/get-by-user/:id', auth, orderController.getOrders);
 
 router.get('/search', orderController.searchOrder);
 
+router.get(
+  '/gettotalsoldcategory-followmonth/:year',
+  auth,
+  authAdmin,
+  orderController.getNumberSoldCategoryFollowMonth
+);
+
+router.get(
+  '/gettotalcategoryonemonth/:month',
+  auth,
+  authAdmin,
+  orderController.getTotalAllCategoryOneMonth
+);
+
+router.get(
+  '/getsalecategoryonemonth/:month',
+  auth,
+  authAdmin,
+  orderController.getSaleAllCategoryOneMonth
+);
+
+router.get(
+  '/getsaleonecategoryallmonths/:category',
+  auth,
+  authAdmin,
+  orderController.getSaleOneCategoryAllMonths
+);
+
+router.post('/add', auth, orderController.addOrder);
+
+router.post('/get-all', auth, authAdmin, orderController.getAllOrders);
+
 router.patch('/update', auth, authAdmin, orderController.updateOrder);
 
-router.get(
-	'/gettotalonemonth',
-	auth,
-	authAdmin,
-	orderController.getTotalOneMonth
-);
-
-router.get(
-	'/gettotalcategory',
-	auth,
-	authAdmin,
-	orderController.getTotalCategory
-);
-
-router.get(
-	'/gettotalsoldcategory',
-	auth,
-	authAdmin,
-	orderController.getNumberSoldCategory
-);
-
-router.get(
-	'/gettotalsoldcategory-followmonth',
-	auth,
-	authAdmin,
-	orderController.getNumberSoldCategoryFollowMonth
-);
-
-module.exports = router;
+export default router;

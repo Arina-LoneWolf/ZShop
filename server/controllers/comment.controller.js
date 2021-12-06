@@ -1,92 +1,68 @@
-require('dotenv').config();
-const Comments = require('../models/commentModel');
-const Users = require('../models/userModel');
-const { ObjectId } = require('mongodb');
+import Comment from '../services/comment.service.js';
+
 const addComment = async (req, res) => {
-	try {
-		const { productId, content, user } = req.body;
-
-		const userCheck = await Users.findById({ _id: user });
-		if (userCheck.mute) {
-			return res.status(400).json({ message: 'User is muted' });
-		}
-
-		const newComment = new Comments({
-			user,
-			content,
-			productId,
-			date: Date.now(),
-		});
-
-		// let date = new Date();
-		// let dateFormat = `${date.getDate()}-${
-		// 	date.getMonth() + 1
-		// }-${date.getFullYear()} ${date.getHours()}-${date.getMinutes()}`.toString();
-
-		if (req.query.reply) {
-			console.log('REPLY');
-			const { _id, user, content, date } = newComment;
-
-			const comment = await Comments.findById({ _id: req.query.id });
-			//console.log('comment', comment);
-			if (comment) {
-				comment.reply.push({ _id, user: user, date, content });
-				await comment.save();
-				console.log(comment);
-			}
-		} else {
-			console.log('Comment_new', newComment);
-			await newComment.save();
-		}
-
-		res.json({ message: 'success comment' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+  try {
+    const { parentId, userId, productId, content } = req.body;
+    const checkUser = await Comment.checkUser(userId);
+    if (checkUser[0].mute === 1) {
+      return res.status(400).json({ message: 'User is muted' });
+    }
+    await Comment.add([parentId, userId, productId, content]);
+    return res.status(201).json({ message: 'Add product success' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const getComment = async (req, res) => {
-	try {
-		//const { productId, content, user } = req.body;
+  try {
+    const data = await Comment.get(req.params.productId);
+    const comments = groupReply(data);
 
-		const listComment = await Comments.find({
-			productId: req.query.productId,
-		})
-			.populate({
-				path: 'reply.user',
-				select: 'name type mute',
-			})
-			.populate({
-				path: 'user',
-				select: 'name type mute',
-			});
+    return res.status(200).json({ comments });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
 
-		res.json(listComment);
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+const groupReply = (list) => {
+  let arr = [...list];
+  const map = new Map();
+  let collection = null;
+  arr.forEach((item) => {
+    if (item.parentId === 0) {
+      collection = map.get(item.id);
+      if (!collection) {
+        item.reply = [];
+        map.set(item.id, item);
+      }
+    } else {
+      collection = map.get(item.parentId);
+      if (collection) collection.reply.push(item);
+    }
+  });
+  return [...map.values()];
 };
 
 const deleteComment = async (req, res) => {
-	try {
-		if (req.query.node) {
-			const comment = await Comments.findByIdAndUpdate(
-				{ _id: req.query.id },
-				{ $pull: { reply: { _id: ObjectId(req.query.node) } } }
-			);
-		} else {
-			const comment = await Comments.deleteOne({ _id: req.query.id });
-		}
+  try {
+    const commentId = req.params.commentId;
+    const [{ parentId }] = await Comment.getParentId(commentId);
 
-		//console.log(comment);
-		res.json({ message: 'delete success' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    if (parentId === 0) {
+      Promise.all([Comment.deleteParent(commentId), Comment.deleteChild(commentId)]);
+    } else {
+      await Comment.deleteChild(commentId);
+    }
+
+    return res.status(200).json({ message: 'Delete comment success' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-module.exports = {
-	addComment,
-	getComment,
-	deleteComment,
+export default {
+  addComment,
+  getComment,
+  deleteComment,
 };

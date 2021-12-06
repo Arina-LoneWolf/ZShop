@@ -1,540 +1,465 @@
-const { json } = require('body-parser');
-const Orders = require('../models/orderModel');
-const Products = require('../models/productModel');
+import Order from '../services/order.service.js';
+import Cart from '../services/cart.service.js';
+import db from '../configs/db.config.js';
 
-const getOrder = async (req, res) => {
-	try {
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+const addOrder = async (req, res) => {
+  const promisePool = db.promise();
+  const connection = await promisePool.getConnection();
+  try {
+    console.log('starting transaction...');
+    await connection.beginTransaction();
 
-		let queryObj = {
-			user: req.params.id,
-		};
-		// if (Object.values(req.body).length !== 0) {
-		// 	if (req.body.timeStart && req.body.timeEnd) {
-		// 		console.log('co time');
-		// 		queryObj = {
-		// 			user: req.params.id,
-		// 			status: req.body.status,
-		// 			date: {
-		// 				$gte: new Date(req.body.timeStart),
-		// 				$lte: new Date(req.body.timeEnd),
-		// 			},
-		// 		};
-		// 	} else {
-		// 		console.log('khong time');
-		// 		queryObj = {
-		// 			user: req.params.id,
-		// 			status: req.body.status,
-		// 		};
-		// 	}
-		// }
-		console.log(queryObj);
-		const startIndex = (page - 1) * limit;
-		const endIndex = page * limit;
+    const {
+      userId,
+      paymentMethod,
+      note,
+      receiverName,
+      receiverEmail,
+      receiverPhone,
+      receiverAddress,
+    } = req.body;
+    const dataProducts = await Cart.getAllProductsTrans(userId, connection); //await Cart.getAllProducts(userId);
+    const oldCart = await Cart.getCartTrans(userId, connection); //await Cart.getCart(userId);
+    let productError = [];
+    let productAdd = [];
+    let idOrder = new Date().valueOf().toString().substring(6, 13);
+    let totalPrice = 0;
 
-		let countOrders = await Orders.countDocuments(queryObj);
-		countOrders = Math.ceil(countOrders / limit);
-		const orders = await Orders.find(queryObj)
-			.populate({
-				path: 'user',
-				select: 'name type district city address phone email',
-			})
-			.sort({ date: -1 })
-			.skip(startIndex)
-			.limit(limit);
+    if (dataProducts.length === 0) {
+      return res.status(400).json({ message: 'Cart empty' });
+    }
 
-		if (orders)
-			res.json({
-				message: 'Get order done',
-				orders,
-				totalPages: countOrders,
-				page: page,
-			});
-		else res.json({ message: 'Get order failed' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    for (let i = 0; i < dataProducts[0].length; i++) {
+      const productId = dataProducts[0][i].id;
+      const rowProduct = await Cart.getQuantityProductTrans(productId, connection); //await Cart.getQuantityProduct(productId);
+
+      if (rowProduct[0].quantity < dataProducts[0][i].quantity) {
+        productError.push({
+          id: dataProducts[0][i].id,
+          name: dataProducts[0][i].name,
+          quantity: dataProducts[0][i].quantity,
+        });
+      } else {
+        totalPrice +=
+          (dataProducts[0][i].price - dataProducts[0][i].discount) * dataProducts[0][i].quantity;
+        productAdd.push([
+          idOrder,
+          productId,
+          dataProducts[0][i].categoryName,
+          dataProducts[0][i].typeName,
+          dataProducts[0][i].price,
+          dataProducts[0][i].discount,
+          dataProducts[0][i].name,
+          dataProducts[0][i].size,
+          dataProducts[0][i].colorLink,
+          dataProducts[0][i].quantity,
+        ]);
+      }
+    }
+
+    if (productError.length !== 0) {
+      return res.status(400).json({ error: productError });
+    }
+
+    //console.log(oldCart[0].id);
+
+    console.log('tong gia', totalPrice);
+
+    await Order.add([
+      idOrder,
+      userId,
+      totalPrice,
+      paymentMethod,
+      note,
+      receiverName,
+      receiverEmail,
+      receiverPhone,
+      receiverAddress,
+    ]);
+
+    // await Order.addTrans(
+    //   [
+    //     idOrder,
+    //     userId,
+    //     totalPrice,
+    //     paymentMethod,
+    //     note,
+    //     receiverName,
+    //     receiverEmail,
+    //     receiverPhone,
+    //     receiverAddress,
+    //   ],
+    //   connection
+    // );
+
+    // await connection.query(
+    //   'INSERT INTO OrderProduct (id, userId,  totalPrice, paymentMethod, note, receiverName, receiverEmail, receiverPhone, receiverAddress) VALUES (?,?,?,?,?,?,?,?,?)',
+    //   [
+    //     idOrder,
+    //     userId,
+    //     totalPrice,
+    //     paymentMethod,
+    //     note,
+    //     receiverName,
+    //     receiverEmail,
+    //     receiverPhone,
+    //     receiverAddress,
+    //   ]
+    // );
+
+    for (let i = 0; i < productAdd.length; i++) {
+      await Order.addProductTrans(productAdd[i], connection);
+      await Order.updateQuantityProductTrans(
+        [productAdd[i][9], productAdd[i][9], productAdd[i][1]],
+        connection
+      );
+      // await connection.query(
+      //   'INSERT INTO `OrderProductDetail`(`orderId`, `productId`,`productCategory`, `productType`, `productPrice`, `productDiscount`, `productName`, `productSize`, `productColor`, `productQuantity`) VALUES (?,?,?,?,?,?,?,?,?,?)',
+      //   productAdd[i]
+      // );
+      // await connection.query(
+      //   ' UPDATE Product SET quantity=quantity-? ,soldQuantity=soldQuantity+? WHERE id=?',
+      //   [productAdd[i][9], productAdd[i][9], productAdd[i][1]]
+      // );
+    }
+
+    await connection.commit();
+
+    // await Order.add([
+    //   idOrder,
+    //   userId,
+    //   totalPrice,
+    //   paymentMethod,
+    //   note,
+    //   receiverName,
+    //   receiverEmail,
+    //   receiverPhone,
+    //   receiverAddress,
+    // ]);
+
+    // for (let i = 0; i < productAdd.length; i++) {
+    //   await Order.addProduct(productAdd[i]);
+    //   await Order.updateQuantityProduct([productAdd[i][9], productAdd[i][9], productAdd[i][1]]);
+    // }
+
+    //-----QUAN TRỌNG-----
+    //nhớ bỏ cmt này để xóa tất cả sản phẩm trong cart khi thanh toán thành công(test thì khỏi bỏ mất công phải add data lại trong cart)
+    //await Cart.deleteProductWithCartIdTrans(oldCart[0].id, connection);
+
+    return res.status(201).json('Add order success');
+  } catch (error) {
+    await connection.rollback();
+    console.info('Rollback successful');
+    return res.status(500).json({ message: error.message });
+  } finally {
+    connection.release();
+  }
+};
+
+//lấy ra doanh thu 12 tháng theo năm (get total one month)
+const getRevenue = async (req, res) => {
+  try {
+    const year = parseInt(req.params.year, 10);
+    let data = await Order.getRevenue(year);
+    let saveMonth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    data.forEach((order) => {
+      saveMonth.splice(saveMonth.indexOf(order.month), 1);
+    });
+    for (let i = 0; i < saveMonth.length; i++) {
+      data.push({ month: saveMonth[i], total: 0 });
+    }
+    data.sort((a, b) => {
+      return a.month - b.month;
+    });
+
+    //console.log(saveMonth);
+
+    return res.status(200).json({ message: 'Done', data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const getAllOrders = async (req, res) => {
-	try {
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    let data = null;
+    let strStatus = 'AND OrderProduct.status=?';
+    let strTime = 'AND OrderProduct.orderDate between ? and ?';
 
-		let queryObj = null;
-		if (Object.values(req.body).length !== 0) {
-			if (req.body.timeStart && req.body.timeEnd) {
-				if (req.body.status) {
-					console.log('co time va co status');
-					queryObj = {
-						status: req.body.status,
-						date: {
-							$gte: new Date(req.body.timeStart),
-							$lte: new Date(`${req.body.timeEnd}T23:59:59`),
-						},
-					};
-				} else {
-					console.log('co time va ko co status');
-					queryObj = {
-						date: {
-							$gte: new Date(req.body.timeStart),
-							$lte: new Date(`${req.body.timeEnd}T23:59:59`),
-						},
-					};
-				}
-			} else {
-				console.log('co status khong co time');
-				queryObj = {
-					status: req.body.status,
-				};
-			}
-		}
+    if (Object.values(req.body).length !== 0) {
+      if (req.body.timeStart && req.body.timeEnd) {
+        if (req.body.status) {
+          console.log('co time va co status');
+          data = await Promise.all([
+            Order.getAllOrders(strTime, strStatus, [
+              `${req.body.timeStart} 00:00:01`,
+              `${req.body.timeEnd} 23:59:59`,
+              req.body.status,
+              startIndex,
+              limit,
+            ]),
+            Order.countAllOrders('WHERE OrderProduct.orderDate between ? and ?', strStatus, [
+              `${req.body.timeStart} 00:00:01`,
+              `${req.body.timeEnd} 23:59:59`,
+              req.body.status,
+            ]),
+          ]).then(([orders, totalOrders]) => {
+            return {
+              orders: orders,
+              totalPages: Math.ceil(totalOrders[0].count / limit),
+              page: page,
+            };
+          });
+        } else {
+          console.log('co time va ko co status');
+          data = await Promise.all([
+            Order.getAllOrders(strTime, '', [
+              `${req.body.timeStart} 00:00:01`,
+              `${req.body.timeEnd} 23:59:59`,
+              startIndex,
+              limit,
+            ]),
+            Order.countAllOrders('WHERE OrderProduct.orderDate between ? and ?', '', [
+              `${req.body.timeStart} 00:00:01`,
+              `${req.body.timeEnd} 23:59:59`,
+            ]),
+          ]).then(([orders, totalOrders]) => {
+            return {
+              orders: orders,
+              totalPages: Math.ceil(totalOrders[0].count / limit),
+              page: page,
+            };
+          });
+        }
+      } else {
+        console.log('co status khong co time');
+        data = await Promise.all([
+          Order.getAllOrders('', strStatus, [req.body.status, startIndex, limit]),
+          Order.countAllOrders('', 'WHERE OrderProduct.status=?', [req.body.status]),
+        ]).then(([orders, totalOrders]) => {
+          return {
+            orders: orders,
+            totalPages: Math.ceil(totalOrders[0].count / limit),
+            page: page,
+          };
+        });
+      }
+    } else {
+      console.log('khong co body');
+      data = await Promise.all([
+        Order.getAllOrders('', '', [startIndex, limit]),
+        Order.countAllOrders('', '', []),
+      ]).then(([orders, totalOrders]) => {
+        return {
+          orders: orders,
+          totalPages: Math.ceil(totalOrders[0].count / limit),
+          page: page,
+        };
+      });
+    }
 
-		const startIndex = (page - 1) * limit;
-		const endIndex = page * limit;
+    //console.log(data);
 
-		console.log(new Date(req.body.timeStart));
-		console.log(new Date(req.body.timeEnd));
-
-		let countOrders = await Orders.countDocuments(queryObj);
-		console.log('tong so hoa don', countOrders);
-		countOrders = Math.ceil(countOrders / limit);
-		const orders = await Orders.find(queryObj)
-			.populate({
-				path: 'user',
-				select: 'name type district city address phone email',
-			})
-			.sort({ date: -1 })
-			.skip(startIndex)
-			.limit(limit);
-
-		if (orders)
-			res.json({
-				message: 'Get all order done',
-				orders,
-				totalPages: countOrders,
-				page: page,
-			});
-		else res.json({ message: 'Get all order failed' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-const addOrder = async (req, res) => {
-	try {
-		const { user, products, receiverInfo, paymentMethod } = req.body;
+const getOrders = async (req, res) => {
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    const userId = parseInt(req.params.id);
+    let data = await Promise.all([
+      Order.getOrders(userId, startIndex, limit),
+      Order.countGetOrders(userId),
+    ]).then(([orders, totalOrders]) => {
+      return {
+        orders: orders,
+        totalPages: Math.ceil(totalOrders[0].count / limit),
+        page: page,
+      };
+    });
 
-		let total = 0;
-		let productError = [];
-		products.forEach((e) => {
-			if (e.status.includes(2)) {
-				total += (e.price - e.discount) * e.soldQuantity;
-			} else {
-				total += e.price * e.soldQuantity;
-			}
-		});
-
-		for (let i = 0; i < products.length; i++) {
-			const oneProduct = await Products.findById({ _id: products[i]._id });
-			if (oneProduct.quantity < products[i].soldQuantity) {
-				let objectInfoError = {
-					id: oneProduct._id,
-					name: oneProduct.name,
-					quantity: oneProduct.quantity,
-				};
-				productError.push(
-					objectInfoError
-					// `Số lượng còn lại của ${oneProduct.name} là ${oneProduct.quantity}`
-				);
-			}
-		}
-
-		if (productError.length !== 0) {
-			return res.status(400).json({ error: productError });
-		}
-
-		for (let i = 0; i < products.length; i++) {
-			await Products.findByIdAndUpdate(
-				{ _id: products[i]._id },
-				{
-					$inc: {
-						quantity: -products[i].soldQuantity,
-						soldQuantity: products[i].soldQuantity,
-					},
-					// $set: {
-					// 	quantity: {
-					// 		$cond: [
-					// 			{ $lte: ['$quantity', 0] },
-					// 			{ $sum: ['$quantity', products[i].soldQuantity] },
-					// 			{ $subtract: ['$quantity', products[i].soldQuantity] },
-					// 		],
-					// 	},
-					// },
-				}
-				// (err, data) => {
-				// 	if (err) return;
-				// 	if (data.quantity < 0) {
-				// 		console.log('Quantity < 0');
-				// 		productError.push(`${data.name} sold out`);
-				// 	}
-				// }
-			);
-		}
-		let timeNow = new Date();
-		let timeAddGMT = new Date(timeNow.getTime() + -timeNow.getTimezoneOffset() * 60000);
-		let idOrder = new Date().valueOf().toString().substring(6, 13);
-		const newOrder = new Orders({
-			user,
-			idOrder,
-			products,
-			date: timeAddGMT,//new Date(),
-			total,
-			receiverInfo,
-			paymentMethod,
-		});
-
-		//if (productError.length === 0) {
-		await newOrder.save();
-		res.json({ message: 'Order add success' });
-		//} else {
-		//res.json({ message: productError });
-		//}
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const updateOrder = async (req, res) => {
-	try {
-		const order = await Orders.findByIdAndUpdate(
-			{ _id: req.body.id },
-			{ status: req.body.status },
-			{ new: true }
-		);
+  try {
+    const { id, status } = req.body;
+    await Order.updateOrder(status, id);
 
-		if (req.body.status === 4) {
-			const productOrder = order.products;
-			console.log(productOrder.length);
-
-			for (let i = 0; i < productOrder.length; i++) {
-				await Products.findByIdAndUpdate(
-					{ _id: productOrder[i]._id },
-					{
-						$inc: {
-							quantity: productOrder[i].soldQuantity,
-							soldQuantity: -productOrder[i].soldQuantity,
-						},
-					}
-				);
-			}
-		}
-
-		res.json({ message: 'Update order done', order });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(200).json('Update order success');
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const searchOrder = async (req, res) => {
-	try {
-		const page = parseInt(req.query.page) || 1;
-		const limit = parseInt(req.query.limit) || 10;
+  try {
+    const page = parseInt(req.query.page) || 1;
+    const limit = parseInt(req.query.limit) || 10;
+    const startIndex = (page - 1) * limit;
+    const searchText = req.query.q;
 
-		const searchText = req.query.q;
+    let data = await Promise.all([
+      Order.searchOrder(startIndex, limit, searchText),
+      Order.countSearchOrder(searchText),
+    ]).then(([orders, totalOrders]) => {
+      return {
+        orders: orders,
+        totalPages: Math.ceil(totalOrders[0].count / limit),
+        page: page,
+      };
+    });
 
-		let queryObj = {
-			$or: [
-				{ idOrder: { $regex: searchText, $options: '$i' } },
-				{ 'receiverInfo.name': { $regex: searchText, $options: '$i' } },
-				{ 'receiverInfo.phone': { $regex: searchText, $options: '$i' } },
-			],
-		};
-		if (Object.values(req.body).length !== 0) {
-			if (req.body.timeStart && req.body.timeEnd) {
-				console.log('co time');
-				queryObj = {
-					...queryObj,
-					status: req.body.status,
-					date: {
-						$gte: new Date(req.body.timeStart),
-						$lte: new Date(req.body.timeEnd),
-					},
-				};
-			} else {
-				console.log('khong time');
-				queryObj = {
-					...queryObj,
-					status: req.body.status,
-				};
-			}
-		}
-
-		const startIndex = (page - 1) * limit;
-		const endIndex = page * limit;
-
-		console.log(req.body.timeStart);
-
-		let countOrders = await Orders.countDocuments(queryObj);
-		countOrders = Math.ceil(countOrders / limit);
-		const orders = await Orders.find(queryObj)
-			.populate({
-				path: 'user',
-				select: 'name type district city address phone email',
-			})
-			.sort({ date: -1 })
-			.skip(startIndex)
-			.limit(limit);
-
-		if (orders)
-			res.json({
-				orders,
-				totalPages: countOrders,
-				page: page,
-				search: searchText,
-			});
-		else res.json({ message: 'Loi' });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const getTotalOneMonth = async (req, res) => {
-	try {
-		//let month = 5;
-
-		let a = Date.now();
-		let b = new Date(a);
-		let dataTotal = [];
-		//console.log(b.getFullYear());
-		for (let i = 1; i <= 12; i++) {
-			const allPrice = await Orders.aggregate([
-				{
-					$match: {
-						$and: [
-							{
-								status: 3,
-							},
-							{
-								date: {
-									$gte: new Date(`2021-${i}`),
-									$lt: new Date(`2021-${i + 1}`),
-								},
-							},
-						],
-						// date: {
-						// 	$gte: new Date(`2021-${i}`),
-						// 	$lt: new Date(`2021-${i + 1}`),
-						// },
-					},
-				},
-				{
-					$group: {
-						_id: {
-							year: { $year: '$date' },
-							month: { $month: '$date' },
-						},
-						total: { $sum: '$total' },
-					},
-				},
-				{
-					$project: {
-						_id: 0,
-						total: 1,
-						month: { $sum: [i, 0] },
-					},
-				},
-			]);
-
-			if (allPrice.length !== 0) {
-				dataTotal.push(allPrice[0]);
-			} else {
-				let fakeResult = {
-					total: 0,
-					month: i,
-				};
-				dataTotal.push(fakeResult);
-			}
-		}
-		console.log(dataTotal);
-
-		res.json({ message: 'Done', data: dataTotal });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const getTotalCategory = async (req, res) => {
-	try {
-		const allPrice = await Orders.aggregate([
-			{
-				$match: {
-					status: 3,
-				},
-			},
-			{
-				$unwind: '$products',
-			},
-		]);
-
-		let result = [];
-		let totalAo = 0;
-		let totalQuan = 0;
-		let totalDamVay = 0;
-		for (let i = 0; i < allPrice.length; i++) {
-			let product = allPrice[i].products;
-
-			if (JSON.stringify(product.category) === JSON.stringify('Áo')) {
-				if (product.status.includes(2))
-					totalAo += (product.price - product.discount) * product.soldQuantity;
-				else {
-					totalAo += product.price * product.soldQuantity;
-				}
-			}
-			if (JSON.stringify(product.category) === JSON.stringify('Quần')) {
-				if (product.status.includes(2))
-					totalQuan +=
-						(product.price - product.discount) * product.soldQuantity;
-				else {
-					totalQuan += product.price * product.soldQuantity;
-				}
-			}
-
-			if (product.category === 'Đầm Váy') {
-				if (product.status.includes(2))
-					totalDamVay +=
-						(product.price - product.discount) * product.soldQuantity;
-				else {
-					totalDamVay += product.price * product.soldQuantity;
-				}
-			}
-		}
-
-		result.push({ category: 'Áo', total: totalAo });
-		result.push({ category: 'Quần', total: totalQuan });
-		result.push({ category: 'Đầm Váy', total: totalDamVay });
-		//console.log(totalQuan);
-
-		res.json({ result });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
-};
-
-const getNumberSoldCategory = async (req, res) => {
-	try {
-		const allPrice = await Orders.aggregate([
-			{
-				$match: {
-					status: 3,
-				},
-			},
-			{
-				$unwind: '$products',
-			},
-		]);
-
-		let result = [];
-		let totalAo = 0;
-		let totalQuan = 0;
-		let totalDamVay = 0;
-		for (let i = 0; i < allPrice.length; i++) {
-			let product = allPrice[i].products;
-
-			if (JSON.stringify(product.category) === JSON.stringify('Áo')) {
-				totalAo += product.soldQuantity;
-			}
-			if (JSON.stringify(product.category) === JSON.stringify('Quần')) {
-				totalQuan += product.soldQuantity;
-			}
-			if (product.category === 'Đầm Váy') {
-				totalDamVay += product.soldQuantity;
-			}
-		}
-
-		result.push({ category: 'Áo', total: totalAo });
-		result.push({ category: 'Quần', total: totalQuan });
-		result.push({ category: 'Đầm Váy', total: totalDamVay });
-		//console.log(totalQuan);
-
-		res.json({ result });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
 const getNumberSoldCategoryFollowMonth = async (req, res) => {
-	try {
-		let data = [];
-		for (let i = 1; i <= 12; i++) {
-			const allPrice = await Orders.aggregate([
-				{
-					$match: {
-						$and: [
-							{
-								status: 3,
-							},
-							{
-								date: {
-									$gte: new Date(`2021-${i}`),
-									$lt: new Date(`2021-${i + 1}`),
-								},
-							},
-						],
-					},
-				},
-				{
-					$unwind: '$products',
-				},
-			]);
+  try {
+    const year = req.params.year;
+    let categoryArr = ['Áo', 'Quần', 'Đầm váy', 'Gấu bông', 'Quà tặng', 'Đồ trang trí', 'Túi ví'];
+    let monthArr = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+    let saveMonth = [];
+    let data = null;
+    let newData = [];
 
-			//let result = [];
-			let totalAo = 0;
-			let totalQuan = 0;
-			let totalDamVay = 0;
-			for (let i = 0; i < allPrice.length; i++) {
-				let product = allPrice[i].products;
+    data = await Order.getSoldQuantityCategoryMonth(year);
+    data.forEach((order) => {
+      if (!saveMonth.includes(order.month)) {
+        saveMonth.push(order.month);
+      }
+      //if (monthArr.includes(order.month)) monthArr.splice(monthArr.indexOf(order.month), 1);
+    });
+    for (let i = 0; i < monthArr.length; i++) {
+      newData.push({
+        Ao: 0,
+        Quan: 0,
+        DamVay: 0,
+        GauBong: 0,
+        QuaTang: 0,
+        DoTrangTri: 0,
+        TuiVi: 0,
+        Month: monthArr[i],
+      });
+      // for (let j = 0; j < categoryArr.length; j++) {
+      //   if()
+      // }
+    }
 
-				if (JSON.stringify(product.category) === JSON.stringify('Áo')) {
-					totalAo += product.soldQuantity;
-				}
-				if (JSON.stringify(product.category) === JSON.stringify('Quần')) {
-					totalQuan += product.soldQuantity;
-				}
-				if (product.category === 'Đầm Váy') {
-					totalDamVay += product.soldQuantity;
-				}
-			}
+    console.log(saveMonth);
+    console.log(newData);
 
-			let objectOneMonthSold = {
-				Ao: totalAo, //{ category: 'Áo', total:  },
-				Quan: totalQuan, // { category: 'Quần', total:  },
-				DamVay: totalDamVay, //{ category: 'Đầm Váy', total: totalDamVay },
-				Month: i,
-			};
-			data.push(objectOneMonthSold);
-		}
-
-		//result.push({ category: 'Áo', total: totalAo });
-		//result.push({ category: 'Quần', total: totalQuan });
-		//result.push({ category: 'Đầm Váy', total: totalDamVay });
-		//console.log(totalQuan);
-
-		res.json({ data });
-	} catch (error) {
-		return res.status(500).json({ message: error.message });
-	}
+    return res.status(200).json(data);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
 };
 
-module.exports = {
-	getOrder,
-	getAllOrders,
-	addOrder,
-	updateOrder,
-	getTotalOneMonth,
-	getTotalCategory,
-	getNumberSoldCategory,
-	getNumberSoldCategoryFollowMonth,
-	searchOrder,
+//lấy số lượng bán của 8 category trong 1 tháng
+const getTotalAllCategoryOneMonth = async (req, res) => {
+  try {
+    const month = req.params.month;
+    let allCategory = ['Áo', 'Quần', 'Đầm váy', 'Gấu bông', 'Quà tặng', 'Đồ trang trí', 'Túi ví'];
+    let data = await Order.getTotalAllCategoryOneMonth(month);
+    for (let i = 0; i < data.length; i++) {
+      allCategory.splice(allCategory.indexOf(data[i].category), 1);
+    }
+
+    for (let i = 0; i < allCategory.length; i++) {
+      data.push({
+        category: allCategory[i],
+        month,
+        total: 0,
+      });
+    }
+
+    data.sort((a, b) => {
+      return a.category.localeCompare(b.category);
+    });
+
+    console.log(allCategory);
+    return res.status(200).json({ message: 'Done', data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+//lấy số doanh thu bán của 8 category trong 1 tháng
+const getSaleAllCategoryOneMonth = async (req, res) => {
+  try {
+    const month = req.params.month;
+    let allCategory = ['Áo', 'Quần', 'Đầm váy', 'Gấu bông', 'Quà tặng', 'Đồ trang trí', 'Túi ví'];
+    let data = await Order.getSaleAllCategoryOneMonth(month);
+    for (let i = 0; i < data.length; i++) {
+      allCategory.splice(allCategory.indexOf(data[i].category), 1);
+    }
+
+    for (let i = 0; i < allCategory.length; i++) {
+      data.push({
+        category: allCategory[i],
+        month,
+        total: 0,
+      });
+    }
+
+    data.sort((a, b) => {
+      return a.category.localeCompare(b.category);
+    });
+
+    console.log(allCategory);
+    return res.status(200).json({ message: 'Done', data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+const getSaleOneCategoryAllMonths = async (req, res) => {
+  try {
+    const category = req.params.category;
+    let data = await Order.getSaleOneCategoryAllMonths(category);
+    let saveMonth = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
+
+    data.forEach((order) => {
+      saveMonth.splice(saveMonth.indexOf(order.month), 1);
+    });
+    for (let i = 0; i < saveMonth.length; i++) {
+      data.push({ category, month: saveMonth[i], total: 0 });
+    }
+    data.sort((a, b) => {
+      return a.month - b.month;
+    });
+
+    //console.log(saveMonth);
+
+    return res.status(200).json({ message: 'Done', data });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export default {
+  addOrder,
+  getRevenue,
+  getAllOrders,
+  getOrders,
+  updateOrder,
+  searchOrder,
+  getNumberSoldCategoryFollowMonth,
+  getTotalAllCategoryOneMonth,
+  getSaleAllCategoryOneMonth,
+  getSaleOneCategoryAllMonths,
 };

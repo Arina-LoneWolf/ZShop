@@ -1,15 +1,15 @@
 import './Header.scss';
 import React, { useEffect, useRef } from 'react';
+import { Link, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { cartTotalQuantity, cartTotalPrice, cartState } from '../../recoil/cartState';
 import { loginState, signUpState } from '../../recoil/entryPointState';
 import { userState } from '../../recoil/userState';
-import { Link, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
-import { FaSearch } from "react-icons/fa";
-import { HiOutlineShoppingBag } from "react-icons/hi";
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 import ConditionalLink from '../../helpers/ConditionalLink';
+import { FaSearch } from "react-icons/fa";
+import { HiOutlineShoppingBag } from "react-icons/hi";
 import logo from '../../assets/images/textlogo.png';
 import emptyCart from '../../assets/images/cart-empty.png';
 import userApi from '../../apis/userApi';

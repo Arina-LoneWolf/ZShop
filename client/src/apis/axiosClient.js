@@ -18,7 +18,7 @@ axiosClient.interceptors.request.use(async (config) => {
     config.headers.Authorization = userAccessToken;
   }
   return config;
-})
+});
 
 axiosClient.interceptors.response.use((response) => {
   if (response?.data) {

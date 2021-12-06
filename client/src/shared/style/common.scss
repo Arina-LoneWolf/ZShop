@@ -1,5 +1,5 @@
 @mixin popup($radius) {
-  border-radius: $radius; // 8px
+  border-radius: $radius;
   z-index: 2;
   position: fixed;
   top: 50%;

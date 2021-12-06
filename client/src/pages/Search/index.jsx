@@ -15,7 +15,7 @@ function SearchSection() {
   const { search, state, pathname } = useLocation();
   const { name } = queryString.parse(search);
   const { category, type } = useParams();
-  const catalog = getCatalog(category, type);
+  const catalog = getCatalog(category);
 
   const filterRef = useRef(null);
 
@@ -167,7 +167,7 @@ function SearchSection() {
 
 export default SearchSection;
 
-const getCatalog = (category, type) => {
+const getCatalog = (category) => {
   let catalog = [];
 
   if (category === 'all') {

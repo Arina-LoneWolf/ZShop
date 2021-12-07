@@ -1,7 +1,7 @@
 import './Checkout.scss';
 import React, { useState, useEffect } from 'react';
 import { useRecoilValue, useSetRecoilState, useRecoilState } from 'recoil';
-import { cartTotalPrice, cartState } from '../../recoil/cartState';
+import { cartState } from '../../recoil/cartState';
 import { toastDisplayState } from '../../recoil/toastDisplayState';
 import { userState } from '../../recoil/userState';
 import SuccessOrder from './SuccessOrder';
@@ -30,7 +30,6 @@ const schema = yup.object({
 
 function Checkout() {
   const user = useRecoilValue(userState);
-  const totalPrice = useRecoilValue(cartTotalPrice);
   const [cart, setCart] = useRecoilState(cartState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
 
@@ -227,11 +226,11 @@ function Checkout() {
               </thead>
 
               <tbody>
-                {cart.map((item, index) => (
-                  <tr className="cart-item" key={index}>
-                    <td className="product-name">{`${item.product.name} - ${item.product.size}`}</td>
-                    <td className="product-quantity">{item.quantity}</td>
-                    <td className="product-unit-price">{(item.product.price - item.product.discount).toLocaleString()}đ</td>
+                {cart.products?.map(product => (
+                  <tr className="cart-item" key={product.id}>
+                    <td className="product-name">{`${product.name} - ${product.size}`}</td>
+                    <td className="product-quantity">{product.quantity}</td>
+                    <td className="product-unit-price">{product.priceAfterDis.toLocaleString()}đ</td>
                   </tr>
                 ))}
               </tbody>
@@ -241,7 +240,7 @@ function Checkout() {
               <tfoot>
                 <tr>
                   <td width="60%">Tạm tính</td>
-                  <td width="40%">{totalPrice.toLocaleString()}đ</td>
+                  <td width="40%">{cart.totalPrice.toLocaleString()}đ</td>
                 </tr>
 
                 <tr>
@@ -251,7 +250,7 @@ function Checkout() {
 
                 <tr>
                   <td width="60%">Tổng cộng</td>
-                  <td width="40%">{(totalPrice + 25000).toLocaleString()}đ</td>
+                  <td width="40%">{(cart.totalPrice + 25000).toLocaleString()}đ</td>
                 </tr>
               </tfoot>
             </table>

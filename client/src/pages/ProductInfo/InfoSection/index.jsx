@@ -146,8 +146,8 @@ function ProductInfo() {
 
         <div className="product-detail-info col l-6">
           <div className="product-title">{product.name}</div>
-          <div className="product-price">{(product.price - product.discount).toLocaleString()}đ</div>
-          {product.discount > 0 && <div className="product-original-price">{parseInt(product.price).toLocaleString()}đ</div>}
+          <div className="product-price">{product.priceAfterDis.toLocaleString()}đ</div>
+          {product.discount > 0 && <div className="product-original-price">{product.price.toLocaleString()}đ</div>}
 
           <div className="size-group">
             <div className="size-title">Size</div>

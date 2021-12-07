@@ -1,7 +1,9 @@
 import './Banner.scss';
 import React from "react";
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import { bannerManagerDisplayState } from '../../../recoil/bannerManagerDisplayState';
+import { userState } from '../../../recoil/userState';
+import { useQuery } from 'react-query';
 import EditBanner from './EditBanner';
 import { Swiper, SwiperSlide } from "swiper/react";
 import SwiperCore, { Autoplay, Pagination, Navigation } from "swiper";
@@ -12,11 +14,19 @@ import slider1 from '../../../assets/images/slider-1.png';
 import slider2 from '../../../assets/images/slider-2.png';
 import slider3 from '../../../assets/images/slider-3.png';
 import slider4 from '../../../assets/images/slider-4.png';
+import bannerApi from '../../../apis/bannerApi';
 
 SwiperCore.use([Autoplay, Pagination, Navigation]);
 
 function Banner() {
   const [bannerManagerDisplay, setBannerManagerDisplay] = useRecoilState(bannerManagerDisplayState);
+  const user = useRecoilValue(userState);
+
+  const { data: banners, refetch } = useQuery('banners', async () => {
+    const response = await bannerApi.getAll();
+    console.log(response);
+    return response.banners;
+  }, { refetchOnWindowFocus: false });
 
   const showBannerManager = () => {
     setBannerManagerDisplay(true);
@@ -41,7 +51,12 @@ function Banner() {
             navigation={true}
             className="slideshow-banner"
           >
-            <SwiperSlide>
+            {banners?.map(banner => (
+              <SwiperSlide key={banner.id}>
+                <img src={banner.bannerLink} alt={'slider' + banner.id} />
+              </SwiperSlide>
+            ))}
+            {/* <SwiperSlide>
               <img src={slider1} alt="slider1" />
             </SwiperSlide>
             <SwiperSlide>
@@ -52,17 +67,17 @@ function Banner() {
             </SwiperSlide>
             <SwiperSlide>
               <img src={slider4} alt="slider4" />
-            </SwiperSlide>
+            </SwiperSlide> */}
           </Swiper>
         </div>
 
-        <div className="edit-btn" onClick={showBannerManager}>
+        {user?.isAdmin === 1 && <div className="edit-btn" onClick={showBannerManager}>
           Chỉnh sửa
           <MdEdit className="edit-icon" />
-        </div>
+        </div>}
       </div>
 
-      {bannerManagerDisplay && <EditBanner />}
+      {bannerManagerDisplay && <EditBanner banners={banners} refetch={refetch} />}
     </div>
   );
 }

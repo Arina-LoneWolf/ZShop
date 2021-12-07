@@ -61,6 +61,7 @@ function SearchSection() {
     }
 
     setTotalPages(response.totalPages);
+    console.log(response);
     return response;
   });
 
@@ -84,10 +85,13 @@ function SearchSection() {
   const handleFilterChange = (e) => {
     switch (e.target.value) {
       case 'new':
-        setFilter({ status: 1 });
+        setFilter({ status: 'Mới' });
         break;
       case 'sale':
-        setFilter({ status: 2 });
+        setFilter({ status: 'Khuyến mãi' });
+        break;
+      case 'hot':
+        setFilter({ status: 'Bán chạy' });
         break;
       case 'ascending':
         setFilter({ sort: 1 });
@@ -123,10 +127,11 @@ function SearchSection() {
                 <div className="col fl-20">
                   <select name="filters" id="filters" onChange={handleFilterChange} ref={filterRef}>
                     <option value="option">------ Lọc -----</option>
-                    <option value="new">Mới nhất</option>
+                    <option value="new">Mới</option>
+                    <option value="hot">Hot</option>
+                    <option value="sale">Sale off</option>
                     <option value="ascending">Giá tăng dần</option>
                     <option value="descending">Giá giảm dần</option>
-                    <option value="sale">Sale</option>
                   </select>
                 </div>
               </div>
@@ -138,14 +143,14 @@ function SearchSection() {
               <EatLoading color='#ffb0bd' />
             </div>}
             {isError && <FetchError />}
-            {data?.products.map(product => <ProductCard product={product} key={product._id} />)}
+            {data?.products?.map(product => <ProductCard product={product} key={product._id} />)}
           </div>
 
           {(category === 'gift' || category === 'decorator' || category === 'bag' || category === 'stuff-animal') && <div className="no-set">Hiện chưa có sản phẩm này</div>}
 
-          {data?.products.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
+          {data?.products?.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
 
-          {data?.products.length > 0 && <ReactPaginate
+          {data?.products?.length > 0 && <ReactPaginate
             previousLabel={"Prev"}
             nextLabel={"Next"}
             pageCount={totalPages}

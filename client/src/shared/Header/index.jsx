@@ -5,6 +5,7 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { cartTotalQuantity, cartTotalPrice, cartState } from '../../recoil/cartState';
 import { loginState, signUpState } from '../../recoil/entryPointState';
 import { userState } from '../../recoil/userState';
+import { useQuery } from 'react-query';
 import LoginForm from './LoginForm';
 import SignUpForm from './SignUpForm';
 import ConditionalLink from '../../helpers/ConditionalLink';
@@ -13,8 +14,15 @@ import { HiOutlineShoppingBag } from "react-icons/hi";
 import logo from '../../assets/images/textlogo.png';
 import emptyCart from '../../assets/images/cart-empty.png';
 import userApi from '../../apis/userApi';
+import productApi from '../../apis/productApi';
 
 function Header() {
+  const { data: categories } = useQuery('categories', async () => {
+    const response = await productApi.getAllCategories();
+    console.log('CATEGORIES: ', response);
+    return response;
+  }, { refetchOnWindowFocus: false });
+
   const history = useHistory();
   const { pathname } = useLocation();
 
@@ -184,7 +192,23 @@ function Header() {
         <div className="nav-bar-container">
           <ul className="nav-bar">
             <li className="all"><Link to={{ pathname: '/category/all', state: 'Tất cả sản phẩm' }}>Tất cả</Link></li>
-            <li className="shirt">
+            {categories?.map(category => (
+              <li className="category" key={category.categoryName}>
+                <Link to={{ pathname: `/category/${category.categoryKey}`, state: category.categoryName }}>
+                  {category.categoryName}
+                </Link>
+                <ul className="sub-nav">
+                  {category.types?.map(type => (
+                    <li key={type.typeName}>
+                      <Link to={{ pathname: `/category/${category.categoryKey}/${type.typeKey}`, state: type.typeName}}>
+                        {type.typeName}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+              </li>
+            ))}
+            {/* <li className="shirt">
               <Link to={{ pathname: '/category/ao', state: 'Áo' }}>Áo</Link>
               <ul className="sub-nav">
                 <li><Link to={{ pathname: '/category/ao/ao-the-thao', state: 'Áo thể thao' }}>Áo thể thao</Link></li>
@@ -213,7 +237,7 @@ function Header() {
             <li className="gift"><Link to={{ pathname: '/category/gift', state: 'Quà tặng' }}>Quà tặng</Link></li>
             <li className="decorator"><Link to={{ pathname: '/category/decorator', state: 'Đồ trang trí' }}>Đồ trang trí</Link></li>
             <li className="bag"><Link to={{ pathname: '/category/bag', state: 'Túi ví' }}>Túi ví</Link></li>
-            <li className="stuff-animal"><Link to={{ pathname: '/category/stuff-animal', state: 'Gấu bông' }}>Gấu bông</Link></li>
+            <li className="stuff-animal"><Link to={{ pathname: '/category/stuff-animal', state: 'Gấu bông' }}>Gấu bông</Link></li> */}
           </ul>
         </div>
       </div>

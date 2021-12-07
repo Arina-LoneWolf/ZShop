@@ -1,8 +1,9 @@
 import './InfoSection.scss';
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
-import { useRecoilState, useSetRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
 import { addToCart, cartState, getProductQuantityInCart } from '../../../recoil/cartState';
+import { userState } from '../../../recoil/userState';
 import { toastDisplayState } from '../../../recoil/toastDisplayState';
 import { useQuery } from 'react-query';
 import { MdLocalShipping } from "react-icons/md";
@@ -10,6 +11,7 @@ import { GiTwoCoins } from "react-icons/gi";
 import { EatLoading } from 'react-loadingg';
 import FetchError from '../../../shared/notifications/FetchError';
 import productApi from '../../../apis/productApi';
+import cartApi from '../../../apis/cartApi';
 import uuid from 'react-uuid';
 
 function ProductInfo() {
@@ -19,11 +21,13 @@ function ProductInfo() {
 
   const { data: product, isLoading, isError, refetch } = useQuery(['productDetail', id], async () => {
     const response = await productApi.getInfo(id);
-    return response;
+    console.log(response);
+    return response; // nhớ bỏ [0] ra
   });
 
   const [cart, setCart] = useRecoilState(cartState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
+  const user = useRecoilValue(userState);
 
   const [quantity, setQuantity] = useState(1);
   const [currentImage, setCurrentImage] = useState('');
@@ -58,7 +62,7 @@ function ProductInfo() {
     setColor(e.target.style.backgroundImage.slice(5, -2));
   }
 
-  const addProductToCart = (sizeLabel, buttonType) => {
+  const addProductToCartOld = (sizeLabel, buttonType) => {
     //create a product object from existing information
     const item = {
       name: product.name,
@@ -92,11 +96,46 @@ function ProductInfo() {
     }
   }
 
+  const addProductToCart = (sizeLabel, buttonType) => {
+    //create a product object from existing information
+    const item = {
+      userId: user.id,
+      productId: product.id,
+      colorLink: color,
+      size: sizeLabel.value,
+      quantity
+    }
+
+    cartApi.add(item)
+      .then(response => {
+
+      })
+      .catch(error => {
+        console.log(error);
+      });
+
+    // if press the 'add_to_cart' button, then show the toast message
+    // if press the 'buy_now' button, then go to the Cart Page
+    if (buttonType === 'add_to_cart') {
+      setToastDisplay({
+        show: true,
+        message: <span>Bạn đã thêm sản phẩm <strong>{item.name}</strong> vào giỏ hàng!</span>
+      });
+    } else {
+      history.push('/cart');
+    }
+  }
+
   const handleAddProductToCart = (buttonType) => {
     // get selected size from checked size label
     const sizeLabel = document.querySelector('input[name="size"]:checked');
     // check if the product information is not complete, then show the toast message, otherwise add the product to cart
-    if (!sizeLabel) {
+    if (!user.accessToken) {
+      setToastDisplay({
+        show: true,
+        message: 'Vui lòng đăng nhập để mua sản phẩm'
+      });
+    } else if (!sizeLabel) {
       setToastDisplay({
         show: true,
         message: 'Bạn chưa chọn size cho sản phẩm'
@@ -106,7 +145,7 @@ function ProductInfo() {
         show: true,
         message: 'Bạn chưa chọn màu cho sản phẩm'
       });
-    } else if (quantity + getProductQuantityInCart(cart, product._id) > product.quantity) {
+    } else if (quantity + getProductQuantityInCart(cart, product.id) > product.quantity) {
       setToastDisplay({
         show: true,
         message: <span><strong>{product.name}</strong> hiện chỉ còn <strong>{product.quantity}</strong> sản phẩm</span>
@@ -128,10 +167,10 @@ function ProductInfo() {
       {isError && <FetchError />}
       {product && <div className="product-detail row">
         <div className="product-images col l-6">
-          <div className="main-image" style={{ backgroundImage: `url(${currentImage || product.images[0]})` }}></div>
+          <div className="main-image" style={{ backgroundImage: `url(${currentImage || product.arrImages[0]})` }}></div>
           <div className="sub-images">
             <div className="row">
-              {product.images.map((image, index) => (
+              {product.arrImages.map((image, index) => (
                 <div className="l-2 sub-image-container" key={index}>
                   <div className="sub-image" style={{ backgroundImage: `url(${image})` }} onClick={(e) => handleSubImageClick(e, image)}></div>
                 </div>
@@ -148,7 +187,7 @@ function ProductInfo() {
           <div className="size-group">
             <div className="size-title">Size</div>
             <div className="size-selection">
-              {product.sizes.map((size, index) => (
+              {product.arrSizes.map((size, index) => (
                 <div className="size-options" key={index}>
                   <input className="radio-option" type="radio" id={size} name="size" value={size} />
                   <label htmlFor={size} className="size-option">{size}</label>
@@ -160,7 +199,7 @@ function ProductInfo() {
           <div className="color-group">
             <div className="color-title">Màu sắc</div>
             <ul className="color-selection">
-              {product.colors.map((color, index) => <li className="color-option" key={index} style={{ backgroundImage: `url(${color})` }} onClick={handleColorClick}></li>)}
+              {product.arrColors.map((color, index) => <li className="color-option" key={index} style={{ backgroundImage: `url(${color})` }} onClick={handleColorClick}></li>)}
             </ul>
           </div>
 

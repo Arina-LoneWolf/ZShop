@@ -243,9 +243,11 @@ const loginGoogle = async (req, res) => {
 
     const { email, name, email_verified } = verify.payload;
 
+
     if (email_verified) {
       let checkEmail = null;
-      checkEmail = await User.getIdByEmail(newEmail);
+      checkEmail = await User.getIdByEmail(email);
+
       if (checkEmail !== null && checkEmail.length === 1) {
         const accessToken = jwt.sign({ id: checkEmail[0].id }, process.env.ACCESS_TOKEN_SECRET);
         return res.status(200).json({
@@ -254,12 +256,16 @@ const loginGoogle = async (req, res) => {
         });
       }
 
+
+
       const username = name + Date.now();
       const password = email + Date.now();
       const hashPassword = await bcrypt.hash(password, 10);
 
-      await User.register([name, username, hashPassword, email]);
-      const accessToken = jwt.sign({ id: checkEmail[0].id }, process.env.ACCESS_TOKEN_SECRET);
+      const newUser = await User.register([name, username, hashPassword, email]);
+
+      //console.log('newUser', newUser.insertId)
+      const accessToken = jwt.sign({ id: newUser.insertId }, process.env.ACCESS_TOKEN_SECRET);
       return res.status(201).json({ message: 'Login with gg success', accessToken });
     }
     // console.log(name);

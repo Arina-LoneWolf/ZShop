@@ -1,28 +1,17 @@
 import './EditBanner.scss';
-import React, { useState } from 'react';
+import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import { bannerManagerDisplayState } from '../../../../recoil/bannerManagerDisplayState';
 import { dialogState } from '../../../../recoil/dialogState';
-import TextError from '../../../../shared/notifications/TextError';
-import * as yup from 'yup';
-import { useForm } from "react-hook-form";
-import { yupResolver } from '@hookform/resolvers/yup';
 import { LoopCircleLoading } from 'react-loadingg';
-import { useMutation, useQuery } from 'react-query';
-import { MdEdit, MdDelete } from 'react-icons/md';
+import { useMutation } from 'react-query';
 import { IoClose } from "react-icons/io5";
 import imageUploadApi from '../../../../apis/imageUploadApi';
 import bannerApi from '../../../../apis/bannerApi';
 
-function EditBanner() {
+function EditBanner({ banners, refetch}) {
   const setBannerManagerDisplay = useSetRecoilState(bannerManagerDisplayState);
   const setDialog = useSetRecoilState(dialogState);
-
-  const { data: banners, isLoading, refetch } = useQuery('banners', async () => {
-    const response = await bannerApi.getAll();
-    console.log(response);
-    return response.banners;
-  });
 
   const handleClosing = () => {
     setBannerManagerDisplay(false);
@@ -108,7 +97,7 @@ function EditBanner() {
             <div className="image-heading fl-55">Hình ảnh</div>
             <div className="add-new-container fl-33">
               <input type="file" id="new-banner-img" onChange={addBanner} accept="image/*" />
-              <label htmlFor="new-banner-img" className="add-new-btn">+ Thêm</label>
+              {banners?.length < 5 && <label htmlFor="new-banner-img" className="add-new-btn">+ Thêm</label>}
             </div>
           </div>
 

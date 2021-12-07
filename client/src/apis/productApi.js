@@ -12,12 +12,12 @@ const productApi = {
   },
 
   getByCategory: (category, params) => { // params: type, status, sort, page, limit
-    const url = `/api/product/detail/${category}`;
+    const url = `/api/product/product-category/${category}`;
     return axiosClient.get(url, { params });
   },
 
   getInfo: (id) => {
-    const url = `/api/product/get-product/${id}`;
+    const url = `/api/product/detail/${id}`;
     return axiosClient.get(url);
   },
 

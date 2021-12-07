@@ -61,7 +61,7 @@ function Cart() {
         const errorProduct = error.response.data;
         setToastDisplay({
           show: true,
-          message: <span><strong>{errorProduct.productName}</strong> hiện chỉ còn <strong>{errorProduct.productQuantity}</strong> sản phẩm</span>
+          message: <span><strong>{errorProduct.name}</strong> hiện chỉ còn <strong>{errorProduct.quantity}</strong> sản phẩm</span>
         });
       });
   }

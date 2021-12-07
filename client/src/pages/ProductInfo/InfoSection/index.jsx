@@ -2,7 +2,7 @@ import './InfoSection.scss';
 import React, { useState, useEffect } from 'react';
 import { useHistory, useParams, useLocation } from 'react-router-dom';
 import { useRecoilState, useSetRecoilState, useRecoilValue } from 'recoil';
-import { addToCart, cartState, getProductQuantityInCart } from '../../../recoil/cartState';
+import { cartState } from '../../../recoil/cartState';
 import { userState } from '../../../recoil/userState';
 import { toastDisplayState } from '../../../recoil/toastDisplayState';
 import { useQuery } from 'react-query';
@@ -12,7 +12,6 @@ import { EatLoading } from 'react-loadingg';
 import FetchError from '../../../shared/notifications/FetchError';
 import productApi from '../../../apis/productApi';
 import cartApi from '../../../apis/cartApi';
-import uuid from 'react-uuid';
 
 function ProductInfo() {
   const { pathname: url } = useLocation();
@@ -25,7 +24,7 @@ function ProductInfo() {
     return response.product;
   });
 
-  const [cart, setCart] = useRecoilState(cartState);
+  const setCart = useSetRecoilState(cartState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
   const user = useRecoilValue(userState);
 
@@ -62,42 +61,7 @@ function ProductInfo() {
     setColor(e.target.style.backgroundImage.slice(5, -2));
   }
 
-  const addProductToCartOld = (sizeLabel, buttonType) => {
-    //create a product object from existing information
-    const item = {
-      name: product.name,
-      price: product.price,
-      discount: product.discount,
-      size: sizeLabel.value,
-      color,
-      _id: product._id,
-      url: url,
-      quantity: product.quantity,
-      type: product.type,
-      category: product.category,
-      status: product.status
-    }
-    // create new cart from the product just created and product quantity
-    const newCart = addToCart(cart, item, quantity, uuid());
-    // update cart state with new cart
-    setCart(newCart);
-    // save new cart to the local storage
-    localStorage.setItem('cart', JSON.stringify(newCart));
-
-    // if press the 'add_to_cart' button, then show the toast message
-    // if press the 'buy_now' button, then go to the Cart Page
-    if (buttonType === 'add_to_cart') {
-      setToastDisplay({
-        show: true,
-        message: <span>Bạn đã thêm sản phẩm <strong>{item.name}</strong> vào giỏ hàng!</span>
-      });
-    } else {
-      history.push('/cart');
-    }
-  }
-
   const addProductToCart = (sizeLabel, buttonType) => {
-    //create a product object from existing information
     const item = {
       productId: product.id,
       colorLink: color,
@@ -107,10 +71,17 @@ function ProductInfo() {
 
     cartApi.add(item)
       .then(response => {
-        console.log('res add cart', response);
+        console.log(response);
+        setCart(response.cart)
       })
       .catch(error => {
-        console.log(error);
+        console.log(error.response.data);
+        const errorProduct = error.response.data;
+        setToastDisplay({
+          show: true,
+          message: <span><strong>{errorProduct.name}</strong> hiện chỉ còn <strong>{errorProduct.quantity}</strong> sản phẩm</span>
+        });
+        return;
       });
 
     // if press the 'add_to_cart' button, then show the toast message
@@ -143,11 +114,6 @@ function ProductInfo() {
       setToastDisplay({
         show: true,
         message: 'Bạn chưa chọn màu cho sản phẩm'
-      });
-    } else if (quantity + getProductQuantityInCart(cart, product.id) > product.quantity) {
-      setToastDisplay({
-        show: true,
-        message: <span><strong>{product.name}</strong> hiện chỉ còn <strong>{product.quantity}</strong> sản phẩm</span>
       });
     } else {
       addProductToCart(sizeLabel, buttonType);

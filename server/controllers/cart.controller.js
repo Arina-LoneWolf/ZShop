@@ -7,9 +7,7 @@ const addProductToCart = async (req, res) => {
     const rowProduct = await Cart.getQuantityProduct(productId);
 
     if (rowProduct[0].quantity < quantity) {
-      return res
-        .status(400)
-        .json({ message: `${rowProduct[0].name} exist ${rowProduct[0].quantity}` });
+      return res.status(400).json({ name: rowProduct[0].name, quantity: rowProduct[0].quantity });
     }
 
     const rowCart = await Cart.getCart(userId);
@@ -76,9 +74,7 @@ const updateQuantityProduct = async (req, res) => {
     const userId = req.user.id; //req.params.id;
     const rowProduct = await Cart.getQuantityProduct(productId);
     if (rowProduct[0].quantity < quantity) {
-      return res
-        .status(400)
-        .json({ message: `${rowProduct[0].name} exist ${rowProduct[0].quantity}` });
+      return res.status(400).json({ name: rowProduct[0].name, quantity: rowProduct[0].quantity });
     }
 
     const rowCart = await Cart.getCart(userId);

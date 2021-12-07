@@ -1,5 +1,5 @@
 import './Cart.scss';
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { removeFromCart, decreaseCartItem, increaseCartItem, getProductQuantityInCart, cartTotalPrice, cartState } from '../../recoil/cartState';
 import { toastDisplayState } from '../../recoil/toastDisplayState';
@@ -7,6 +7,7 @@ import { dialogState } from '../../recoil/dialogState';
 import { userState } from '../../recoil/userState';
 import { Link, useHistory } from 'react-router-dom';
 import EmptyCart from './EmptyCart';
+import cartApi from '../../apis/cartApi';
 
 function Cart() {
   const history = useHistory();
@@ -17,6 +18,15 @@ function Cart() {
   const setDialog = useSetRecoilState(dialogState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
   const user = useRecoilValue(userState);
+
+  useEffect(() => {
+    const getCart = async () => {
+      const newCart = await cartApi.get();
+      console.log(newCart);
+    }
+
+    getCart();
+  }, [])
 
   const handleRemoveProduct = (id) => {
     setDialog({

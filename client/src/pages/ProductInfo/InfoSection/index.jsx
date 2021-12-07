@@ -99,7 +99,6 @@ function ProductInfo() {
   const addProductToCart = (sizeLabel, buttonType) => {
     //create a product object from existing information
     const item = {
-      userId: user.id,
       productId: product.id,
       colorLink: color,
       size: sizeLabel.value,
@@ -108,7 +107,7 @@ function ProductInfo() {
 
     cartApi.add(item)
       .then(response => {
-
+        console.log('res add cart', response);
       })
       .catch(error => {
         console.log(error);
@@ -119,7 +118,7 @@ function ProductInfo() {
     if (buttonType === 'add_to_cart') {
       setToastDisplay({
         show: true,
-        message: <span>Bạn đã thêm sản phẩm <strong>{item.name}</strong> vào giỏ hàng!</span>
+        message: <span>Bạn đã thêm sản phẩm <strong>{product.name}</strong> vào giỏ hàng!</span>
       });
     } else {
       history.push('/cart');

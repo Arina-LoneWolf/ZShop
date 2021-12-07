@@ -1,7 +1,6 @@
-import React, { useRef, useState } from 'react';
+import React, { useRef } from 'react';
 import { useRecoilState } from 'recoil';
 import { userState } from '../../../recoil/userState';
-import { useQuery } from 'react-query';
 import TextError from '../../../shared/notifications/TextError';
 import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';

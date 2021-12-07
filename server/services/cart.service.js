@@ -12,6 +12,18 @@ const Cart = {
     return data;
   },
 
+  getProductInCart: async (infoProduct) => {
+    const data = await executeQuery(
+      `
+    SELECT productId,quantity FROM CartDetail 
+    WHERE productId=? 
+    AND size=?
+    AND colorLink=?`,
+      infoProduct
+    );
+    return data;
+  },
+
   getCartTrans: async (userId, pool) => {
     return await pool.query('SELECT id FROM Cart WHERE userId=?', [userId]);
   },
@@ -25,7 +37,7 @@ const Cart = {
   },
 
   getQuantityProduct: async (productId) => {
-    const data = await executeQuery('SELECT quantity FROM Product WHERE id=?', [productId]);
+    const data = await executeQuery('SELECT name,quantity FROM Product WHERE id=?', [productId]);
     return data;
   },
 
@@ -77,6 +89,7 @@ const Cart = {
     WHERE CartDetail.cartId =?
     AND CartDetail.productId=?
     AND CartDetail.size=?
+    AND CartDetail.colorLink=?
     `,
       dataUpdate
     );
@@ -90,6 +103,7 @@ const Cart = {
       WHERE CartDetail.cartId=?
       AND CartDetail.productId=?
       AND CartDetail.size=?
+      AND CartDetail.colorLink=?
       `,
       // `
       // DELETE FROM CartDetail

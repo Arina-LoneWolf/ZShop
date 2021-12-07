@@ -10,6 +10,6 @@ router.post('/add', auth, cartController.addProductToCart);
 
 router.patch('/update', auth, cartController.updateQuantityProduct);
 
-router.delete('/delete', auth, cartController.deleteProductInCart);
+router.delete('/delete-item', auth, cartController.deleteProductInCart);
 
 export default router;

@@ -1,8 +1,8 @@
 import axiosClient from './axiosClient';
 
 const cartApi = {
-  get: (userId) => {
-    const url = `/api/cart/get/${userId}`;
+  get: () => {
+    const url = '/api/cart/get';
     return axiosClient.get(url);
   },
 

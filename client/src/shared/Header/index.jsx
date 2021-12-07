@@ -2,7 +2,7 @@ import './Header.scss';
 import React, { useEffect, useRef } from 'react';
 import { Link, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { cartTotalQuantity, cartTotalPrice, cartState } from '../../recoil/cartState';
+import { cartTotalPrice, cartState } from '../../recoil/cartState';
 import { loginState, signUpState } from '../../recoil/entryPointState';
 import { userState } from '../../recoil/userState';
 import { useQuery } from 'react-query';
@@ -27,7 +27,7 @@ function Header() {
   const { pathname } = useLocation();
 
   const cart = useRecoilValue(cartState);
-  const totalQuantity = useRecoilValue(cartTotalQuantity);
+  // const totalQuantity = useRecoilValue(cartTotalQuantity);
   const totalPrice = useRecoilValue(cartTotalPrice);
 
   const [login, setLogin] = useRecoilState(loginState);
@@ -112,15 +112,15 @@ function Header() {
     }
   }, [pathname]);
 
-  useEffect(() => {
-    if (pathname === '/cart' || pathname.includes('/admin')) return;
+  // useEffect(() => {
+  //   if (pathname === '/cart' || pathname.includes('/admin')) return;
 
-    if (cart.length) {
-      cartPreviewRef.current.classList.remove('empty');
-    } else {
-      cartPreviewRef.current.classList.add('empty');
-    }
-  }, [cart, pathname]);
+  //   if (cart.length) {
+  //     cartPreviewRef.current.classList.remove('empty');
+  //   } else {
+  //     cartPreviewRef.current.classList.add('empty');
+  //   }
+  // }, [cart, pathname]);
 
   const isInDashboard = useRouteMatch('/admin');
   const isInCartPage = useRouteMatch('/cart');
@@ -154,8 +154,9 @@ function Header() {
             <div className="cart-group">
               <Link to='/cart' className="cart-hover"></Link>
               <HiOutlineShoppingBag className="cart-icon" />
-              <div className="cart-notice">{totalQuantity}</div>
-              {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
+              {/* <div className="cart-notice">{totalQuantity}</div> */}
+              <div className="cart-notice">{cart.products.length}</div>
+              {/* {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
                 <div className="empty-cart-container">
                   <img src={emptyCart} alt="" className="empty-cart-img" />
                   <div className="empty-cart-message">Chưa có sản phẩm nào</div>
@@ -182,7 +183,7 @@ function Header() {
                   </div>
                   <Link to='/cart'><div className="view-cart-btn">Xem giỏ hàng</div></Link>
                 </div>
-              </div>}
+              </div>} */}
             </div>
           </div>
         </div>

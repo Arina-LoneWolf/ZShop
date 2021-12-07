@@ -57,21 +57,13 @@ function Cart() {
         setCart(response.cart);
       })
       .catch(error => {
-        console.log(error);
+        console.log(error.response.data);
+        const errorProduct = error.response.data;
+        setToastDisplay({
+          show: true,
+          message: <span><strong>{errorProduct.productName}</strong> hiện chỉ còn <strong>{errorProduct.productQuantity}</strong> sản phẩm</span>
+        });
       });
-
-    // if (getProductQuantityInCart(cart, product._id) + 1 > product.quantity) {
-    //   setToastDisplay({
-    //     show: true,
-    //     message: <span><strong>{product.name}</strong> hiện chỉ còn <strong>{product.quantity}</strong> sản phẩm</span>
-    //   });
-    //   return;
-    // }
-
-    // const newCart = increaseCartItem(cart, id);
-
-    // setCart(newCart);
-    // localStorage.setItem('cart', JSON.stringify(newCart));
   }
 
   const handleProductDecrement = (product) => {

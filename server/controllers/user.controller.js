@@ -124,6 +124,7 @@ const getInfo = async (req, res) => {
   try {
     const id = req.user.id;
     const user = await User.getInfo(id);
+
     return res.status(200).json({ message: 'Get info success', user: user[0] });
   } catch (error) {
     res.status(500).json(error);
@@ -148,7 +149,7 @@ const updateInfo = async (req, res) => {
 
     await User.updateInfo(data);
     const user = await User.getInfo(id);
-    return res.json({ message: 'Update info success', user });
+    return res.status(200).json({ message: 'Update info success', user });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -167,7 +168,7 @@ const updatePass = async (req, res) => {
     const passwordHash = await bcrypt.hash(newPassword, 10);
     await User.updatePassword(passwordHash, id);
 
-    return res.json({ message: 'Update password success' });
+    return res.status(200).json({ message: 'Update password success' });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -204,7 +205,7 @@ const updateEmail = async (req, res) => {
         otp,
       });
     } else {
-      return res.json({ message: 'Update email failed' });
+      return res.status(400).json({ message: 'Update email failed' });
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -243,7 +244,6 @@ const loginGoogle = async (req, res) => {
 
     const { email, name, email_verified } = verify.payload;
 
-
     if (email_verified) {
       let checkEmail = null;
       checkEmail = await User.getIdByEmail(email);
@@ -256,8 +256,6 @@ const loginGoogle = async (req, res) => {
         });
       }
 
-
-
       const username = name + Date.now();
       const password = email + Date.now();
       const hashPassword = await bcrypt.hash(password, 10);
@@ -268,8 +266,6 @@ const loginGoogle = async (req, res) => {
       const accessToken = jwt.sign({ id: newUser.insertId }, process.env.ACCESS_TOKEN_SECRET);
       return res.status(201).json({ message: 'Login with gg success', accessToken });
     }
-    // console.log(name);
-    // return res.status(201).json({ message: 'Register success gg' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

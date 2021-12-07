@@ -21,8 +21,8 @@ const userApi = {
     return axiosClient.get(url);
   },
 
-  updateInfo: (id, data) => {
-    const url = `/api/user/update-info/${id}`;
+  updateInfo: (data) => {
+    const url = '/api/user/update-info';
     return axiosClient.patch(url, data);
   },
 

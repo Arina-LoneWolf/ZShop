@@ -36,7 +36,7 @@ function Profile() {
     phone: user.phone,
     province: user.city,
     district: user.district,
-    addressDetail: user.address
+    addressDetail: user.adress // sai chính tả dm
   };
 
   const { register, handleSubmit, formState: { errors, isDirty } } = useForm({
@@ -50,7 +50,7 @@ function Profile() {
       phone: values.phone,
       city: values.province,
       district: values.district,
-      address: values.addressDetail
+      adress: values.addressDetail // sai chính tả dm
     }
 
     setDialog({
@@ -66,7 +66,7 @@ function Profile() {
             type: SUCCESS,
             message: 'Thông tin tài khoản đã được cập nhật'
           });
-        }).catch(error => console.log(error.response.data.message));
+        }).catch(error => console.log(error));
       }
     });
   };

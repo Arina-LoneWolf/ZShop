@@ -1,5 +1,5 @@
 import React from 'react';
-import { useSetRecoilState } from 'recoil';
+import { useSetRecoilState, useRecoilState } from 'recoil';
 import { resultMessageState, SUCCESS, FAILURE } from '../../../recoil/resultMessageState';
 import { dialogState } from '../../../recoil/dialogState';
 import TextError from '../../../shared/notifications/TextError';

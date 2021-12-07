@@ -22,7 +22,7 @@ function ProductInfo() {
   const { data: product, isLoading, isError, refetch } = useQuery(['productDetail', id], async () => {
     const response = await productApi.getInfo(id);
     console.log(response);
-    return response; // nhớ bỏ [0] ra
+    return response.product;
   });
 
   const [cart, setCart] = useRecoilState(cartState);

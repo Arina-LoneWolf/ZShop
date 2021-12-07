@@ -28,7 +28,7 @@ const addProductToCart = async (req, res) => {
 
 const getAllProductsInCart = async (req, res) => {
   try {
-    const userId = req.params.id;
+    const userId = req.user.id;
     const data = await Cart.getAllProducts(userId);
 
     return res.status(200).json({ products: data });
@@ -40,7 +40,7 @@ const getAllProductsInCart = async (req, res) => {
 const updateQuantityProduct = async (req, res) => {
   try {
     const { productId, size, quantity } = req.body;
-    const userId = req.params.id;
+    const userId = req.user.id; //req.params.id;
     const rowProduct = await Cart.getQuantityProduct(productId);
     if (rowProduct[0].quantity < quantity) {
       return res.status(500).json({ message: 'Not enough product' });
@@ -62,7 +62,7 @@ const updateQuantityProduct = async (req, res) => {
 const deleteProductInCart = async (req, res) => {
   try {
     const { products } = req.body;
-    const userId = req.params.id;
+    const userId = req.user.id; //req.params.id;
 
     const rowCart = await Cart.getCart(userId);
     if (rowCart.length === 0) {

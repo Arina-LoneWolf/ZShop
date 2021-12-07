@@ -34,6 +34,7 @@ function SearchSection() {
     if (search) {
       const params = {
         ...pagination,
+        ...filter,
         name
       };
       response = await productApi.search(params);

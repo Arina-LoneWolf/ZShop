@@ -105,8 +105,9 @@ const getAllProducts = async (req, res) => {
 const getProductDetail = async (req, res) => {
   try {
     console.log(typeof req.params.id);
-    const product = await Product.getDetail(req.params.id);
-    res.status(200).json(product);
+    const id = parseInt(req.params.id);
+    const product = await Product.getDetail([id]); //(req.params.id);
+    res.status(200).json({ product: product[0] });
   } catch (error) {
     res.status(500).json(error);
   }
@@ -252,7 +253,7 @@ const getProductCategory = async (req, res) => {
       }
     }
     res.status(200).json({
-      product: data,
+      products: data,
       totalPages: Math.ceil(totalProduct[0].totalProduct / limit),
       page: page,
     });

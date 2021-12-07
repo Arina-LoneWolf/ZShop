@@ -1,5 +1,5 @@
 import './Cart.scss';
-import React, { useEffect } from 'react';
+import React from 'react';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
 import { cartState } from '../../recoil/cartState';
 import { toastDisplayState } from '../../recoil/toastDisplayState';
@@ -16,15 +16,6 @@ function Cart() {
   const setDialog = useSetRecoilState(dialogState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
   const user = useRecoilValue(userState);
-
-  // useEffect(() => {
-  //   const getCart = async () => {
-  //     const newCart = await cartApi.get();
-  //     console.log(newCart);
-  //   }
-
-  //   getCart();
-  // }, [])
 
   const handleRemoveProduct = (product) => {
     setDialog({
@@ -45,19 +36,14 @@ function Cart() {
         cartApi.delete(item)
           .then(response => {
             console.log(response);
-            // setCart(response.cart);
+            setCart(response.cart);
           })
           .catch(error => console.log(error));
-
-        // const newCart = removeFromCart(cart, id);
-
-        // setCart(newCart);
-        // localStorage.setItem('cart', JSON.stringify(newCart));
       }
     });
   }
 
-  const handleProductIncrement = (id, product) => {
+  const handleProductIncrement = (product) => {
     const item = {
       productId: product.id,
       size: product.size,
@@ -68,7 +54,7 @@ function Cart() {
     cartApi.update(item)
       .then(response => {
         console.log(response);
-        // setCart(response.cart);
+        setCart(response.cart);
       })
       .catch(error => {
         console.log(error);
@@ -101,16 +87,9 @@ function Cart() {
     cartApi.update(item)
       .then(response => {
         console.log(response);
-        // setCart(response.cart);
+        setCart(response.cart);
       })
       .catch(error => console.log(error));
-
-    // let newCart = [];
-
-    // newCart = decreaseCartItem(cart, id);
-
-    // setCart(newCart);
-    // localStorage.setItem('cart', JSON.stringify(newCart));
   }
 
   const handleCheckoutClick = () => {

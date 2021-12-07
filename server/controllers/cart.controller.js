@@ -44,9 +44,7 @@ const addProductToCart = async (req, res) => {
     // console.log('old', oldCart);
     return res.status(201).json({
       message: 'Add product in cart success',
-      products: getNewCart,
-      totalPrice: total,
-      numberProducts,
+      cart: { products: getNewCart, totalPrice: total, numberProducts },
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -105,9 +103,11 @@ const updateQuantityProduct = async (req, res) => {
 
     return res.status(200).json({
       message: 'Update cart success',
-      products: getNewCart,
-      totalPrice: total,
-      numberProducts,
+      cart: {
+        products: getNewCart,
+        totalPrice: total,
+        numberProducts,
+      },
     });
 
     //return res.status(200).json({ message: 'Update cart success' });
@@ -119,6 +119,7 @@ const updateQuantityProduct = async (req, res) => {
 const deleteProductInCart = async (req, res) => {
   try {
     const { products } = req.body;
+    console.log(req.body)
     const userId = req.user.id; //req.params.id;
 
     const rowCart = await Cart.getCart(userId);

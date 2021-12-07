@@ -18,7 +18,7 @@ const cartApi = {
 
   delete: (data) => {
     let url = '/api/cart/delete-item';
-    return axiosClient.delete(url, data);
+    return axiosClient.delete(url, { data });
   }
 }
 

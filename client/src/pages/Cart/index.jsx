@@ -1,7 +1,7 @@
 import './Cart.scss';
 import React, { useEffect } from 'react';
 import { useRecoilValue, useRecoilState, useSetRecoilState } from 'recoil';
-import { removeFromCart, decreaseCartItem, increaseCartItem, getProductQuantityInCart, cartTotalPrice, cartState } from '../../recoil/cartState';
+import { cartState } from '../../recoil/cartState';
 import { toastDisplayState } from '../../recoil/toastDisplayState';
 import { dialogState } from '../../recoil/dialogState';
 import { userState } from '../../recoil/userState';
@@ -12,60 +12,105 @@ import cartApi from '../../apis/cartApi';
 function Cart() {
   const history = useHistory();
 
-  const totalPrice = useRecoilValue(cartTotalPrice);
-
   const [cart, setCart] = useRecoilState(cartState);
   const setDialog = useSetRecoilState(dialogState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
   const user = useRecoilValue(userState);
 
-  useEffect(() => {
-    const getCart = async () => {
-      const newCart = await cartApi.get();
-      console.log(newCart);
-    }
+  // useEffect(() => {
+  //   const getCart = async () => {
+  //     const newCart = await cartApi.get();
+  //     console.log(newCart);
+  //   }
 
-    getCart();
-  }, [])
+  //   getCart();
+  // }, [])
 
-  const handleRemoveProduct = (id) => {
+  const handleRemoveProduct = (product) => {
     setDialog({
       show: true,
       message: 'Bạn có chắc muốn xóa sản phẩm này?',
       acceptButtonName: 'Xóa',
       func: () => {
-        const newCart = removeFromCart(cart, id);
+        const item = {
+          products: [
+            {
+              productId: product.id,
+              size: product.size,
+              colorLink: product.colorLink
+            }
+          ]
+        }
 
-        setCart(newCart);
-        localStorage.setItem('cart', JSON.stringify(newCart));
+        cartApi.delete(item)
+          .then(response => {
+            console.log(response);
+            // setCart(response.cart);
+          })
+          .catch(error => console.log(error));
+
+        // const newCart = removeFromCart(cart, id);
+
+        // setCart(newCart);
+        // localStorage.setItem('cart', JSON.stringify(newCart));
       }
     });
   }
 
   const handleProductIncrement = (id, product) => {
-    if (getProductQuantityInCart(cart, product._id) + 1 > product.quantity) {
-      setToastDisplay({
-        show: true,
-        message: <span><strong>{product.name}</strong> hiện chỉ còn <strong>{product.quantity}</strong> sản phẩm</span>
-      });
-      return;
+    const item = {
+      productId: product.id,
+      size: product.size,
+      quantity: product.quantity + 1,
+      colorLink: product.colorLink
     }
 
-    const newCart = increaseCartItem(cart, id);
+    cartApi.update(item)
+      .then(response => {
+        console.log(response);
+        // setCart(response.cart);
+      })
+      .catch(error => {
+        console.log(error);
+      });
 
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    // if (getProductQuantityInCart(cart, product._id) + 1 > product.quantity) {
+    //   setToastDisplay({
+    //     show: true,
+    //     message: <span><strong>{product.name}</strong> hiện chỉ còn <strong>{product.quantity}</strong> sản phẩm</span>
+    //   });
+    //   return;
+    // }
+
+    // const newCart = increaseCartItem(cart, id);
+
+    // setCart(newCart);
+    // localStorage.setItem('cart', JSON.stringify(newCart));
   }
 
-  const handleProductDecrement = (id, currentQuantity) => {
-    if (currentQuantity <= 1) return;
+  const handleProductDecrement = (product) => {
+    if (product.quantity <= 1) return;
 
-    let newCart = [];
+    const item = {
+      productId: product.id,
+      size: product.size,
+      quantity: product.quantity - 1,
+      colorLink: product.colorLink
+    }
 
-    newCart = decreaseCartItem(cart, id);
+    cartApi.update(item)
+      .then(response => {
+        console.log(response);
+        // setCart(response.cart);
+      })
+      .catch(error => console.log(error));
 
-    setCart(newCart);
-    localStorage.setItem('cart', JSON.stringify(newCart));
+    // let newCart = [];
+
+    // newCart = decreaseCartItem(cart, id);
+
+    // setCart(newCart);
+    // localStorage.setItem('cart', JSON.stringify(newCart));
   }
 
   const handleCheckoutClick = () => {
@@ -81,37 +126,37 @@ function Cart() {
 
   return (
     <React.Fragment>
-      {cart.length === 0 && <EmptyCart />}
-      {cart.length !== 0 && <div className="full-cart">
+      {cart.products?.length === 0 && <EmptyCart />}
+      {cart.products?.length !== 0 && <div className="full-cart">
         <table>
-          {cart.map((item, index) => {
+          {cart.products?.map(product => {
             return (
-              <tr key={index}>
+              <tr key={product.id}>
                 <td width="10%" className="image-color-container">
-                  <div className="image-color" style={{ backgroundImage: `url(${item.product.color})` }}></div>
+                  <div className="image-color" style={{ backgroundImage: `url(${product.colorLink})` }}></div>
                 </td>
 
-                <td width="30%" className="product-name"><Link to={item.product.url}>{`${item.product.name} - ${item.product.size}`}</Link></td>
+                <td width="30%" className="product-name"><Link to={`/product/${product.id}`}>{`${product.name} - ${product.size}`}</Link></td>
 
-                <td width="15%" className="unit-price">{(item.product.price - item.product.discount).toLocaleString()}đ</td>
+                <td width="15%" className="unit-price">{product.priceAfterDis.toLocaleString()}đ</td>
 
                 <td width="15%" className="quantity-adjustment">
-                  <span className="decrement-btn" onClick={() => handleProductDecrement(item.id, item.quantity)}>-</span>
-                  <span className="quantity">{item.quantity}</span>
-                  <span className="increment-btn" onClick={() => handleProductIncrement(item.id, item.product)}>+</span>
+                  <span className="decrement-btn" onClick={() => handleProductDecrement(product)}>-</span>
+                  <span className="quantity">{product.quantity}</span>
+                  <span className="increment-btn" onClick={() => handleProductIncrement(product)}>+</span>
                 </td>
 
-                <td width="15%" className="product-total-price">{((item.product.price - item.product.discount) * item.quantity).toLocaleString()}đ</td>
+                <td width="15%" className="product-total-price">{(product.priceAfterDis * product.quantity).toLocaleString()}đ</td>
 
                 <td width="15%" className="remove">
-                  <span className="remove-btn" onClick={() => handleRemoveProduct(item.id)}>Xóa</span>
+                  <span className="remove-btn" onClick={() => handleRemoveProduct(product)}>Xóa</span>
                 </td>
               </tr>
             )
           })}
         </table>
 
-        <div className="total-price">Tổng: {totalPrice.toLocaleString()}đ</div>
+        <div className="total-price">Tổng: {cart.totalPrice.toLocaleString()}đ</div>
 
         <div className="btn-group">
           <Link to='/'><div className="continue-shopping-btn">Tiếp tục mua sắm</div></Link>

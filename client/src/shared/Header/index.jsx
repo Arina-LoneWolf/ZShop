@@ -2,7 +2,7 @@ import './Header.scss';
 import React, { useEffect, useRef } from 'react';
 import { Link, useRouteMatch, useHistory, useLocation } from 'react-router-dom';
 import { useRecoilValue, useRecoilState } from 'recoil';
-import { cartTotalPrice, cartState } from '../../recoil/cartState';
+import { cartState } from '../../recoil/cartState';
 import { loginState, signUpState } from '../../recoil/entryPointState';
 import { userState } from '../../recoil/userState';
 import { useQuery } from 'react-query';
@@ -27,8 +27,6 @@ function Header() {
   const { pathname } = useLocation();
 
   const cart = useRecoilValue(cartState);
-  // const totalQuantity = useRecoilValue(cartTotalQuantity);
-  const totalPrice = useRecoilValue(cartTotalPrice);
 
   const [login, setLogin] = useRecoilState(loginState);
   const [signUp, setSignUp] = useRecoilState(signUpState);
@@ -57,10 +55,6 @@ function Header() {
     if (keyword)
       history.push(`/search?name=${keyword}`);
   }
-
-  // useEffect(() => {
-  //   console.log(user);
-  // }, [user]);
 
   useEffect(() => {
     const userAccessToken = localStorage.getItem('accessToken');
@@ -112,15 +106,15 @@ function Header() {
     }
   }, [pathname]);
 
-  // useEffect(() => {
-  //   if (pathname === '/cart' || pathname.includes('/admin')) return;
+  useEffect(() => {
+    if (pathname === '/cart' || pathname.includes('/admin')) return;
 
-  //   if (cart.length) {
-  //     cartPreviewRef.current.classList.remove('empty');
-  //   } else {
-  //     cartPreviewRef.current.classList.add('empty');
-  //   }
-  // }, [cart, pathname]);
+    if (cart.products?.length) {
+      cartPreviewRef.current.classList.remove('empty');
+    } else {
+      cartPreviewRef.current.classList.add('empty');
+    }
+  }, [cart, pathname]);
 
   const isInDashboard = useRouteMatch('/admin');
   const isInCartPage = useRouteMatch('/cart');
@@ -154,9 +148,8 @@ function Header() {
             <div className="cart-group">
               <Link to='/cart' className="cart-hover"></Link>
               <HiOutlineShoppingBag className="cart-icon" />
-              {/* <div className="cart-notice">{totalQuantity}</div> */}
-              <div className="cart-notice">{cart.products.length}</div>
-              {/* {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
+              <div className="cart-notice">{cart.numberProducts}</div>
+              {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
                 <div className="empty-cart-container">
                   <img src={emptyCart} alt="" className="empty-cart-img" />
                   <div className="empty-cart-message">Chưa có sản phẩm nào</div>
@@ -164,26 +157,26 @@ function Header() {
 
                 <div className="cart-list">
                   <div className="cart-items">
-                    {[...cart].reverse().map((item, index) => (
+                    {[...cart.products].reverse().map((product, index) => (
                       <div className="cart-product-container" key={index}>
                         <div className="product-info">
-                          <div className="product-color" style={{ backgroundImage: `url(${item.product.color})` }}></div>
+                          <div className="product-color" style={{ backgroundImage: `url(${product.colorLink})` }}></div>
                           <div className="product-description">
-                            <div className="product-name"><Link to={item.product.url}>{item.product.name}</Link></div>
-                            <div className="product-quantity">x{item.quantity}</div>
+                            <div className="product-name"><Link to={`/product/${product.id}`}>{product.name}</Link></div>
+                            <div className="product-quantity">x{product.quantity}</div>
                           </div>
                         </div>
-                        <div className="product-price">{((item.product.price - item.product.discount) * item.quantity).toLocaleString()}đ</div>
+                        <div className="product-price">{product.priceAfterDis.toLocaleString()}đ</div>
                       </div>
                     ))}
                   </div>
                   <div className="cart-total-price">
                     <span className="text-label">Thành tiền:</span>
-                    <span className="total-price">{totalPrice.toLocaleString()}đ</span>
+                    <span className="total-price">{cart.totalPrice.toLocaleString()}đ</span>
                   </div>
                   <Link to='/cart'><div className="view-cart-btn">Xem giỏ hàng</div></Link>
                 </div>
-              </div>} */}
+              </div>}
             </div>
           </div>
         </div>
@@ -209,36 +202,6 @@ function Header() {
                 </ul>
               </li>
             ))}
-            {/* <li className="shirt">
-              <Link to={{ pathname: '/category/ao', state: 'Áo' }}>Áo</Link>
-              <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/ao/ao-the-thao', state: 'Áo thể thao' }}>Áo thể thao</Link></li>
-                <li><Link to={{ pathname: '/category/ao/ao-thun-nu', state: 'Áo thun nữ' }}>Áo thun nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao/ao-kieu-nu', state: 'Áo kiểu nữ' }}>Áo kiểu nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao/ao-so-mi-nu', state: 'Áo sơ mi nữ' }}>Áo sơ mi nữ</Link></li>
-                <li><Link to={{ pathname: '/category/ao/ao-khoac-nu', state: 'Áo khoác nữ' }}>Áo khoác nữ</Link></li>
-              </ul>
-            </li>
-            <li className="pants">
-              <Link to={{ pathname: '/category/quan', state: 'Quần' }}>Quần</Link>
-              <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/quan/quan-dai', state: 'Quần dài' }}>Quần dài</Link></li>
-                <li><Link to={{ pathname: '/category/quan/quan-short-nu', state: 'Quần jean nữ' }}>Quần jean nữ</Link></li>
-                <li><Link to={{ pathname: '/category/quan/quan-legging', state: 'Quần legging' }}>Quần legging</Link></li>
-              </ul>
-            </li>
-            <li className="dress-skirt">
-              <Link to={{ pathname: '/category/dam-vay', state: 'Đầm váy' }}>Đầm váy</Link>
-              <ul className="sub-nav">
-                <li><Link to={{ pathname: '/category/dam-vay/chan-vay', state: 'Chân váy' }}>Chân váy</Link></li>
-                <li><Link to={{ pathname: '/category/dam-vay/dam-nu', state: 'Đầm nữ' }}>Đầm nữ</Link></li>
-                <li><Link to={{ pathname: '/category/dam-vay/yem', state: 'Yếm' }}>Yếm</Link></li>
-              </ul>
-            </li>
-            <li className="gift"><Link to={{ pathname: '/category/gift', state: 'Quà tặng' }}>Quà tặng</Link></li>
-            <li className="decorator"><Link to={{ pathname: '/category/decorator', state: 'Đồ trang trí' }}>Đồ trang trí</Link></li>
-            <li className="bag"><Link to={{ pathname: '/category/bag', state: 'Túi ví' }}>Túi ví</Link></li>
-            <li className="stuff-animal"><Link to={{ pathname: '/category/stuff-animal', state: 'Gấu bông' }}>Gấu bông</Link></li> */}
           </ul>
         </div>
       </div>

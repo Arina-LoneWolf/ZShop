@@ -11,14 +11,14 @@ const cartApi = {
     return axiosClient.post(url, data);
   },
 
-  update: (userId) => {
-    let url = `/api/cart/update/${userId}`;
-    return axiosClient.delete(url);
+  update: (data) => {
+    let url = '/api/cart/update';
+    return axiosClient.patch(url, data);
   },
 
-  delete: (userId) => {
-    let url = `/api/cart/delete/${userId}`;
-    return axiosClient.delete(url);
+  delete: (data) => {
+    let url = '/api/cart/delete-item';
+    return axiosClient.delete(url, data);
   }
 }
 

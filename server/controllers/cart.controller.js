@@ -33,7 +33,21 @@ const addProductToCart = async (req, res) => {
       //await Cart.addCartDetail([oldCart[0]?.id, productId, colorLink, size, quantity]);
     }
 
-    return res.status(201).json({ message: 'Add category success' });
+    const getNewCart = await Cart.getAllProducts(userId);
+    let total = 0;
+    let numberProducts = 0;
+    getNewCart.forEach((product) => {
+      total += product.total;
+      numberProducts += product.quantity;
+    });
+
+    // console.log('old', oldCart);
+    return res.status(201).json({
+      message: 'Add product in cart success',
+      products: getNewCart,
+      totalPrice: total,
+      numberProducts,
+    });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -43,8 +57,16 @@ const getAllProductsInCart = async (req, res) => {
   try {
     const userId = req.user.id;
     const data = await Cart.getAllProducts(userId);
+    let total = 0;
+    let numberProducts = 0;
+    data.forEach((product) => {
+      total += product.total;
+      numberProducts += product.quantity;
+    });
 
-    return res.status(200).json({ products: data });
+    //console.log(data);
+
+    return res.status(200).json({ products: data, totalPrice: total, numberProducts });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -73,7 +95,22 @@ const updateQuantityProduct = async (req, res) => {
       }
     }
 
-    return res.status(200).json({ message: 'Update cart success' });
+    const getNewCart = await Cart.getAllProducts(userId);
+    let total = 0;
+    let numberProducts = 0;
+    getNewCart.forEach((product) => {
+      total += product.total;
+      numberProducts += product.quantity;
+    });
+
+    return res.status(200).json({
+      message: 'Update cart success',
+      products: getNewCart,
+      totalPrice: total,
+      numberProducts,
+    });
+
+    //return res.status(200).json({ message: 'Update cart success' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

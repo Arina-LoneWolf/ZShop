@@ -3,6 +3,7 @@ import React from 'react';
 import { useSetRecoilState } from 'recoil';
 import { signUpState } from '../../../recoil/entryPointState';
 import { userState } from '../../../recoil/userState';
+import { cartState } from '../../../recoil/cartState';
 import { resultMessageState, SUCCESS } from '../../../recoil/resultMessageState';
 import TextError from '../../notifications/TextError';
 import GoogleLogin from 'react-google-login';
@@ -11,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import userApi from '../../../apis/userApi';
+import cartApi from '../../../apis/cartApi';
 
 const schema = yup.object({
   fullName: yup.string().required('*Bắt buộc'),
@@ -29,6 +31,7 @@ const schema = yup.object({
 function SignUpForm() {
   const setSignUp = useSetRecoilState(signUpState);
   const setUser = useSetRecoilState(userState);
+  const setCart = useSetRecoilState(cartState);
   const setResultMessage = useSetRecoilState(resultMessageState);
 
   const responseSuccessGoogle = (res) => {
@@ -46,6 +49,13 @@ function SignUpForm() {
           ...res.user
         });
       }).catch(err => console.log(err));
+
+      cartApi.get().then(response => {
+        console.log(response)
+        setCart(response);
+      }).catch(error => {
+        console.log(error);
+      });
 
       setSignUp(false);
     });
@@ -82,7 +92,7 @@ function SignUpForm() {
       console.log(error.response.data.message);
       if (error.response.data.message === 'This username already exist') {
         setError('username', { message: 'Tên đăng nhập đã được sử dụng' }, { shouldFocus: true });
-      } else if (error.response.data.message === 'This email already exist') {
+      } else if (error.response.data.message === 'Duplicate username or email') {
         setError('email', { message: 'Email đã được sử dụng' }, { shouldFocus: true });
       }
     });

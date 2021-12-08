@@ -91,7 +91,7 @@ const getAllProductsInCart = async (req, res) => {
       numberProducts += product.quantity;
     });
 
-    //console.log(data);
+    console.log(data);
 
     return res.status(200).json({ products: data, totalPrice: total, numberProducts });
   } catch (error) {

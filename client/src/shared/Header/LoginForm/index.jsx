@@ -3,6 +3,7 @@ import React, { useState } from 'react';
 import { useSetRecoilState } from 'recoil';
 import { loginState } from '../../../recoil/entryPointState';
 import { userState } from '../../../recoil/userState';
+import { cartState } from '../../../recoil/cartState';
 import TextError from '../../notifications/TextError';
 import ErrorLoginMessage from '../../notifications/ErrorMessage'
 import GoogleLogin from 'react-google-login';
@@ -11,6 +12,7 @@ import { useForm } from "react-hook-form";
 import { yupResolver } from '@hookform/resolvers/yup';
 import * as yup from 'yup';
 import userApi from '../../../apis/userApi';
+import cartApi from '../../../apis/cartApi';
 
 const schema = yup.object({
   username: yup.string().required('Chưa nhập tài khoản'),
@@ -22,6 +24,7 @@ const schema = yup.object({
 function LoginForm() {
   const setLogin = useSetRecoilState(loginState);
   const setUser = useSetRecoilState(userState);
+  const setCart = useSetRecoilState(cartState);
 
   const [showErrorMessage, setShowErrorMessage] = useState(false);
   const [errorMsg, setErrorMsg] = useState('');
@@ -45,6 +48,13 @@ function LoginForm() {
           ...res.user
         });
       }).catch(err => console.log(err));
+
+      cartApi.get().then(response => {
+        console.log(response)
+        setCart(response);
+      }).catch(error => {
+        console.log(error);
+      });
 
       setLogin(false);
     });
@@ -74,6 +84,13 @@ function LoginForm() {
           ...res.user
         });
       }).catch(err => console.log(err));
+
+      cartApi.get().then(response => {
+        console.log(response)
+        setCart(response);
+      }).catch(error => {
+        console.log(error);
+      });
 
       setLogin(false);
     }).catch(error => {

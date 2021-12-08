@@ -15,6 +15,7 @@ import logo from '../../assets/images/textlogo.png';
 import emptyCart from '../../assets/images/cart-empty.png';
 import userApi from '../../apis/userApi';
 import productApi from '../../apis/productApi';
+import cartApi from '../../apis/cartApi';
 
 function Header() {
   const { data: categories } = useQuery('categories', async () => {
@@ -26,11 +27,10 @@ function Header() {
   const history = useHistory();
   const { pathname } = useLocation();
 
-  const cart = useRecoilValue(cartState);
-
   const [login, setLogin] = useRecoilState(loginState);
   const [signUp, setSignUp] = useRecoilState(signUpState);
   const [user, setUser] = useRecoilState(userState);
+  const [cart, setCart] = useRecoilState(cartState);
 
   const cartPreviewRef = useRef(null);
   const searchRef = useRef(null);
@@ -45,6 +45,7 @@ function Header() {
       setSignUp(true);
     } else {
       setUser({});
+      setCart({});
       localStorage.removeItem('accessToken');
     }
   };
@@ -68,7 +69,14 @@ function Header() {
         })
       }).catch(error => {
         console.log(error);
-      })
+      });
+
+      cartApi.get().then(response => {
+        console.log(response)
+        setCart(response);
+      }).catch(error => {
+        console.log(error);
+      });
     }
   }, []);
 
@@ -77,6 +85,7 @@ function Header() {
       if (e.key === 'accessToken') {
         if (e.oldValue && !e.newValue) {
           setUser({});
+          setCart({});
         } else if (e.newValue) {
           const userAccessToken = localStorage.getItem('accessToken');
 
@@ -86,6 +95,13 @@ function Header() {
               accessToken: userAccessToken,
               ...response.user,
             })
+          }).catch(error => {
+            console.log(error);
+          })
+
+          cartApi.get().then(response => {
+            console.log(response)
+            setCart(response);
           }).catch(error => {
             console.log(error);
           })
@@ -148,7 +164,7 @@ function Header() {
             <div className="cart-group">
               <Link to='/cart' className="cart-hover"></Link>
               <HiOutlineShoppingBag className="cart-icon" />
-              <div className="cart-notice">{cart.numberProducts}</div>
+              <div className="cart-notice">{cart.numberProducts || 0}</div>
               {!isInCartPage && <div className="cart-preview" ref={cartPreviewRef}>
                 <div className="empty-cart-container">
                   <img src={emptyCart} alt="" className="empty-cart-img" />
@@ -157,7 +173,7 @@ function Header() {
 
                 <div className="cart-list">
                   <div className="cart-items">
-                    {cart?.products.length !== 0 && [...cart.products].reverse().map((product, index) => (
+                    {cart.products && cart?.products?.length !== 0 && [...cart.products].reverse().map((product, index) => (
                       <div className="cart-product-container" key={index}>
                         <div className="product-info">
                           <div className="product-color" style={{ backgroundImage: `url(${product.colorLink})` }}></div>
@@ -172,7 +188,7 @@ function Header() {
                   </div>
                   <div className="cart-total-price">
                     <span className="text-label">Thành tiền:</span>
-                    <span className="total-price">{cart.totalPrice.toLocaleString()}đ</span>
+                    <span className="total-price">{cart.totalPrice?.toLocaleString()}đ</span>
                   </div>
                   <Link to='/cart'><div className="view-cart-btn">Xem giỏ hàng</div></Link>
                 </div>

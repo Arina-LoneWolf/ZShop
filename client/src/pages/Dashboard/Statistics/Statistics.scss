@@ -114,6 +114,14 @@
           width: 45px;
         }
       }
+
+      .total {
+        position: absolute;
+        top: 94px;
+        font-weight: 700;
+        font-size: 19px;
+        color: lighten($lightslategray, 15);
+      }
     }
   }
 }

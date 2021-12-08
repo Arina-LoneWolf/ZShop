@@ -83,7 +83,7 @@ function Checkout() {
 
     orderApi.add(order).then(response => {
       console.log(response);
-      // setCart({});
+      setCart(response.cart);
       setOrderSuccessfully(true);
     }).catch(error => {
       console.log(error.response);

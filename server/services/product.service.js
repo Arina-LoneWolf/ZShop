@@ -280,7 +280,7 @@ const Product = {
        pr.id=Color.productId AND 
        pr.id=Size.productId 
       ${numberQuestion}
-      AND MATCH(pr.name) AGAINST ('"${strSearch}"' IN BOOLEAN MODE)
+      AND MATCH(pr.name) AGAINST ('${strSearch}' IN BOOLEAN MODE)
      GROUP BY pr.id
     ${strHaving}) 
     AS newProduct, ProductStatusDetail as psd, Status
@@ -300,7 +300,7 @@ const Product = {
       FROM  ProductStatusDetail as psd , Status, Product as pr
       WHERE psd.statusId=Status.id AND pr.id=psd.productId
       ${numberQuestion}
-      AND MATCH(pr.name) AGAINST ('"${strSearch}"' IN BOOLEAN MODE)
+      AND MATCH(pr.name) AGAINST ('${strSearch}' IN BOOLEAN MODE)
       GROUP BY psd.productId
       ${strHaving}) 
       AS newTable`,

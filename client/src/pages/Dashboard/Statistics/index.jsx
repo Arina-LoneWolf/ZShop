@@ -13,7 +13,7 @@ function Statistics() {
 
   const [category, setCategory] = useState('Áo');
   const [salesMonth, setSalesMonth] = useState(12);
-  const [soldMonth, setSoldMonth] = useState(1);
+  const [soldMonth, setSoldMonth] = useState(12);
 
   const { data, isLoading } = useQuery(['statistics', category, salesMonth, soldMonth], async () => {
     let [monthlySales, monthlyCategorySales, categorySales, categorySold] = await Promise.all([
@@ -25,25 +25,18 @@ function Statistics() {
 
     // console.log(monthlySales.data, monthlyCategorySales.data, categorySales.data, categorySold.data);
 
-    // categorySales = categorySales.result;
-    // categorySold = categorySold.result;
     monthlySales = monthlySales.data.map(datum => ({ 'Tháng': datum.month, 'Doanh thu': datum.total }));
     monthlyCategorySales = monthlyCategorySales.data.map(datum => ({ 'Tháng': datum.month, 'Doanh thu': datum.total }));
-    categorySales = categorySales.data;
-    categorySold = categorySold.data;
-    console.log(categorySales)
-    // monthlySold = monthlySold.data.map(datum => ({
-    //   'Tháng': datum.Month,
-    //   'Áo': datum.Ao,
-    //   'Quần': datum.Quan,
-    //   'Đầm váy': datum.DamVay
-    // }));
+
+    console.log('log ra thu', categorySold.data)
 
     return {
       monthlySales,
       monthlyCategorySales,
-      categorySales,
-      categorySold
+      categorySales: categorySales.data,
+      categorySold: categorySold.data,
+      totalCategorySales: categorySales.total,
+      totalCategorySold: categorySold.total
     }
   });
 
@@ -62,43 +55,43 @@ function Statistics() {
   const COLORS = ["#3369e7", "#8e43e7", "#ff4f81", "#ff6c5f", "#ffc168", "#2dde98", "#1cc7d0", "#00aeff"];
   const months = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12];
 
-  const sample = [
-    {
-      "category": "Áo",
-      "month": 12,
-      "total": 810000
-    },
-    {
-      "category": "Đầm váy",
-      "month": "12",
-      "total": 120000
-    },
-    {
-      "category": "Đồ trang trí",
-      "month": "12",
-      "total": 100000
-    },
-    {
-      "category": "Gấu bông",
-      "month": "12",
-      "total": 172000
-    },
-    {
-      "category": "Quà tặng",
-      "month": "12",
-      "total": 500000
-    },
-    {
-      "category": "Quần",
-      "month": "12",
-      "total": 90000
-    },
-    {
-      "category": "Túi ví",
-      "month": "12",
-      "total": 420000
-    }
-  ]
+  // const sample = [
+  //   {
+  //     "category": "Áo",
+  //     "month": 12,
+  //     "total": 810000
+  //   },
+  //   {
+  //     "category": "Đầm váy",
+  //     "month": "12",
+  //     "total": 120000
+  //   },
+  //   {
+  //     "category": "Đồ trang trí",
+  //     "month": "12",
+  //     "total": 100000
+  //   },
+  //   {
+  //     "category": "Gấu bông",
+  //     "month": "12",
+  //     "total": 172000
+  //   },
+  //   {
+  //     "category": "Quà tặng",
+  //     "month": "12",
+  //     "total": 500000
+  //   },
+  //   {
+  //     "category": "Quần",
+  //     "month": "12",
+  //     "total": 90000
+  //   },
+  //   {
+  //     "category": "Túi ví",
+  //     "month": "12",
+  //     "total": 420000
+  //   }
+  // ]
 
   return (
     <React.Fragment>
@@ -169,7 +162,7 @@ function Statistics() {
           <div className="category-overview">
             <PieChart width={160} height={160}>
               <Pie
-                data={sample}
+                data={data?.categorySales}
                 cx={'50%'}
                 cy={'50%'}
                 innerRadius={60}
@@ -178,7 +171,7 @@ function Statistics() {
                 paddingAngle={5}
                 dataKey="total"
               >
-                {sample.map((entry, index) => (
+                {data?.categorySales.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -201,12 +194,14 @@ function Statistics() {
                 ))}
               </select>
             </div>
+
+            <div className="total">{data?.totalCategorySales?.toLocaleString()}đ</div>
           </div>
 
           <div className="category-overview">
             <PieChart width={160} height={160}>
               <Pie
-                data={sample}
+                data={data?.categorySold}
                 cx={'50%'}
                 cy={'50%'}
                 innerRadius={60}
@@ -215,7 +210,7 @@ function Statistics() {
                 paddingAngle={5}
                 dataKey="total"
               >
-                {sample.map((entry, index) => (
+                {data?.categorySold.map((entry, index) => (
                   <Cell key={`cell-${index}`} fill={COLORS[index % COLORS.length]} />
                 ))}
               </Pie>
@@ -238,6 +233,8 @@ function Statistics() {
                 ))}
               </select>
             </div>
+
+            <div className="total">{data?.totalCategorySold}</div>
           </div>
         </div>
       </div>}

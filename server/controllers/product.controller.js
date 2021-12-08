@@ -402,6 +402,15 @@ const searchProduct = async (req, res) => {
     const limit = parseInt(req.query.limit) || 10;
     const startIndex = (page - 1) * limit;
     const strSearch = req.query.name;
+    //console.log(typeof strSearch);
+
+    let arrStr = strSearch.split(' ');
+    let dataStr = '';
+    for (let i = 0; i < arrStr.length; i++) {
+      dataStr += arrStr[i] + '*'; //+ ' ';
+    }
+
+    //console.log(dataStr);
 
     let strSort = '';
     let strHaving = 'HAVING JSON_LENGTH(arrStatus) >= ?';
@@ -425,14 +434,14 @@ const searchProduct = async (req, res) => {
           numberQuestion += '?,';
         }
         totalProduct = await Product.countSearchProduct(
-          strSearch,
+          dataStr /*strSearch*/,
           'HAVING COUNT(psd.productId) >= ?',
           numberQuestion,
           [...req.query.status, req.query.status.length]
         );
 
         data = await Product.searchProduct(
-          strSearch,
+          dataStr /*strSearch*/,
           [...req.query.status, req.query.status.length, startIndex, limit],
           numberQuestion,
           strHaving,
@@ -446,13 +455,13 @@ const searchProduct = async (req, res) => {
       } else {
         console.log(strHaving);
         totalProduct = await Product.countSearchProduct(
-          strSearch,
+          dataStr /*strSearch*/,
           'HAVING COUNT(psd.productId) >= ?',
           'AND Status.name IN (?)',
           [req.query.status, 1]
         );
         data = await Product.searchProduct(
-          strSearch,
+          dataStr /*strSearch*/,
           [req.query.status, 1, startIndex, limit],
           'AND Status.name IN (?)',
           strHaving,
@@ -465,8 +474,14 @@ const searchProduct = async (req, res) => {
       }
     } else {
       console.log(strSort);
-      data = await Product.searchProduct(strSearch, [startIndex, limit], '', '', strSort);
-      totalProduct = await Product.countSearchProduct(strSearch, '', '', []);
+      data = await Product.searchProduct(
+        dataStr /*strSearch*/,
+        [startIndex, limit],
+        '',
+        '',
+        strSort
+      );
+      totalProduct = await Product.countSearchProduct(dataStr /*strSearch*/, '', '', []);
 
       console.log('data', data.length);
       console.log('totalProduct', totalProduct[0].totalProduct);

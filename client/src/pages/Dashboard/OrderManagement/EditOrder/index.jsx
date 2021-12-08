@@ -1,7 +1,6 @@
 import './EditOrder.scss';
 import React, { useState } from 'react';
-import { useRecoilValue, useSetRecoilState } from 'recoil';
-// import { userState } from '../../../../recoil/userState';
+import { useSetRecoilState } from 'recoil';
 import { orderEditDisplayState } from '../../../../recoil/orderEditDisplayState';
 import { toastDisplayState } from '../../../../recoil/toastDisplayState';
 import { dialogState } from '../../../../recoil/dialogState';
@@ -30,7 +29,6 @@ const steps = [
 ];
 
 function EditOrder({ order, refetch }) {
-  // const user = useRecoilValue(userState);
   const setDialog = useSetRecoilState(dialogState);
   const setOrderEditDisplay = useSetRecoilState(orderEditDisplayState);
   const setToastDisplay = useSetRecoilState(toastDisplayState);
@@ -38,14 +36,8 @@ function EditOrder({ order, refetch }) {
   const [currentStep, setCurrentStep] = useState(order.status);
 
   const mutation = useMutation(async () => {
-    // const config = {
-    //   headers: {
-    //     Authorization: user.accessToken
-    //   }
-    // }
-
     const data = {
-      id: order._id,
+      id: order.orderId,
       status: currentStep
     }
 
@@ -58,22 +50,6 @@ function EditOrder({ order, refetch }) {
         message: 'Đã lưu cập nhật'
       });
     }).catch(error => console.log(error));
-
-    // axios.patch(`http://localhost:5000/api/order/update`, data, config)
-    //   .then((response) => {
-    //     // console.log('Luu thanh cong');
-    //     // console.log(response.data);
-
-    //     refetch();
-
-    //     setToastDisplay({
-    //       show: true,
-    //       message: 'Đã lưu cập nhật'
-    //     });
-    //   })
-    //   .catch((error) => {
-    //     console.log(error);
-    //   })
   })
 
   const handleCancelOrder = () => {
@@ -83,14 +59,8 @@ function EditOrder({ order, refetch }) {
       acceptButtonName: 'Xác nhận',
       adminMode: true,
       func: () => {
-        // const config = {
-        //   headers: {
-        //     Authorization: user.accessToken
-        //   }
-        // }
-
         const data = {
-          id: order._id,
+          id: order.orderId,
           status: 4
         }
 
@@ -104,24 +74,6 @@ function EditOrder({ order, refetch }) {
           });
           setOrderEditDisplay(false);
         }).catch(error => console.log(error));
-
-        // axios.patch(`http://localhost:5000/api/order/update`, data, config)
-        //   .then((response) => {
-        //     // console.log('Luu thanh cong');
-        //     // console.log(response.data);
-
-        //     refetch();
-
-        //     setToastDisplay({
-        //       show: true,
-        //       message: 'Đã hủy đơn hàng'
-        //     });
-
-        //     setOrderEditDisplay(false);
-        //   })
-        //   .catch((error) => {
-        //     console.log(error);
-        //   })
       }
     });
   }

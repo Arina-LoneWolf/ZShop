@@ -20,6 +20,7 @@ function Comment({ comment, refetch, reply = false }) {
   const timeAgoRef = useRef();
 
   const date = new Date(comment.date);
+  date.setTime(date.getTime() - (7*60*60*1000));
   timeAgoRef.current = timeSince(date);
 
   const handleOnSubmit = () => {
@@ -80,6 +81,7 @@ function Comment({ comment, refetch, reply = false }) {
       message: 'Bạn có chắc muốn xóa bình luận này?',
       acceptButtonName: 'Xóa',
       func: () => {
+        console.log('id comment bi xoa: ', comment.id);
         commentApi.delete(comment.id).then(response => {
           console.log(response);
           refetch();

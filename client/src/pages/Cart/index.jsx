@@ -100,9 +100,9 @@ function Cart() {
       {cart.products?.length === 0 && <EmptyCart />}
       {cart.products?.length !== 0 && <div className="full-cart">
         <table>
-          {cart.products?.map(product => {
+          {cart.products?.map((product, index) => {
             return (
-              <tr key={product.id}>
+              <tr key={index}>
                 <td width="10%" className="image-color-container">
                   <div className="image-color" style={{ backgroundImage: `url(${product.colorLink})` }}></div>
                 </td>

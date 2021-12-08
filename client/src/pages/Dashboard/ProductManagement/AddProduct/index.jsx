@@ -69,17 +69,18 @@ function AddNewProduct({ refetch }) {
     // console.log(uploadedImages)
     // console.log(uploadedColors)
 
-    const productStatus = values.productStatus.map(status => parseInt(status));
+    const productStatus = values.productStatus;
+
     if (values.productDiscount > 0) {
-      productStatus.push(2);
+      productStatus.push('Khuyến mãi');
     } else if (!values.productStatus.length) {
-      productStatus.push(0);
+      productStatus.push('Không có');
     }
 
     const product = {
       name: values.productName,
       category: values.productCategory,
-      type: values.productType === 'Quần Jean Nữ' ? 'Quần Short Nữ' : values.productType,
+      type: values.productType,
       price: values.productPrice,
       discount: values.productDiscount,
       quantity: values.productQuantity,
@@ -282,9 +283,9 @@ function AddNewProduct({ refetch }) {
             <label htmlFor="status-options">Trạng thái</label>
             <div className="multi-select-container">
               <div className="status-options">
-                <input {...register("productStatus")} name="productStatus" type="checkbox" id="new" value="1" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="new" value="Mới" />
                 <label htmlFor="new">Mới nhất</label>
-                <input {...register("productStatus")} name="productStatus" type="checkbox" id="hot" value="3" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="hot" value="Bán chạy" />
                 <label htmlFor="hot">Bán chạy</label>
               </div>
               <TextError>{errors.productStatus?.message}</TextError>

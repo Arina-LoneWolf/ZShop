@@ -91,6 +91,7 @@ function OrderManagement() {
     }
 
     setTotalPages(response.totalPages);
+    console.log(response);
     return response.orders;
   });
 
@@ -224,11 +225,11 @@ function OrderManagement() {
         <div className="order-list">
           {isLoading && <EatLoading color="#ff7eae" />}
           {orders?.map(order => (
-            <div key={order._id} className="order-item">
-              <div className="order-id fl-14">{order.idOrder}</div>
+            <div key={order.orderId} className="order-item">
+              <div className="order-id fl-14">{order.orderId}</div>
               <div className="order-recipient-name fl-25">{order.receiverInfo.name}</div>
               <div className="order-recipient-phone fl-15">{order.receiverInfo.phone}</div>
-              <div className="order-date fl-11">{new Date(order.date).toLocaleString("en-GB").slice(0, 10)}</div>
+              <div className="order-date fl-11">{new Date(order.orderDate).toLocaleString("en-GB").slice(0, 10)}</div>
               <div className="order-total-price fl-13">{order.total.toLocaleString()}đ</div>
               <div className="order-status fl-12">
                 <label className={'status-label ' + orderStatus[order.status].key}>{orderStatus[order.status].value}</label>

@@ -36,7 +36,7 @@ const types = [
     categoryKey: 'quan'
   },
   {
-    name: 'Quần Jean Nữ',
+    name: 'Quần Short Nữ',
     key: 'quan-short-nu',
     categoryName: 'Quần',
     categoryKey: 'quan'

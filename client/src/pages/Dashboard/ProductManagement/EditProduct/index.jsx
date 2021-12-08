@@ -14,6 +14,7 @@ import categories from '../../../../shared/data/categories';
 import types from '../../../../shared/data/types';
 import sizes from '../../../../shared/data/sizes';
 import productApi from '../../../../apis/productApi';
+import imageUploadApi from '../../../../apis/imageUploadApi';
 
 const schema = yup.object({
   productName: yup.string().required('*Bắt buộc'),
@@ -34,9 +35,9 @@ const schema = yup.object({
 });
 
 function EditProduct({ product, refetch }) {
-  const [selectedImages, setSelectedImages] = useState(product.images.map(image => ({ url: image })));
-  const [selectedColors, setSelectedColors] = useState(product.colors.map(color => ({ url: color })));
-  const [selectedCategory, setSelectedCategory] = useState(product.category);
+  const [selectedImages, setSelectedImages] = useState(product.arrImages.map(image => ({ url: image })));
+  const [selectedColors, setSelectedColors] = useState(product.arrColors.map(color => ({ url: color })));
+  const [selectedCategory, setSelectedCategory] = useState(product.categoryName);
   const [accordingTypes, setAccordingTypes] = useState([]);
 
   const setToastDisplay = useSetRecoilState(toastDisplayState);
@@ -73,8 +74,8 @@ function EditProduct({ product, refetch }) {
     }
 
     const [uploadedImages, uploadedColors] = await Promise.all([
-      productApi.uploadImages(images),
-      productApi.uploadImages(colors)
+      imageUploadApi.uploadImages(images),
+      imageUploadApi.uploadImages(colors)
     ]);
 
     // uploadedImages.concat(completeImages.map(image => image.url));
@@ -83,18 +84,18 @@ function EditProduct({ product, refetch }) {
     // console.log(uploadedImages)
     // console.log(uploadedColors)
 
-    let productStatus = values.productStatus.map(status => parseInt(status));
-    if (values.productDiscount > 0 && !productStatus.includes(2)) {
-      productStatus.push(2);
+    let productStatus = values.productStatus;
+    if (values.productDiscount > 0 && !productStatus.includes('Khuyến mãi')) {
+      productStatus.push('Khuyến mãi');
     }
     if (parseInt(values.productDiscount) <= 0) {
-      productStatus = productStatus.filter(status => status !== 2);
+      productStatus = productStatus.filter(status => status !== 'Khuyến mãi');
     }
-    if (productStatus.length >= 2 && productStatus.includes(0)) {
-      productStatus = productStatus.filter(status => status !== 0);
+    if (productStatus.length >= 2 && productStatus.includes('Không có')) {
+      productStatus = productStatus.filter(status => status !== 'Không có');
     }
     if (!productStatus.length) {
-      productStatus.push(0);
+      productStatus.push('Không có');
     }
 
     const data = {
@@ -112,7 +113,7 @@ function EditProduct({ product, refetch }) {
 
     console.log(data);
 
-    productApi.update(product._id, data).then(response => {
+    productApi.update(product.id, data).then(response => {
       console.log('Luu thanh cong');
       console.log(response);
 
@@ -127,15 +128,15 @@ function EditProduct({ product, refetch }) {
 
   const defaultValues = {
     productName: product.name,
-    productPrice: product.real_price,
-    productCategory: product.category,
-    productType: product.type,
+    productPrice: product.price,
+    productCategory: product.categoryName,
+    productType: product.typeName,
     productQuantity: product.quantity,
-    productStatus: product.status.map(status => status.toString()),
-    productSize: product.sizes,
+    productStatus: product.arrStatus,
+    productSize: product.arrSizes,
     productDiscount: product.discount,
-    productImages: product.images,
-    productColors: product.colors
+    productImages: product.arrImages,
+    productColors: product.arrColors
   };
 
   const { register, handleSubmit, setValue, setError, clearErrors, reset, formState: { errors } } = useForm({
@@ -301,9 +302,9 @@ function EditProduct({ product, refetch }) {
             <label htmlFor="status-options">Trạng thái</label>
             <div className="multi-select-container">
               <div className="status-options">
-                <input {...register("productStatus")} name="productStatus" type="checkbox" id="new" value="1" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="new" value="Mới" />
                 <label htmlFor="new">Mới nhất</label>
-                <input {...register("productStatus")} name="productStatus" type="checkbox" id="hot" value="3" />
+                <input {...register("productStatus")} name="productStatus" type="checkbox" id="hot" value="Bán chạy" />
                 <label htmlFor="hot">Bán chạy</label>
               </div>
               <TextError>{errors.productStatus?.message}</TextError>

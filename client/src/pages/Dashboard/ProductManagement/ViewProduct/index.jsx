@@ -5,25 +5,13 @@ import { productViewDisplayState } from '../../../../recoil/productViewDisplaySt
 import { IoClose } from "react-icons/io5";
 
 const productStatus = {
-  '0': {
-    key: 'none',
-    value: 'Không có'
-  },
-  '1': {
-    key: 'new',
-    value: 'Mới'
-  },
-  '2': {
-    key: 'sale',
-    value: 'Khuyến mãi'
-  },
-  '3': {
-    key: 'hot',
-    value: 'Bán chạy'
-  }
+  'Không có': 'none',
+  'Mới': 'new',
+  'Khuyến mãi': 'sale',
+  'Bán chạy': 'hot'
 }
 
-  function ViewProduct({ product }) {
+function ViewProduct({ product }) {
   const setProductViewDisplay = useSetRecoilState(productViewDisplayState);
 
   const handleClosing = () => {
@@ -42,17 +30,17 @@ const productStatus = {
 
           <div className="form-control">
             <label className="field-title">Phân loại:</label>
-            <label className="text-lb">{product.category}</label>
+            <label className="text-lb">{product.categoryName}</label>
           </div>
 
           <div className="form-control">
             <label className="field-title">Loại:</label>
-            <label className="text-lb">{product.type === 'Quần Short Nữ' ? 'Quần Jean Nữ' : product.type}</label>
+            <label className="text-lb">{product.typeName}</label>
           </div>
 
           <div className="form-control">
             <label className="field-title">Giá:</label>
-            <label className="text-lb">{product.real_price.toLocaleString()}đ</label>
+            <label className="text-lb">{product.price.toLocaleString()}đ</label>
           </div>
 
           <div className="form-control">
@@ -68,8 +56,8 @@ const productStatus = {
           <div className="form-control mt-9">
             <label className="field-title">Trạng thái:</label>
             <div className="product-status-view">
-              {product.status.map(status => (
-                <label key={status} className={'status-label ' + productStatus[status].key}>{productStatus[status].value}</label>
+              {product.arrStatus.map(status => (
+                <label key={status} className={'status-label ' + productStatus[status]}>{status}</label>
               ))}
             </div>
           </div>
@@ -77,7 +65,7 @@ const productStatus = {
           <div className="form-control">
             <label className="field-title">Kích thước:</label>
             <div className="product-size">
-              {product.sizes.map(size => (
+              {product.arrSizes.map(size => (
                 <label key={size} className="size-label">{size}</label>
               ))}
             </div>
@@ -87,7 +75,7 @@ const productStatus = {
             <label className="label-for-img field-title" htmlFor="product-image">Hình ảnh:</label>
             <div className="product-image">
               <div className="img-row">
-                {product.images.map(image => (
+                {product.arrImages.map(image => (
                   <div className="img-col" key={image}>
                     <div className="image-color" style={{ backgroundImage: `url(${image})` }}></div>
                   </div>
@@ -100,7 +88,7 @@ const productStatus = {
             <label className="label-for-img field-title" htmlFor="product-image">Màu sắc:</label>
             <div className="product-color">
               <div className="img-row">
-                {product.colors.map(color => (
+                {product.arrColors.map(color => (
                   <div className="img-col" key={color}>
                     <div className="image-color" style={{ backgroundImage: `url(${color})` }}></div>
                   </div>

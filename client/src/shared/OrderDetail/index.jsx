@@ -12,7 +12,7 @@ function OrderDetail({ order }) {
       <div id="overlay" onClick={() => setOrderDisplay(false)}></div>
       <div className="order-detail">
         <div className="order-cart-list" width="100%">
-          <div className="heading-id">Đơn hàng <span>#{order.idOrder}</span></div>
+          <div className="heading-id">Đơn hàng <span>#{order.orderId}</span></div>
           <div className="heading-title">
             <div className="product-color">Ảnh</div>
             <div className="product-description">Sản phẩm</div>
@@ -23,8 +23,8 @@ function OrderDetail({ order }) {
           </div>
 
           <div className="order-cart-detail">
-            {order.products.map(product => (
-              <div className="item-row" key={product._id}>
+            {order.products.map((product, index) => (
+              <div className="item-row" key={index}>
                 <div className="product-color-container">
                   <div className="product-color" style={{ backgroundImage: `url(${product.color})` }}></div>
                 </div>
@@ -48,9 +48,9 @@ function OrderDetail({ order }) {
           </ul>
           <ul className="payment-info col-40">
             <li className="total-price">Tổng đơn: <span>{order.total.toLocaleString()}đ</span></li>
-            <li className="shipping-fee">Phí vận chuyển: <span>{order.shipFee.toLocaleString()}đ</span></li>
+            <li className="shipping-fee">Phí vận chuyển: <span>{order.shippingFee.toLocaleString()}đ</span></li>
             <li className="payment-method">Trạng thái: <span>{getStatus(order.status)}</span></li>
-            <li className="date">Ngày đặt: {new Date(order.date).toLocaleString("en-GB").slice(0, 10)}</li>
+            <li className="date">Ngày đặt: {new Date(order.orderDate).toLocaleString("en-GB").slice(0, 10)}</li>
             <li className="payment-method">{order.paymentMethod}</li>
           </ul>
         </div>

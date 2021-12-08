@@ -157,8 +157,8 @@ function Header() {
 
                 <div className="cart-list">
                   <div className="cart-items">
-                    {[...cart.products].reverse().map(product => (
-                      <div className="cart-product-container" key={product.id}>
+                    {cart?.products.length !== 0 && [...cart.products].reverse().map((product, index) => (
+                      <div className="cart-product-container" key={index}>
                         <div className="product-info">
                           <div className="product-color" style={{ backgroundImage: `url(${product.colorLink})` }}></div>
                           <div className="product-description">

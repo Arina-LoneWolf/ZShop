@@ -52,7 +52,7 @@ const deleteComment = async (req, res) => {
     if (parentId === 0) {
       Promise.all([Comment.deleteParent(commentId), Comment.deleteChild(commentId)]);
     } else {
-      await Comment.deleteChild(commentId);
+      await Comment.deleteParent(commentId);
     }
 
     return res.status(200).json({ message: 'Delete comment success' });

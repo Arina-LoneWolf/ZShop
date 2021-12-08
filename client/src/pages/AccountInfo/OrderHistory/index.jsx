@@ -22,7 +22,7 @@ function OrderHistory() {
       page: page + 1,
       limit: 8
     }
-    const response = await orderApi.getByUserId(user._id, params);
+    const response = await orderApi.getByUserId(user.id, params);
     setTotalPages(response.totalPages);
     return response.orders;
   });
@@ -54,9 +54,9 @@ function OrderHistory() {
 
         <tbody>
           {orders?.map(order => (
-            <tr key={order._id}>
-              <td>{order.idOrder}</td>
-              <td>{new Date(order.date).toLocaleString("en-GB").slice(0, 10)}</td>
+            <tr key={order.orderId}>
+              <td>{order.orderId}</td>
+              <td>{new Date(order.orderDate).toLocaleString("en-GB").slice(0, 10)}</td>
               <td>{order.total.toLocaleString()}đ</td>
               <td>{getStatus(order.status)}</td>
               <td><span className="view-detail-btn" onClick={() => handleViewDetailClick(order)}>Xem chi tiết</span></td>

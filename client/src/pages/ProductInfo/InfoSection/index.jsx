@@ -72,9 +72,21 @@ function ProductInfo() {
     cartApi.add(item)
       .then(response => {
         console.log(response);
-        setCart(response.cart)
+        setCart(response.cart);
+
+        // if press the 'add_to_cart' button, then show the toast message
+        // if press the 'buy_now' button, then go to the Cart Page
+        if (buttonType === 'add_to_cart') {
+          setToastDisplay({
+            show: true,
+            message: <span>Bạn đã thêm sản phẩm <strong>{product.name}</strong> vào giỏ hàng!</span>
+          });
+        } else {
+          history.push('/cart');
+        }
       })
       .catch(error => {
+        console.log('vo ham co return;');
         console.log(error.response.data);
         const errorProduct = error.response.data;
         setToastDisplay({
@@ -83,17 +95,6 @@ function ProductInfo() {
         });
         return;
       });
-
-    // if press the 'add_to_cart' button, then show the toast message
-    // if press the 'buy_now' button, then go to the Cart Page
-    if (buttonType === 'add_to_cart') {
-      setToastDisplay({
-        show: true,
-        message: <span>Bạn đã thêm sản phẩm <strong>{product.name}</strong> vào giỏ hàng!</span>
-      });
-    } else {
-      history.push('/cart');
-    }
   }
 
   const handleAddProductToCart = (buttonType) => {

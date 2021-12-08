@@ -20,17 +20,42 @@ const addProductToCart = async (req, res) => {
     } else {
       oldCart = await Cart.getCart(userId);
       const getProductInCart = await Cart.getProductInCart([productId, size, colorLink]);
+
+      const getAllProductSameId = await Cart.getAllProductsSameIdInCart([productId]);
       if (getProductInCart.length === 1) {
         //console.log(getProductInCart[0].quantity);
+
+        //product A mau do
         let newQuantity = getProductInCart[0].quantity + quantity;
 
-        if (rowProduct[0].quantity < newQuantity) {
+        let totalProduct = 0;
+        getAllProductSameId.forEach((productSameId) => {
+          totalProduct += productSameId.quantity;
+        });
+
+        console.log('toi da', rowProduct[0].quantity);
+        console.log(totalProduct);
+
+        if (rowProduct[0].quantity < totalProduct + quantity) {
           return res
             .status(400)
             .json({ name: rowProduct[0].name, quantity: rowProduct[0].quantity });
         }
         await Cart.updateQuantityProduct([newQuantity, oldCart[0]?.id, productId, size, colorLink]);
       } else {
+        let totalProduct = 0;
+        getAllProductSameId.forEach((productSameId) => {
+          totalProduct += productSameId.quantity;
+        });
+
+        console.log('toi da', rowProduct[0].quantity);
+        console.log(totalProduct);
+
+        if (rowProduct[0].quantity < totalProduct + quantity) {
+          return res
+            .status(400)
+            .json({ name: rowProduct[0].name, quantity: rowProduct[0].quantity });
+        }
         await Cart.addCartDetail([oldCart[0]?.id, productId, colorLink, size, quantity]);
       }
 

@@ -23,22 +23,10 @@ import deleteIcon from '../../../assets/icons/delete.svg';
 import productApi from '../../../apis/productApi';
 
 const productStatus = {
-  '0': {
-    key: 'none',
-    value: 'Không có'
-  },
-  '1': {
-    key: 'new',
-    value: 'Mới'
-  },
-  '2': {
-    key: 'sale',
-    value: 'Khuyến mãi'
-  },
-  '3': {
-    key: 'hot',
-    value: 'Bán chạy'
-  }
+  'Không có': 'none',
+  'Mới': 'new',
+  'Khuyến mãi': 'sale',
+  'Bán chạy': 'hot'
 }
 
 function ProductManagement() {
@@ -62,7 +50,12 @@ function ProductManagement() {
   const [productEditDisplay, setProductEditDisplay] = useRecoilState(productEditDisplayState);
   const [productAddDisplay, setProductAddDisplay] = useRecoilState(productAddDisplayState);
 
-  const { data, isLoading, refetch } = useQuery(['managedProducts', page, searchKey, filter], async () => {
+  const { data: categories } = useQuery('categories', async () => {
+    const response = await productApi.getAllCategories();
+    return response;
+  }, { refetchOnWindowFocus: false });
+
+  const { data: products, isLoading, refetch } = useQuery(['managedProducts', page, searchKey, filter], async () => {
     const pagination = {
       page: page + 1,
       limit: 8,
@@ -103,7 +96,7 @@ function ProductManagement() {
     }
 
     setTotalPages(response.totalPages);
-    return response;
+    return response.products;
   });
 
   const handleAddProductClick = () => {
@@ -136,7 +129,6 @@ function ProductManagement() {
   }
 
   const handlePageChange = ({ selected }) => {
-    // console.log('page click: ', selected);
     setPage(selected);
   };
 
@@ -189,7 +181,7 @@ function ProductManagement() {
         <div className="add-product-btn" onClick={handleAddProductClick}><AiOutlinePlus className="add-icon" /></div>
       </div>
 
-      <div className={data?.products.length === 8 ? "product-table" : "product-table offset"}>
+      <div className={products?.length === 8 ? "product-table" : "product-table offset"}>
         <form className="title-list" ref={filterRef} onChange={handleFilterChange}>
           <div className="image-title fl-6 fl-o-1 title">Ảnh</div>
           <div className="name-title fl-20 title">Tên sản phẩm</div>
@@ -197,55 +189,23 @@ function ProductManagement() {
             <span className="type-title">Loại</span>
             <TiArrowSortedDown className="dropdown-icon" />
             <div className="type-options">
-              <div className="category-option">
-                <input type="radio" name="productType" id="ao" value="ao" />
-                <label htmlFor="ao">
-                  Áo
-                  <BiChevronRight className="expand-select-icon" />
-                  <div className="type-option">
-                    <input type="radio" name="productType" id="ao-the-thao" value="ao/ao-the-thao" />
-                    <label htmlFor="ao-the-thao">Áo thể thao</label>
-                    <input type="radio" name="productType" id="ao-thun-nu" value="ao/ao-thun-nu" />
-                    <label htmlFor="ao-thun-nu">Áo thun nữ</label>
-                    <input type="radio" name="productType" id="ao-kieu-nu" value="ao/ao-kieu-nu" />
-                    <label htmlFor="ao-kieu-nu">Áo kiểu nữ</label>
-                    <input type="radio" name="productType" id="ao-so-mi-nu" value="ao/ao-so-mi-nu" />
-                    <label htmlFor="ao-so-mi-nu">Áo sơ mi nữ</label>
-                    <input type="radio" name="productType" id="ao-khoac-nu" value="ao/ao-khoac-nu" />
-                    <label htmlFor="ao-khoac-nu">Áo khoác nữ</label>
-                  </div>
-                </label>
-              </div>
-              <div className="category-option">
-                <input type="radio" name="productType" id="quan" value="quan?" />
-                <label htmlFor="quan">
-                  Quần
-                  <BiChevronRight className="expand-select-icon" />
-                  <div className="type-option">
-                    <input type="radio" name="productType" id="quan-dai" value="quan/quan-dai" />
-                    <label htmlFor="quan-dai">Quần dài</label>
-                    <input type="radio" name="productType" id="quan-short-nu" value="quan/quan-short-nu" />
-                    <label htmlFor="quan-short-nu">Quần jean nữ</label>
-                    <input type="radio" name="productType" id="quan-legging" value="quan/quan-legging" />
-                    <label htmlFor="quan-legging">Quần legging</label>
-                  </div>
-                </label>
-              </div>
-              <div className="category-option">
-                <input type="radio" name="productType" id="dam-vay" value="dam-vay?" />
-                <label htmlFor="dam-vay">
-                  Đầm váy
-                  <BiChevronRight className="expand-select-icon" />
-                  <div className="type-option">
-                    <input type="radio" name="productType" id="chan-vay" value="dam-vay/chan-vay" />
-                    <label htmlFor="chan-vay">Chân váy</label>
-                    <input type="radio" name="productType" id="dam-nu" value="dam-vay/dam-nu" />
-                    <label htmlFor="dam-nu">Đầm nữ</label>
-                    <input type="radio" name="productType" id="yem" value="dam-vay/yem" />
-                    <label htmlFor="yem">Yếm</label>
-                  </div>
-                </label>
-              </div>
+              {categories?.map(category => (
+                <div className="category-option" key={category.categoryName}>
+                  <input type="radio" name="productType" id={category.categoryKey} value={category.categoryKey} />
+                  <label htmlFor={category.categoryKey}>
+                    {category.categoryName}
+                    <BiChevronRight className="expand-select-icon" />
+                    <div className="type-option">
+                      {category.types?.map(type => (
+                        <React.Fragment>
+                          <input type="radio" name="productType" id={type.typeKey} value={`${category.categoryKey}/${type.typeKey}`} />
+                          <label htmlFor={type.typeKey}>{type.typeName}</label>
+                        </React.Fragment>
+                      ))}
+                    </div>
+                  </label>
+                </div>
+              ))}
               <div className="category-option">
                 <input type="radio" name="productType" id="all" value="all" defaultChecked ref={defaultTypeRef} />
                 <label htmlFor="all">Tất cả</label>
@@ -257,17 +217,17 @@ function ProductManagement() {
             <span className="status-title">Trạng thái</span>
             <TiArrowSortedDown className="dropdown-icon" />
             <div className="status-options">
-              <input type="checkbox" name="productStatus" id="new-status" value="1" ref={newStatusRef} />
+              <input type="checkbox" name="productStatus" id="new-status" value="Mới" ref={newStatusRef} />
               <label htmlFor="new-status">
                 Mới nhất
                 <TiTick className="tick-icon" />
               </label>
-              <input type="checkbox" name="productStatus" id="sale-status" value="2" ref={saleStatusRef} />
+              <input type="checkbox" name="productStatus" id="sale-status" value="Khuyền mãi" ref={saleStatusRef} />
               <label htmlFor="sale-status">
                 Khuyến mãi
                 <TiTick className="tick-icon" />
               </label>
-              <input type="checkbox" name="productStatus" id="hot-status" value="3" ref={hotStatusRef} />
+              <input type="checkbox" name="productStatus" id="hot-status" value="Bán chạy" ref={hotStatusRef} />
               <label htmlFor="hot-status">
                 Bán chạy
                 <TiTick className="tick-icon" />
@@ -292,24 +252,24 @@ function ProductManagement() {
 
         <div className="product-list">
           {isLoading && <EatLoading color="#ff7eae" />}
-          {data?.products.map(product => (
-            <div key={product._id} className="product-item">
+          {products?.map(product => (
+            <div key={product.id} className="product-item">
               <div className="product-image-container fl-6 fl-o-1">
-                <div className="product-image" style={{ backgroundImage: `url(${product.images[0]})` }}></div>
+                <div className="product-image" style={{ backgroundImage: `url(${product.arrImages[0]})` }}></div>
               </div>
               <div className="product-name fl-20">
-                <Link to={`/product/${product._id}`} target='_blank'>{product.name}</Link>
+                <Link to={`/product/${product.id}`} target='_blank'>{product.name}</Link>
               </div>
-              <div className="product-type fl-15">{product.type === 'Quần Short Nữ' ? 'Quần Jean Nữ' : product.type}</div>
+              <div className="product-type fl-15">{product.typeName}</div>
               <div className="product-quantity fl-8">{product.quantity}</div>
               <div className="product-status fl-16">
-                {product.status.map(status => (
-                  <label key={status} className={'status-label ' + productStatus[status].key}>{productStatus[status].value}</label>
+                {product.arrStatus.map(status => (
+                  <label key={status} className={'status-label ' + productStatus[status]}>{status}</label>
                 ))}
               </div>
               <div className="product-unit-price fl-11">
-                <div className="discount-price">{product.new_price.toLocaleString()}đ</div>
-                {product.new_price !== product.real_price && <div className="original-price">{product.real_price.toLocaleString()}đ</div>}
+                <div className="discount-price">{product.priceAfterDis.toLocaleString()}đ</div>
+                {product.priceAfterDis !== product.price && <div className="original-price">{product.price.toLocaleString()}đ</div>}
               </div>
               <div className="product-discount fl-10">{product.discount.toLocaleString()}đ</div>
               <div className="product-manipulation fl-13">
@@ -319,7 +279,7 @@ function ProductManagement() {
                 <div className="edit-btn" onClick={() => handleEditProductClick(product)}>
                   <img src={editIcon} className="btn-icon" alt="" />
                 </div>
-                <div className="delete-btn" onClick={() => handleDeleteProductClick(product._id)}>
+                <div className="delete-btn" onClick={() => handleDeleteProductClick(product.id)}>
                   <img src={deleteIcon} className="btn-icon" alt="" />
                 </div>
               </div>
@@ -328,7 +288,7 @@ function ProductManagement() {
         </div>
       </div>
 
-      {data?.products.length > 0 && <ReactPaginate
+      {products?.length > 0 && <ReactPaginate
         previousLabel={<GrFormPrevious className="prev-icon" />}
         nextLabel={<GrFormNext className="next-icon" />}
         pageCount={totalPages}

@@ -24,6 +24,17 @@ const Cart = {
     return data;
   },
 
+  getAllProductsSameIdInCart: async (infoProduct) => {
+    const data = await executeQuery(
+      `
+    SELECT productId,quantity FROM CartDetail 
+    WHERE productId=? 
+     `,
+      infoProduct
+    );
+    return data;
+  },
+
   getCartTrans: async (userId, pool) => {
     return await pool.query('SELECT id FROM Cart WHERE userId=?', [userId]);
   },

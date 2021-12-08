@@ -38,12 +38,11 @@ function AdminLogin() {
     userApi.login(request).then(response => {
       console.log(response);
       const userAccessToken = response.accessToken;
-
       localStorage.setItem('accessToken', userAccessToken);
 
       userApi.getInfo().then(res => {
         console.log(res.user);
-        if (res.user.type === 1) {
+        if (res.user.isAdmin === 1) {
           setUser({
             accessToken: userAccessToken,
             ...res.user

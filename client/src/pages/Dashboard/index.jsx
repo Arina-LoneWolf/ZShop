@@ -1,6 +1,5 @@
 import './Dashboard.scss';
 import React, { useState, useRef } from 'react';
-import { useHistory } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { userState } from '../../recoil/userState';
 import Statistics from './Statistics';
@@ -19,7 +18,7 @@ import skyBackground from '../../assets/images/sky-background.jpg';
 function Dashboard() {
   const setUser = useSetRecoilState(userState);
 
-  const [selectedTab, setSelectedTab] = useState('statistics');
+  const [selectedTab, setSelectedTab] = useState('product');
 
   const statisticsTabRef = useRef(null);
   const productTabRef = useRef(null);
@@ -84,12 +83,12 @@ function Dashboard() {
               <img src={vividPinwheel} className="logo-icon" alt="" />
 
               <div className="menu-options">
-                <div className="tab-option active" ref={statisticsTabRef} onClick={handleStatisticsTabClick}>
+                <div className="tab-option" ref={statisticsTabRef} onClick={handleStatisticsTabClick}>
                   <img src={pinkBubbleChartIcon} className="option-icon" alt="" />
                   <div className="option-title">Thống kê</div>
                 </div>
 
-                <div className="tab-option" ref={productTabRef} onClick={handleProductTabClick}>
+                <div className="tab-option active" ref={productTabRef} onClick={handleProductTabClick}>
                   <img src={starIcon} className="option-icon" alt="" />
                   <div className="option-title">Sản phẩm</div>
                 </div>

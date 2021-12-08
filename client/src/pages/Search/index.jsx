@@ -23,7 +23,7 @@ function SearchSection() {
   const [page, setPage] = useState(0);
   const [filter, setFilter] = useState({});
 
-  const { data, isLoading, isError } = useQuery(['filteredProducts', page, category, type, name, filter], async () => {
+  const { data: products, isLoading, isError } = useQuery(['filteredProducts', page, category, type, name, filter], async () => {
     const pagination = {
       page: page + 1,
       limit: 16
@@ -62,8 +62,8 @@ function SearchSection() {
     }
 
     setTotalPages(response.totalPages);
-    console.log(response);
-    return response;
+    console.log(response.products);
+    return response.products;
   });
 
   useEffect(() => {
@@ -144,14 +144,14 @@ function SearchSection() {
               <EatLoading color='#ffb0bd' />
             </div>}
             {isError && <FetchError />}
-            {data?.products?.map(product => <ProductCard product={product} key={product._id} />)}
+            {products?.map(product => <ProductCard product={product} key={product.id} />)}
           </div>
 
           {(category === 'gift' || category === 'decorator' || category === 'bag' || category === 'stuff-animal') && <div className="no-set">Hiện chưa có sản phẩm này</div>}
 
-          {data?.products?.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
+          {products?.length === 0 && <div className="no-result">Không có kết quả phù hợp với từ khóa "{name}"</div>}
 
-          {data?.products?.length > 0 && <ReactPaginate
+          {products?.length > 0 && <ReactPaginate
             previousLabel={"Prev"}
             nextLabel={"Next"}
             pageCount={totalPages}

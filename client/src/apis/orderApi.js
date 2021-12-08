@@ -36,25 +36,30 @@ const orderApi = {
   //   return axiosClient.get(url);
   // },
 
-  getMonthlySales: () => {
+  // getMonthlyCategorySold: () => { // chưa hiểu lắm, có lẽ cần chỉnh lại (cách) dữ liệu trả về
+  //   const url = '/api/order/gettotalsoldcategory-followmonth/2021';
+  //   return axiosClient.get(url);
+  // },
+
+  getMonthlySales: () => { // doanh thu 12 tháng của năm 2021
     const url = '/api/order/gettotalonemonth/2021';
     return axiosClient.get(url);
   },
 
-  getMonthlyCategorySold: () => { // chưa hiểu lắm, có lẽ cần chỉnh lại (cách) dữ liệu trả về
-    const url = '/api/order/gettotalsoldcategory-followmonth/2021';
-    return axiosClient.get(url);
-  },
-
-  getCategorySoldByMonth: (month) => {
+  getCategorySoldByMonth: (month) => { // số lượng bán của 8 categories trong tháng X
     const url = `/api/order/gettotalcategoryonemonth/${month}`;
     return axiosClient.get(url);
   },
 
-  getCategorySalesByMonth: (month) => {
+  getCategorySalesByMonth: (month) => { // doanh thu của 8 categories trong tháng X
     const url = `/api/order/getsalecategoryonemonth/${month}`;
     return axiosClient.get(url);
   },
+
+  getMonthlySaleByCategory: (category) => { // doanh thu 12 tháng của category X
+    const url = `/api/order/getsaleonecategoryallmonths/${category}`;
+    return axiosClient.get(url);
+  }
 }
 
 export default orderApi;

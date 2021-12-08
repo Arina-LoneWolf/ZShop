@@ -1,103 +1,117 @@
-@import '../../../shared/style/color.scss';
+@import "../../../shared/style/color.scss";
 
 .statistics {
   display: flex;
   height: 100%;
 
   .chart-zone {
-    flex: 0 0 74%;
-    max-width: 74%;
+    // flex: 0 0 74%;
+    // max-width: 74%;
     height: 100%;
+    flex-grow: 1;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 22px;
 
-    .monthly-sales {
+    .monthly-sales,
+    .monthly-category-sales {
       position: relative;
       background: $white;
       width: 100%;
-      height: 45%;
-      padding: 16px 24px;
-      border-radius: 8px;
-      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
-    }
-
-    .sold-category-monthly {
-      position: relative;
-      margin-top: 3%;
-      background: $white;
-      width: 100%;
-      height: 51%;
       padding: 16px 24px;
       border-radius: 8px;
       box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
     }
 
     .chart-name {
+      display: flex;
+      align-items: center;
+      justify-content: center;
       position: absolute;
+      left: 0;
+      bottom: 10px;
       font-size: 19px;
       font-weight: 600;
-      bottom: 10px;
-      left: 50%;
-      transform: translateX(-50%);
+      width: 100%;
       color: lighten($lightslategray, 15);
+
+      select {
+        border: 1.5px solid lighten($lightslategray, 15);
+        border-radius: 4px;
+        font-size: 17px;
+        font-weight: 600;
+        margin-left: 7px;
+        padding-top: 2px;
+        width: 122px;
+      }
     }
   }
 
   .overview {
-    margin-left: 26px;
+    display: grid;
+    grid-template-columns: 1fr;
+    grid-template-rows: 1fr 1fr;
+    gap: 22px;
+    margin-left: 22px;
     height: 100%;
-    width: calc(100% - 26px);
+    width: 300px;
 
     .category-overview {
-      padding: 18px 0;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 24px 18px;
       border-radius: 8px;
       text-align: center;
-      height: calc((100% - 36px) / 3);
+      background: white;
+      box-shadow: rgba(0, 0, 0, 0.16) 0px 1px 4px;
 
-      .category-name {
-        font-size: 18px;
-        text-transform: uppercase;
-        font-weight: 800;
-        margin-bottom: 12px;
+      .chart-annotations {
+        display: flex;
+        justify-content: space-between;
+        flex-wrap: wrap;
+        margin: 16px 14px 0;
+
+        .annotations-wrapper {
+          display: flex;
+          align-items: center;
+          // margin-right: 14px;
+
+          .color-sign {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+          }
+
+          .color-annotation {
+            font-size: 13px;
+            margin-left: 3px;
+          }
+        }
       }
 
-      .total-control {
-        margin-top: 10px;
+      .chart-name {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 19px;
+        font-weight: 600;
+        color: lighten($lightslategray, 15);
+        position: absolute;
+        left: 0;
+        bottom: 10px;
+        width: 100%;
 
-        .total-title {
+        select {
+          border: 1.5px solid lighten($lightslategray, 15);
+          border-radius: 4px;
           font-size: 17px;
           font-weight: 600;
-        }
-
-        .total-value {
-          color: $darkslategrey;
-          font-size: 20px;
-          font-weight: 800;
-          margin-top: 2px;
-        }
-      }
-
-      &.shirt {
-        background: lighten($mediumpurple, 24);
-
-        .category-name {
-          color: $mediumpurple;
-        }
-      }
-
-      &.pants {
-        background: lighten($sandybrown, 25);
-        margin-top: 18px;
-
-        .category-name {
-          color: darken($sandybrown, 5);
-        }
-      }
-
-      &.dress-skirt {
-        background: lighten($hotpink, 20);
-        margin-top: 18px;
-
-        .category-name {
-          color: $hotpink;
+          margin-left: 7px;
+          padding-top: 2px;
+          width: 45px;
         }
       }
     }

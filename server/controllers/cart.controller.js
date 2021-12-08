@@ -23,6 +23,12 @@ const addProductToCart = async (req, res) => {
       if (getProductInCart.length === 1) {
         //console.log(getProductInCart[0].quantity);
         let newQuantity = getProductInCart[0].quantity + quantity;
+
+        if (rowProduct[0].quantity < newQuantity) {
+          return res
+            .status(400)
+            .json({ name: rowProduct[0].name, quantity: rowProduct[0].quantity });
+        }
         await Cart.updateQuantityProduct([newQuantity, oldCart[0]?.id, productId, size, colorLink]);
       } else {
         await Cart.addCartDetail([oldCart[0]?.id, productId, colorLink, size, quantity]);

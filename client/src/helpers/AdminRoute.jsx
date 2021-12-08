@@ -17,7 +17,7 @@ function AdminRoute({ component: Component, children, redirect, ...rest }) {
     }
 
     const response = await userApi.getInfo();
-    if (response.user.type !== 1) {
+    if (response.user.isAdmin !== 1) {
       throw new Error('You are not an admin');
     }
   }, { retry: false });

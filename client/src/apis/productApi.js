@@ -41,11 +41,6 @@ const productApi = {
     return axiosClient.delete(url);
   },
 
-  // uploadImages: (data) => {
-  //   const url = '/api/image/upload';
-  //   return axiosClient.post(url, data);
-  // },
-
   getAllCategories: () => {
     const url = '/api/category/getAll';
     return axiosClient.get(url);

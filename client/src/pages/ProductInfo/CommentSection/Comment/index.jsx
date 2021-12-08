@@ -8,7 +8,7 @@ import { useParams } from "react-router-dom";
 import commentApi from '../../../../apis/commentApi';
 import userApi from '../../../../apis/userApi';
 
-function Comment({ comment, refetch, commentId, reply = false, parentId }) {
+function Comment({ comment, refetch, reply = false }) {
   const { id: productId } = useParams();
   const user = useRecoilValue(userState);
 
@@ -27,18 +27,14 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
 
     if (commentContent) {
       const subComment = {
-        user: user._id,
+        userId: user.id,
         content: commentContent,
-        productId: productId
+        productId: productId,
+        parentId: comment.id
       }
 
-      const params = {
-        reply: 1,
-        id: commentId
-      }
-
-      commentApi.add(subComment, params).then(response => {
-        // console.log(response.message);
+      commentApi.add(subComment).then(response => {
+        console.log(response);
         replyCommentBoxRef.current.innerText = '';
         replyBoxRef.current.classList.remove('active');
         refetch();
@@ -84,20 +80,8 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
       message: 'Bạn có chắc muốn xóa bình luận này?',
       acceptButtonName: 'Xóa',
       func: () => {
-        let params = {};
-        if (reply) {
-          params = {
-            id: parentId,
-            node: commentId
-          }
-        } else {
-          params = {
-            id: commentId
-          }
-        }
-
-        commentApi.delete(params).then(response => {
-          // console.log(response.message);
+        commentApi.delete(comment.id).then(response => {
+          console.log(response);
           refetch();
         }).catch(error => {
           console.log(error);
@@ -107,11 +91,11 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
   }
 
   const handleMuteUser = () => {
-    const keyword = comment.user.mute ? 'bỏ cấm' : 'cấm';
+    const keyword = comment.mute ? 'bỏ cấm' : 'cấm';
 
     const data = {
-      id: comment.user._id,
-      mute: !comment.user.mute
+      id: comment.userId,
+      mute: !comment.mute
     }
 
     setDialog({
@@ -120,7 +104,7 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
       acceptButtonName: keyword,
       func: () => {
         userApi.updateMute(data).then(response => {
-          console.log(response.message);
+          console.log(response);
           refetch();
         }).catch(error => {
           console.log(error.response.data.message);
@@ -137,24 +121,24 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
     return () => clearInterval(timeAgo);
   }, [])
 
-  const isAdmin = user.type === 1;
-  const isAdminComment = comment.user.type === 1;
+  const isAdmin = user.isAdmin === 1;
+  const isAdminComment = comment.isAdmin === 1;
 
   return (
     <div className="comment">
       <div className={reply ? "reply-comment" : "original-comment"}>
         <div className={isAdminComment ? "avatar admin-mode" : "avatar"}>
           <div className="text-avatar">
-            {isAdminComment ? 'Z' : comment.user.name.split(" ").pop().charAt(0)}
+            {isAdminComment ? 'Z' : comment.name.split(" ").pop().charAt(0)}
           </div>
         </div>
         <div className="comment-content">
-          <div className="author">{isAdminComment ? 'ZShop - Quà tặng & Phụ kiện thời trang' : comment.user.name}</div>
+          <div className="author">{isAdminComment ? 'ZShop - Quà tặng & Phụ kiện thời trang' : comment.name}</div>
           <div className="content">{comment.content}</div>
           <div className="control-options">
             {!reply && <span className="reply-btn" onClick={handleReplyClick}>Trả lời</span>}
             {isAdmin && <span className="delete-btn" onClick={handleDeleteComment}>Xóa</span>}
-            {isAdmin && !isAdminComment && <span className="mute-btn" onClick={handleMuteUser}>{comment.user.mute ? 'Bỏ cấm' : 'Cấm'}</span>}
+            {isAdmin && !isAdminComment && <span className="mute-btn" onClick={handleMuteUser}>{comment.mute ? 'Bỏ cấm' : 'Cấm'}</span>}
             <span className="time-ago">{timeAgoRef.current}</span>
           </div>
         </div>
@@ -182,12 +166,10 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
         </div>
       </div>}
 
-      {comment.reply && comment.reply.map(reply => (
+      {comment.reply?.map(reply => (
         <Comment
-          key={reply._id}
-          commentId={reply._id}
+          key={reply.id}
           comment={reply}
-          parentId={commentId}
           refetch={refetch}
           reply
         />
@@ -197,6 +179,9 @@ function Comment({ comment, refetch, commentId, reply = false, parentId }) {
 }
 
 function timeSince(date) {
+  // console.log('date comment: ', date);
+  // console.log('date now: ', new Date());
+  // console.log('tinh date: ', new Date() - date);
   var seconds = Math.floor((new Date() - date) / 1000);
 
   var interval = seconds / 31536000;

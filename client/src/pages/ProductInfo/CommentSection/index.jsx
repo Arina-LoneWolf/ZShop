@@ -20,10 +20,9 @@ function CommentSection() {
   const commentBoxRef = useRef(null);
 
   const { data: comments, refetch } = useQuery('comments', async () => {
-    const params = { productId }
-    const response = await commentApi.getAllByProductId(params);
-    // console.log(response)
-    return response;
+    const response = await commentApi.getAllByProductId(productId);
+    console.log('get comment: ', response)
+    return response.comments;
   });
 
   useEffect(() => {
@@ -65,13 +64,14 @@ function CommentSection() {
     }
 
     const comment = {
-      user: user._id,
+      userId: user.id,
       content: commentContent,
-      productId: productId
+      productId: productId,
+      parentId: 0
     }
 
     commentApi.add(comment).then(response => {
-      // console.log(response.message);
+      console.log(response);
       refetch();
       commentBoxRef.current.innerText = '';
     }).then(error => {
@@ -86,7 +86,7 @@ function CommentSection() {
     }
   }
 
-  const isAdmin = user.type === 1;
+  const isAdmin = user.isAdmin === 1;
 
   return (
     <React.Fragment>
@@ -97,7 +97,7 @@ function CommentSection() {
           <div className="comment-typing-area">
             <div className={isAdmin ? "avatar admin-mode" : "avatar"}>
               <div className="text-avatar">
-                {user.accessToken ? (user.type === 1 ? 'Z' : user.name.split(" ").pop().charAt(0)) : 'P'}
+                {user.accessToken ? (user.isAdmin === 1 ? 'Z' : user.name.split(" ").pop().charAt(0)) : 'P'}
               </div>
             </div>
             <div
@@ -119,8 +119,8 @@ function CommentSection() {
         <div className="comment-display-area">
           {[...comments].reverse().map(comment => (
             <Comment
-              key={comment._id}
-              commentId={comment._id}
+              key={comment.id}
+              commentId={comment.id}
               comment={comment}
               refetch={refetch}
             />

@@ -1,19 +1,19 @@
 import axiosClient from './axiosClient';
 
 const commentApi = {
-  getAllByProductId: (params) => { // params: productId
-    const url = '/api/comment/get';
-    return axiosClient.get(url, { params });
+  getAllByProductId: (productId) => { // params: productId
+    const url = `/api/comment/get/${productId}`;
+    return axiosClient.get(url);
   },
 
-  add: (data, params) => {
-    const url = '/api/comment/add'; // params: reply: 1, id (commentId)
-    return axiosClient.post(url, data, { params });
+  add: (data) => {
+    const url = '/api/comment/add';
+    return axiosClient.post(url, data);
   },
 
-  delete: (params) => { // params: id (commentId) / id (parentId), node (commentId)
-    let url = '/api/comment/delete';
-    return axiosClient.delete(url, { params });
+  delete: (commentId) => {
+    let url = `/api/comment/delete/${commentId}`;
+    return axiosClient.delete(url);
   }
 }
 

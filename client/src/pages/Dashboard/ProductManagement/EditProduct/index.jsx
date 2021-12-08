@@ -375,7 +375,7 @@ function EditProduct({ product, refetch }) {
           </div>
 
           <div className="btn-group">
-            <button type="button" className="cancel-btn" onClick={handleClosing}>Hủy</button>
+            <button type="button" className="cancel-btn" onClick={handleClosing}>Đóng</button>
             <button type="submit" className="save-product-btn">Lưu</button>
           </div>
         </form>

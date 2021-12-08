@@ -196,28 +196,30 @@ const Product = {
   },
 
   insertImage: async (listImages) => {
-    const data = await executeQuery('INSERT INTO Image(imageLink, productId) VALUES ?', [
-      listImages,
-    ]);
+    const data = await executeQuery(
+      'INSERT INTO Image(imageLink, productId) VALUES (?,?)',
+      listImages
+    );
     return data;
   },
 
   insertColor: async (listColors) => {
-    const data = await executeQuery('INSERT INTO Color (colorLink, productId) VALUES ?', [
-      listColors,
-    ]);
+    const data = await executeQuery(
+      'INSERT INTO Color (colorLink, productId) VALUES (?,?)',
+      listColors
+    );
     return data;
   },
 
   insertSize: async (listSize) => {
-    const data = await executeQuery('INSERT INTO Size (name, productId) VALUES ?', [listSize]);
+    const data = await executeQuery('INSERT INTO Size (name, productId) VALUES (?,?)', listSize);
     return data;
   },
 
   insertProStatusDetail: async (listStatus) => {
     const data = await executeQuery(
-      'INSERT INTO ProductStatusDetail (productId,statusId) VALUES ?',
-      [listStatus]
+      'INSERT INTO ProductStatusDetail (productId,statusId) VALUES (?,?)',
+      listStatus
     );
     return data;
   },

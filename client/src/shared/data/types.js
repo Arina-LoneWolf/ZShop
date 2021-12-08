@@ -65,6 +65,84 @@ const types = [
     categoryName: 'Đầm Váy',
     categoryKey: 'dam-vay'
   },
+  {
+    name: 'Mền Thú',
+    key: 'men-thu',
+    categoryName: 'Gấu Bông',
+    categoryKey: 'gau-bong'
+  },
+  {
+    name: 'Gối Chữ U',
+    key: 'goi-chu-u',
+    categoryName: 'Gấu Bông',
+    categoryKey: 'gau-bong'
+  },
+  {
+    name: 'Gấu Bông Cute',
+    key: 'gau-bong-cute',
+    categoryName: 'Gấu Bông',
+    categoryKey: 'gau-bong'
+  },
+  {
+    name: 'Hoa',
+    key: 'hoa',
+    categoryName: 'Quà Tặng',
+    categoryKey: 'qua-tang'
+  },
+  {
+    name: 'Thiệp',
+    key: 'thiep',
+    categoryName: 'Quà Tặng',
+    categoryKey: 'qua-tang'
+  },
+  {
+    name: 'Túi Quà',
+    key: 'tui-qua',
+    categoryName: 'Quà Tặng',
+    categoryKey: 'qua-tang'
+  },
+  {
+    name: 'Móc Khóa',
+    key: 'moc-khoa',
+    categoryName: 'Quà Tặng',
+    categoryKey: 'qua-tang'
+  },
+  {
+    name: 'Đèn',
+    key: 'den',
+    categoryName: 'Đồ Trang Trí',
+    categoryKey: 'do-trang-tri'
+  },
+  {
+    name: 'Kẹp Ảnh',
+    key: 'kep-anh',
+    categoryName: 'Đồ Trang Trí',
+    categoryKey: 'do-trang-tri'
+  },
+  {
+    name: 'Chuông Gió',
+    key: 'chuong-gio',
+    categoryName: 'Đồ Trang Trí',
+    categoryKey: 'do-trang-tri'
+  },
+  {
+    name: 'Ví',
+    key: 'vi',
+    categoryName: 'Túi Ví',
+    categoryKey: 'tui-vi'
+  },
+  {
+    name: 'Balo',
+    key: 'balo',
+    categoryName: 'Túi Ví',
+    categoryKey: 'tui-vi'
+  },
+  {
+    name: 'Túi Đeo',
+    key: 'tui-deo',
+    categoryName: 'Túi Ví',
+    categoryKey: 'tui-vi'
+  },
 ];
 
 export default types;

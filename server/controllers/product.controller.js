@@ -275,10 +275,10 @@ const addProduct = async (req, res) => {
     const [{ typeId }] = await Product.getTypeId(type);
 
     let discount = !req.body.discount ? 0 : req.body.discount;
-    let newImages = [];
-    let newColors = [];
-    let newSizes = [];
-    let newStatus = [];
+    // let newImages = [];
+    // let newColors = [];
+    // let newSizes = [];
+    // let newStatus = [];
     let newProduct = await Product.addProduct([
       name,
       categoryId,
@@ -289,25 +289,28 @@ const addProduct = async (req, res) => {
     ]);
 
     for (let i = 0; i < images.length; i++) {
-      newImages.push([images[i], newProduct.insertId]);
+      //newImages.push([images[i], newProduct.insertId]);
+      await Product.insertImage([images[i], newProduct.insertId]);
     }
 
     for (let i = 0; i < colors.length; i++) {
-      newColors.push([colors[i], newProduct.insertId]);
+      //newColors.push([colors[i], newProduct.insertId]);
+      await Product.insertColor([colors[i], newProduct.insertId]);
     }
 
     for (let i = 0; i < sizes.length; i++) {
-      newSizes.push([sizes[i], newProduct.insertId]);
+      //newSizes.push([sizes[i], newProduct.insertId]);
+      await Product.insertSize([sizes[i], newProduct.insertId]);
     }
 
     for (let i = 0; i < status.length; i++) {
-      newStatus.push([newProduct.insertId, objStatus[status[i]]]);
+      //newStatus.push([newProduct.insertId, objStatus[status[i]]]);
+      await Product.insertProStatusDetail([newProduct.insertId, objStatus[status[i]]]);
     }
 
-    await Product.insertImage(newImages);
-    await Product.insertColor(newColors);
-    await Product.insertSize(newSizes);
-    await Product.insertProStatusDetail(newStatus);
+    // await Product.insertColor(newColors);
+    //await Product.insertSize(newSizes);
+    //await Product.insertProStatusDetail(newStatus);
 
     return res.status(201).json({ message: 'Add product success' });
   } catch (error) {
@@ -329,10 +332,10 @@ const editProduct = async (req, res) => {
     };
 
     let discount = !req.body.discount ? 0 : req.body.discount;
-    let newImages = [];
-    let newColors = [];
-    let newSizes = [];
-    let newStatus = [];
+    // let newImages = [];
+    // let newColors = [];
+    // let newSizes = [];
+    // let newStatus = [];
 
     await Product.updateProduct([name, categoryId, typeId, price, discount, quantity, id]);
     Promise.all([
@@ -343,27 +346,32 @@ const editProduct = async (req, res) => {
     ]);
 
     for (let i = 0; i < images.length; i++) {
-      newImages.push([images[i], id]);
+      //newImages.push([images[i], id]);
+      await Product.insertImage([images[i], id]);
     }
 
     for (let i = 0; i < colors.length; i++) {
-      newColors.push([colors[i], id]);
+      //newColors.push([colors[i], id]);
+      await Product.insertColor([colors[i], id]);
     }
 
     for (let i = 0; i < sizes.length; i++) {
-      newSizes.push([sizes[i], id]);
+      //newSizes.push([sizes[i], id]);
+      await Product.insertSize([sizes[i], id]);
     }
 
     for (let i = 0; i < status.length; i++) {
-      newStatus.push([id, objStatus[status[i]]]);
+      //newStatus.push([id, objStatus[status[i]]]);
+      await Product.insertProStatusDetail([id, objStatus[status[i]]]);
     }
 
-    Promise.all([
-      Product.insertImage(newImages),
-      Product.insertColor(newColors),
-      Product.insertSize(newSizes),
-      Product.insertProStatusDetail(newStatus),
-    ]);
+    //Promise.all([
+
+    //await Product.insertImage(newImages);
+    //await Product.insertColor(newColors);
+    //await Product.insertSize(newSizes);
+    //await Product.insertProStatusDetail(newStatus);
+    //]);
 
     return res.status(200).json({ message: 'Update product success' });
   } catch (error) {

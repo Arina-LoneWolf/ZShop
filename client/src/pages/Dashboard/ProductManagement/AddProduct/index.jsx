@@ -356,7 +356,7 @@ function AddNewProduct({ refetch }) {
           </div>
 
           <div className="btn-group">
-            <button type="button" className="cancel-btn" onClick={handleClosing}>Hủy</button>
+            <button type="button" className="cancel-btn" onClick={handleClosing}>Đóng</button>
             <button type="submit" className="add-product-btn">Thêm</button>
           </div>
         </form>

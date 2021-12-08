@@ -8,7 +8,7 @@ const addComment = async (req, res) => {
       return res.status(400).json({ message: 'User is muted' });
     }
     await Comment.add([parentId, userId, productId, content]);
-    return res.status(201).json({ message: 'Add product success' });
+    return res.status(201).json({ message: 'Add comment success' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

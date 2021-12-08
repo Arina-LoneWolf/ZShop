@@ -213,7 +213,7 @@ LIMIT ?,?
     FROM OrderProductDetail, OrderProduct, User
     WHERE OrderProduct.id=OrderProductDetail.orderId
     AND OrderProduct.userId=User.id
-    AND MATCH(OrderProduct.receiverName,OrderProduct.id,OrderProduct.receiverPhone) AGAINST ('"${strSearch}"' IN BOOLEAN MODE)
+    AND MATCH(OrderProduct.receiverName,OrderProduct.id,OrderProduct.receiverPhone) AGAINST ('${strSearch}' IN BOOLEAN MODE)
     GROUP BY OrderProduct.id, userInfo, receiverInfo, objectProduct
     ) AS newTable
     GROUP BY newTable.orderId, newTable.receiverInfo, newTable.userInfo, 
@@ -227,13 +227,14 @@ LIMIT ?,?
     return data;
   },
 
+  // AGAINST ('"${strSearch}"' IN BOOLEAN MODE)
   countSearchOrder: async (strSearch) => {
     const data = await executeQuery(
       `
     SELECT COUNT(DISTINCT OrderProduct.id) as count
     FROM OrderProduct
     WHERE MATCH(OrderProduct.receiverName,OrderProduct.id,OrderProduct.receiverPhone) 
-    AGAINST ('"${strSearch}"' IN BOOLEAN MODE)
+    AGAINST ('${strSearch}' IN BOOLEAN MODE)
     `
     );
     return data;

@@ -146,7 +146,14 @@ const addOrder = async (req, res) => {
     //nhớ bỏ cmt này để xóa tất cả sản phẩm trong cart khi thanh toán thành công(test thì khỏi bỏ mất công phải add data lại trong cart)
     //await Cart.deleteProductWithCartIdTrans(oldCart[0].id, connection);
 
-    return res.status(201).json('Add order success');
+    return res.status(201).json({
+      message: 'Add order success',
+      cart: {
+        products: [],
+        totalPrice: 0,
+        numberProducts: 0,
+      },
+    });
   } catch (error) {
     await connection.rollback();
     console.info('Rollback successful');
@@ -311,9 +318,18 @@ const searchOrder = async (req, res) => {
     const startIndex = (page - 1) * limit;
     const searchText = req.query.q;
 
+    let arrStr = searchText.split(' ');
+    let dataStr = '';
+    for (let i = 0; i < arrStr.length; i++) {
+      dataStr += arrStr[i] + '*'; //+ ' ';
+      // if (i === arrStr.length - 1) {
+      //   dataStr += "'";
+      // }
+    }
+    console.log('q', dataStr);
     let data = await Promise.all([
-      Order.searchOrder(startIndex, limit, searchText),
-      Order.countSearchOrder(searchText),
+      Order.searchOrder(startIndex, limit, /*searchText*/ dataStr),
+      Order.countSearchOrder(/*searchText*/ dataStr),
     ]).then(([orders, totalOrders]) => {
       return {
         orders: orders,

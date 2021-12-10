@@ -144,7 +144,7 @@ const addOrder = async (req, res) => {
 
     //-----QUAN TRỌNG-----
     //nhớ bỏ cmt này để xóa tất cả sản phẩm trong cart khi thanh toán thành công(test thì khỏi bỏ mất công phải add data lại trong cart)
-    await Cart.deleteProductWithCartIdTrans(oldCart[0][0].id, connection);
+    //await Cart.deleteProductWithCartIdTrans(oldCart[0].id, connection);
 
     return res.status(201).json({
       message: 'Add order success',
@@ -197,15 +197,10 @@ const getAllOrders = async (req, res) => {
     let strStatus = 'AND OrderProduct.status=?';
     let strTime = 'AND OrderProduct.orderDate between ? and ?';
 
-    console.log("body", req.body)
-
     if (Object.values(req.body).length !== 0) {
       if (req.body.timeStart && req.body.timeEnd) {
         if (req.body.status) {
           console.log('co time va co status');
-
-          console.log('a', strTime);
-          console.log('b', strStatus)
           data = await Promise.all([
             Order.getAllOrders(strTime, strStatus, [
               `${req.body.timeStart} 00:00:01`,
@@ -214,8 +209,6 @@ const getAllOrders = async (req, res) => {
               startIndex,
               limit,
             ]),
-
-
             Order.countAllOrders('WHERE OrderProduct.orderDate between ? and ?', strStatus, [
               `${req.body.timeStart} 00:00:01`,
               `${req.body.timeEnd} 23:59:59`,
@@ -264,8 +257,6 @@ const getAllOrders = async (req, res) => {
       }
     } else {
       console.log('khong co body');
-      console.log('limit', limit)
-      console.log('startIndex', startIndex)
       data = await Promise.all([
         Order.getAllOrders('', '', [startIndex, limit]),
         Order.countAllOrders('', '', []),
@@ -405,7 +396,7 @@ const getTotalAllCategoryOneMonth = async (req, res) => {
     for (let i = 0; i < allCategory.length; i++) {
       data.push({
         category: allCategory[i],
-        month: parseInt(month),
+        month,
         total: 0,
       });
     }
@@ -417,11 +408,10 @@ const getTotalAllCategoryOneMonth = async (req, res) => {
     let total = 0;
     data.forEach((dt) => {
       total += parseInt(dt.total);
-      dt.total = parseInt(dt.total)
     });
 
     console.log(allCategory);
-    return res.status(200).json({ message: 'Done', data, total: parseInt(total) });
+    return res.status(200).json({ message: 'Done', data, total });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

@@ -149,7 +149,7 @@ function Statistics() {
             </ResponsiveContainer>
             <div className="chart-name">
               <span className="chart-name-title">Tổng doanh thu qua các tháng của</span>
-              <select name="category-options" ref={categoryOptionRef} onChange={handleCategoryChange}>
+              <select name="category-options" value={category} ref={categoryOptionRef} onChange={handleCategoryChange}>
                 {categories.map(category => (
                   <option value={category.name} key={category.name}>{category.name}</option>
                 ))}
@@ -188,7 +188,7 @@ function Statistics() {
 
             <div className="chart-name">
               <span className="chart-name-title">Tổng doanh thu tháng</span>
-              <select name="category-options" ref={salesMonthOptionRef} onChange={handleSalesMonthChange}>
+              <select name="category-options" value={salesMonth} ref={salesMonthOptionRef} onChange={handleSalesMonthChange}>
                 {months.map((month) => (
                   <option value={month} key={month}>{month}</option>
                 ))}
@@ -227,7 +227,7 @@ function Statistics() {
 
             <div className="chart-name">
               <span className="chart-name-title">Tổng số lượng bán tháng</span>
-              <select name="category-options" ref={soldMonthOptionRef} onChange={handleSoldMonthChange}>
+              <select name="category-options" value={soldMonth} ref={soldMonthOptionRef} onChange={handleSoldMonthChange}>
                 {months.map((month) => (
                   <option value={month} key={month}>{month}</option>
                 ))}

@@ -53,7 +53,7 @@ function AdminLogin() {
         }
       }).catch(err => console.log(err));
     }).catch(error => {
-      console.log(error.response.data.message);
+      console.log(error.response);
       setShowErrorMessage(true);
     });
   }

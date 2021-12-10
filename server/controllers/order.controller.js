@@ -197,10 +197,15 @@ const getAllOrders = async (req, res) => {
     let strStatus = 'AND OrderProduct.status=?';
     let strTime = 'AND OrderProduct.orderDate between ? and ?';
 
+    console.log("body", req.body)
+
     if (Object.values(req.body).length !== 0) {
       if (req.body.timeStart && req.body.timeEnd) {
         if (req.body.status) {
           console.log('co time va co status');
+
+          console.log('a', strTime);
+          console.log('b', strStatus)
           data = await Promise.all([
             Order.getAllOrders(strTime, strStatus, [
               `${req.body.timeStart} 00:00:01`,
@@ -209,6 +214,8 @@ const getAllOrders = async (req, res) => {
               startIndex,
               limit,
             ]),
+
+
             Order.countAllOrders('WHERE OrderProduct.orderDate between ? and ?', strStatus, [
               `${req.body.timeStart} 00:00:01`,
               `${req.body.timeEnd} 23:59:59`,
@@ -257,6 +264,8 @@ const getAllOrders = async (req, res) => {
       }
     } else {
       console.log('khong co body');
+      console.log('limit', limit)
+      console.log('startIndex', startIndex)
       data = await Promise.all([
         Order.getAllOrders('', '', [startIndex, limit]),
         Order.countAllOrders('', '', []),

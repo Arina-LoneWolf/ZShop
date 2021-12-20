@@ -401,16 +401,19 @@ const searchProduct = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const startIndex = (page - 1) * limit;
-    const strSearch = req.query.name;
+    const strSearch = req.query.name.trim();
     //console.log(typeof strSearch);
 
     let arrStr = strSearch.split(' ');
     let dataStr = '';
     for (let i = 0; i < arrStr.length; i++) {
-      dataStr += arrStr[i] + '*'; //+ ' ';
+      if (arrStr !== '')
+        dataStr += '+' + arrStr[i] + '*' + ' ';
     }
 
-    //console.log(dataStr);
+    dataStr.trim();
+
+    console.log('KKO', dataStr);
 
     let strSort = '';
     let strHaving = 'HAVING JSON_LENGTH(arrStatus) >= ?';

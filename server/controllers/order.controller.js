@@ -144,7 +144,7 @@ const addOrder = async (req, res) => {
 
     //-----QUAN TRỌNG-----
     //nhớ bỏ cmt này để xóa tất cả sản phẩm trong cart khi thanh toán thành công(test thì khỏi bỏ mất công phải add data lại trong cart)
-    //await Cart.deleteProductWithCartIdTrans(oldCart[0].id, connection);
+    await Cart.deleteProductWithCartIdTrans(oldCart[0][0].id, connection);
 
     return res.status(201).json({
       message: 'Add order success',
@@ -316,14 +316,18 @@ const searchOrder = async (req, res) => {
     const page = parseInt(req.query.page) || 1;
     const limit = parseInt(req.query.limit) || 10;
     const startIndex = (page - 1) * limit;
-    const searchText = req.query.q;
+    const searchText = req.query.q.trim();
+    console.log('KOOL', searchText.length)
 
     let arrStr = searchText.split(' ');
+    console.log('BBB', arrStr)
     let dataStr = '';
     for (let i = 0; i < arrStr.length; i++) {
-      dataStr += arrStr[i] + '*'; //+ ' ';
-    }
+      if (arrStr[i] !== '')
+        dataStr += "+" + arrStr[i] + '*' + ' ';
 
+    }
+    dataStr.trim()
     console.log('q', dataStr);
     let data = await Promise.all([
       Order.searchOrder(startIndex, limit, /*searchText*/ dataStr),
@@ -396,7 +400,7 @@ const getTotalAllCategoryOneMonth = async (req, res) => {
     for (let i = 0; i < allCategory.length; i++) {
       data.push({
         category: allCategory[i],
-        month,
+        month: parseInt(month),
         total: 0,
       });
     }
@@ -407,6 +411,7 @@ const getTotalAllCategoryOneMonth = async (req, res) => {
 
     let total = 0;
     data.forEach((dt) => {
+      dt.total = parseInt(dt.total)
       total += parseInt(dt.total);
     });
 
@@ -430,7 +435,7 @@ const getSaleAllCategoryOneMonth = async (req, res) => {
     for (let i = 0; i < allCategory.length; i++) {
       data.push({
         category: allCategory[i],
-        month,
+        month: parseInt(month),
         total: 0,
       });
     }
@@ -441,6 +446,7 @@ const getSaleAllCategoryOneMonth = async (req, res) => {
 
     let total = 0;
     data.forEach((dt) => {
+      dt.total = parseInt(dt.total)
       total += dt.total;
     });
 

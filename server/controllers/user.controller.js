@@ -93,7 +93,8 @@ const confirmMail = async (req, res) => {
   } catch (error) {
     res.status(500).json(error);
   }
-  return res.redirect('http://localhost:3000');
+  //http://localhost:3000
+  return res.redirect('https://jolly-brahmagupta-03c960.netlify.app');
 };
 
 const login = async (req, res) => {

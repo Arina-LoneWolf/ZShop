@@ -1,25 +1,32 @@
-import { google } from 'googleapis';
+// import { google } from 'googleapis';
 import nodemailer from 'nodemailer';
 
-const CLIENT_ID = process.env.CLIENT_ID;
-const CLIENT_SECRET = process.env.CLIENT_SECRET;
-const REDIRECT_URL = process.env.REDIRECT_URL;
-const REFRESH_TOKEN_MAIL = process.env.REFRESH_TOKEN_MAIL;
+// const CLIENT_ID = process.env.CLIENT_ID;
+// const CLIENT_SECRET = process.env.CLIENT_SECRET;
+// const REDIRECT_URL = process.env.REDIRECT_URL;
+// const REFRESH_TOKEN_MAIL = process.env.REFRESH_TOKEN_MAIL;
 
-const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
-oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN_MAIL });
+// const oAuth2Client = new google.auth.OAuth2(CLIENT_ID, CLIENT_SECRET, REDIRECT_URL);
+// oAuth2Client.setCredentials({ refresh_token: REFRESH_TOKEN_MAIL });
 
 const sendMail = async (to, url) => {
-  const accessToken = await oAuth2Client.getAccessToken();
+  // const accessToken = await oAuth2Client.getAccessToken();
+  // const smtpTransport = nodemailer.createTransport({
+  //   service: 'gmail',
+  //   auth: {
+  //     type: 'OAuth2',
+  //     user: process.env.USERNAME_GMAIL,
+  //     clientId: CLIENT_ID,
+  //     clientSecret: CLIENT_SECRET,
+  //     refreshToken: REFRESH_TOKEN_MAIL,
+  //     accessToken: accessToken,
+  //   },
+  // });
   const smtpTransport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      type: 'OAuth2',
       user: process.env.USERNAME_GMAIL,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN_MAIL,
-      accessToken: accessToken,
+      pass: process.env.PASS_GMAIL,
     },
   });
 
@@ -45,16 +52,23 @@ const sendMail = async (to, url) => {
 };
 
 const sendMailOTP = async (to, otp) => {
-  const accessToken = await oAuth2Client.getAccessToken();
+  // const accessToken = await oAuth2Client.getAccessToken();
+  // const smtpTransport = nodemailer.createTransport({
+  //   service: 'gmail',
+  //   auth: {
+  //     type: 'OAuth2',
+  //     user: process.env.USERNAME_GMAIL,
+  //     clientId: CLIENT_ID,
+  //     clientSecret: CLIENT_SECRET,
+  //     refreshToken: REFRESH_TOKEN_MAIL,
+  //     accessToken: accessToken,
+  //   },
+  // });
   const smtpTransport = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      type: 'OAuth2',
       user: process.env.USERNAME_GMAIL,
-      clientId: CLIENT_ID,
-      clientSecret: CLIENT_SECRET,
-      refreshToken: REFRESH_TOKEN_MAIL,
-      accessToken: accessToken,
+      pass: process.env.PASS_GMAIL,
     },
   });
 

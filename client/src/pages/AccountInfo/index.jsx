@@ -7,8 +7,7 @@ import ChangeEmail from './ChangeEmail';
 import { IoPersonCircle } from "react-icons/io5";
 
 function AccountInfo() {
-  const [catalogOption, setCatalogOption] = useState('changePassword');
-  console.log('account info render');
+  const [catalogOption, setCatalogOption] = useState('profile');
 
   const catalogOptionInfo = {
     profile: <Profile />,

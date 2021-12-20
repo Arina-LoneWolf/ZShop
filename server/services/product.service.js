@@ -87,8 +87,10 @@ const Product = {
     const data = await executeQuery(
       `
     SELECT COUNT(*) AS totalProduct FROM (SELECT psd.productId as totalProduct 
-    FROM  ProductStatusDetail as psd , Status
-    WHERE psd.statusId=Status.id 
+      FROM  ProductStatusDetail as psd , Status, Color, Image
+      WHERE psd.statusId=Status.id 
+      AND Color.productId=psd.productId
+      AND Image.productId=psd.productId
     ${numberQuestion}
     GROUP BY psd.productId
     ${strHaving}) 

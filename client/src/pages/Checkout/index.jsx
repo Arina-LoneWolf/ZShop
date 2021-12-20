@@ -236,7 +236,7 @@ function Checkout() {
               <tfoot>
                 <tr>
                   <td width="60%">Tạm tính</td>
-                  <td width="40%">{cart.totalPrice.toLocaleString()}đ</td>
+                  <td width="40%">{cart?.totalPrice?.toLocaleString()}đ</td>
                 </tr>
 
                 <tr>

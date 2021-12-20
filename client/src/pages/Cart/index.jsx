@@ -127,7 +127,7 @@ function Cart() {
           })}
         </table>
 
-        <div className="total-price">Tổng: {cart.totalPrice.toLocaleString()}đ</div>
+        <div className="total-price">Tổng: {cart?.totalPrice?.toLocaleString()}đ</div>
 
         <div className="btn-group">
           <Link to='/'><div className="continue-shopping-btn">Tiếp tục mua sắm</div></Link>

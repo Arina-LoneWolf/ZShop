@@ -75,3 +75,9 @@ Add some necessary files to the project according to the instructions below:
 ```bash
   docker-compose up -d
 ```
+
+
+## Authors
+
+- [@arina](https://github.com/Arina-LoneWolf)
+- [@minhnhatkool](https://github.com/minhnhatkool123)

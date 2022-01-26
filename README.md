@@ -40,7 +40,7 @@ Before you continue, ensure you meet the following requirements:
 
 ## Install
 Add some necessary files to the project according to the instructions below:
-* Add a file named .env to top of the project and paste the following code:
+* Add a file named `.env` to top of the project and paste the following code:
 ```bash
   NODE_LOCAL_PORT=<YOUR_PORT>
   NODE_DOCKER_PORT=<YOUR_PORT>

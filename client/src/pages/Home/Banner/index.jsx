@@ -24,7 +24,7 @@ function Banner() {
 
   const { data: banners, refetch } = useQuery('banners', async () => {
     const response = await bannerApi.getAll();
-    console.log(response);
+    console.log('BANNER: ', response);
     return response.banners;
   }, { refetchOnWindowFocus: false });
 

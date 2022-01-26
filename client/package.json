@@ -9,7 +9,7 @@
     "@testing-library/user-event": "^12.8.3",
     "axios": "^0.21.4",
     "moment": "^2.29.1",
-    "node-sass": "^5.0.0",
+    "node-sass": "^6.0.1",
     "query-string": "^4.3.4",
     "react": "^16.14.0",
     "react-dates": "^21.8.0",

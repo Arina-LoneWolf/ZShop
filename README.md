@@ -38,7 +38,7 @@ Before you continue, ensure you meet the following requirements:
 * You have installed Docker.
 * You have installed NodeJS.
 
-## Install
+## Config
 Add some necessary files to the project according to the instructions below:
 * Add a file named `.env` to the top of the project and paste the following code:
 ```bash
